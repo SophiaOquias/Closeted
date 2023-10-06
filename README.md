@@ -1,2 +1,2 @@
-# closeted
+# Closeted
 A wardrobe organizer
