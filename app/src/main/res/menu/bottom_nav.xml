@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/navCloset"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:icon="@drawable/baseline_closet_24"
+        android:title="Closet"/>
+    <item
+        android:icon="@drawable/baseline_clothes_24"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/navOutfits"
+        android:title="Outfits"/>
+    <item
+        android:icon="@drawable/baseline_add_24"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/navAdd"
+        android:title="Add Outfit"/>
+    <item
+        android:icon="@drawable/baseline_local_laundry_service_24"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/navLaundry"
+        android:title="Laundry"/>
+</menu>
