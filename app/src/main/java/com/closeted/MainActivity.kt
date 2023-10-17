@@ -25,8 +25,8 @@ class MainActivity : AppCompatActivity() {
                 R.id.navOutfits -> {
                     replaceFragment(OutfitsFragment())
                 }
-                R.id.navAdd -> {
-                    replaceFragment(AddFragment())
+                R.id.navCalendar -> {
+                    replaceFragment(CalendarFragment())
                 }
                 R.id.navLaundry -> {
                     replaceFragment(LaundryFragment())
