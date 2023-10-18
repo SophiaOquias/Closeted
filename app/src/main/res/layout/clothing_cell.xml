@@ -17,7 +17,6 @@
             android:layout_marginTop="10dp"
             android:layout_marginRight="15dp"
             android:layout_marginBottom="10dp"
-            android:src="@drawable/shirt_sample"
-            />
+            android:src="@drawable/shirt_sample" />
     </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

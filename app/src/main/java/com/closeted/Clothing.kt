@@ -1,6 +1,9 @@
 package com.closeted
 
-class Clothing(imageId: Int){
+class Clothing(imageId: Int, laundry: Boolean){
     var imageId = imageId
+        private set
+
+    var laundry = laundry
         private set
 }
