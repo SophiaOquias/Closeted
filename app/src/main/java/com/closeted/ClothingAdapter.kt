@@ -3,7 +3,8 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 
-public class ClothingAdapter(private val data: List<Clothing>): RecyclerView.Adapter<ClothingViewHolder>() {
+public class ClothingAdapter(private val data: List<Clothing>, private val laundryView: Boolean): RecyclerView.Adapter<ClothingViewHolder>() {
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ClothingViewHolder {
         val inflater = LayoutInflater.from(parent.context)
         val view = inflater.inflate(R.layout.clothing_cell, parent, false)
@@ -11,7 +12,7 @@ public class ClothingAdapter(private val data: List<Clothing>): RecyclerView.Ada
     }
 
     override fun onBindViewHolder(holder: ClothingViewHolder, position: Int) {
-        holder.bindData(data[position])
+        holder.bindData(data[position], laundryView)
     }
 
     override fun getItemCount(): Int {

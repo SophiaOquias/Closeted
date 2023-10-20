@@ -2,12 +2,12 @@ package com.closeted
 
 class DataGenerator {
     companion object {
-        private val item1 : Clothing = Clothing(R.drawable.shirt_sample, false)
-        private val item2 : Clothing = Clothing(R.drawable.skirt_sample, true)
-        private val item3 : Clothing = Clothing(R.drawable.dress_sample, false)
-        private val item4 : Clothing = Clothing(R.drawable.shirt2_sample,  false)
-        private val item5 : Clothing = Clothing(R.drawable.shirt3_sample, true)
-        private val item6 : Clothing = Clothing(R.drawable.shirt4_sample, true)
+        private val item1 : Clothing = Clothing(R.drawable.shirt_sample, false, false)
+        private val item2 : Clothing = Clothing(R.drawable.skirt_sample, true, false)
+        private val item3 : Clothing = Clothing(R.drawable.dress_sample, false, false)
+        private val item4 : Clothing = Clothing(R.drawable.shirt2_sample,  false, false)
+        private val item5 : Clothing = Clothing(R.drawable.shirt3_sample, true, false)
+        private val item6 : Clothing = Clothing(R.drawable.shirt4_sample, true, false)
 
         private val section3: Closet = Closet(arrayListOf(item3), "Dresses")
         private val section1: Closet = Closet(arrayListOf(item1, item4, item5, item6), "Shirts")

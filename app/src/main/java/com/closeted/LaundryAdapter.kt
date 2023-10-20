@@ -35,7 +35,7 @@ public class LaundryAdapter (private val data: ArrayList<Closet>): RecyclerView.
 
         layoutManager.initialPrefetchItemCount = parentItem.clothing.size
 
-        val childItemAdapter = ClothingAdapter(parentItem.clothing)
+        val childItemAdapter = ClothingAdapter(parentItem.clothing, true)
         holder.childRecyclerView.layoutManager = layoutManager
         holder.childRecyclerView.adapter = childItemAdapter
         holder.childRecyclerView.setRecycledViewPool(viewPool)

@@ -36,8 +36,6 @@ class ClosetFragment : Fragment() {
             param1 = it.getString(ARG_PARAM1)
             param2 = it.getString(ARG_PARAM2)
         }
-
-
     }
 
     override fun onCreateView(
@@ -58,7 +56,6 @@ class ClosetFragment : Fragment() {
         closetRecyclerViewItem.layoutManager = layoutManager
 
         val addButton = view.findViewById<ImageButton>(R.id.addButton)
-
         addButton.setOnClickListener(View.OnClickListener {
             val transaction = requireActivity().supportFragmentManager.beginTransaction()
 
@@ -71,6 +68,13 @@ class ClosetFragment : Fragment() {
             transaction.commit()
         })
 
+
+        val editButton = view.findViewById<ImageButton>(R.id.editButton)
+
+        editButton.setOnClickListener(View.OnClickListener {
+            closetAdapter.toggleEditMode()
+            closetAdapter.notifyDataSetChanged()
+        })
 
         return view
     }
