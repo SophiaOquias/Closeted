@@ -6,7 +6,6 @@ import android.view.ViewGroup
 import androidx.annotation.NonNull
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.closeted.databinding.HorizontalOutfitsBinding
 
 class ParentAdapter(private val data: ArrayList<ParentModel>) : RecyclerView.Adapter<ParentAdapter.ViewHolder>() {
     private val viewPool = RecyclerView.RecycledViewPool()
@@ -34,7 +33,7 @@ class ParentAdapter(private val data: ArrayList<ParentModel>) : RecyclerView.Ada
 
     inner class ViewHolder(itemView : View) : RecyclerView.ViewHolder(itemView){
         //val binding = HorizontalOutfitsBinding.bind(itemView)
-        val childRecyclerView: RecyclerView = itemView.findViewById(R.id.outfitChild_rv)
+        val childRecyclerView: RecyclerView = itemView.findViewById(R.id.outfit_img)
     }
 
 }
