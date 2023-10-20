@@ -6,6 +6,7 @@
     android:layout_height="match_parent"
     android:background="#00FFFFFF"
     android:backgroundTint="#00FFFFFF"
+    android:padding="8dp"
     tools:context=".ViewOutfit">
 
     <Button
@@ -29,6 +30,9 @@
         android:layout_marginBottom="8dp"
         android:background="@null"
         android:contentDescription="edit outfit"
+        android:foreground="@drawable/baseline_edit_24"
+        android:foregroundTint="#000000"
+        android:visibility="visible"
         app:layout_constraintBottom_toTopOf="@+id/recyclerView"
         app:layout_constraintEnd_toStartOf="@+id/viewDeleteBtn"
         tools:src="@drawable/baseline_edit_24" />
@@ -41,6 +45,9 @@
         android:layout_marginBottom="8dp"
         android:background="@null"
         android:contentDescription="delete outfit"
+        android:foreground="@drawable/baseline_delete_24"
+        android:foregroundTint="#000000"
+        android:visibility="visible"
         app:layout_constraintBottom_toTopOf="@+id/recyclerView"
         app:layout_constraintEnd_toEndOf="parent"
         tools:src="@drawable/baseline_delete_24" />
@@ -51,7 +58,7 @@
         android:layout_height="wrap_content"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" >
+        app:layout_constraintTop_toTopOf="parent">
 
     </androidx.recyclerview.widget.RecyclerView>
 
