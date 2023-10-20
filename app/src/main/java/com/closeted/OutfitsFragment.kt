@@ -5,6 +5,8 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -20,6 +22,8 @@ class OutfitsFragment : Fragment() {
     // TODO: Rename and change types of parameters
     private var param1: String? = null
     private var param2: String? = null
+    private lateinit var outfitListRV: RecyclerView
+    private val outfitData: ArrayList<ParentModel> = DataGenerator.generateOutfitData()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -33,8 +37,18 @@ class OutfitsFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_outfits, container, false)
+        val view = inflater.inflate(R.layout.fragment_outfits, container, false)
+        val outfitRecyclerViewItem = view.findViewById<RecyclerView>(R.id.outfitsList_rv)
+        val layoutManager = LinearLayoutManager(requireContext())
+        //val outfitAdapter = ParentAdapter(ChildGenerator.collections)
+        val outfitAdapter = ParentAdapter(outfitData)
+        outfitRecyclerViewItem.adapter = outfitAdapter
+        outfitRecyclerViewItem.layoutManager = layoutManager
+
+        /*outfitListRV = view.findViewById(R.id.outfitsList_rv)
+        outfitListRV.layoutManager = LinearLayoutManager(context)
+        outfitListRV.adapter = ParentAdapter(ChildGenerator.collections)*/
+        return view
     }
 
     companion object {
