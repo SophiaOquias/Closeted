@@ -1,18 +1,13 @@
 package com.closeted
 
-import android.content.Intent
 import android.os.Bundle
+import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
+import android.widget.ArrayAdapter
 import android.widget.ImageButton
-import androidx.annotation.NonNull
-import androidx.fragment.app.Fragment
-import androidx.recyclerview.widget.GridLayoutManager
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
-
+import android.widget.Spinner
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -21,14 +16,25 @@ private const val ARG_PARAM2 = "param2"
 
 /**
  * A simple [Fragment] subclass.
- * Use the [ClosetFragment.newInstance] factory method to
+ * Use the [AddClothingFragment.newInstance] factory method to
  * create an instance of this fragment.
  */
-class ClosetFragment : Fragment() {
+class AddClothingFragment : Fragment() {
     // TODO: Rename and change types of parameters
     private var param1: String? = null
     private var param2: String? = null
-    private val closetData: ArrayList<Closet> = DataGenerator.generateClosetData()
+    private var clothingTypes =arrayOf(
+        "Blouse",
+        "Dress",
+        "Hoodie",
+        "Jeans",
+        "Jacket",
+        "Pants",
+        "Shirt",
+        "Skirt",
+        "Sweater",
+        "T-Shirt"
+    )
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -43,40 +49,44 @@ class ClosetFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
+        val view = inflater.inflate(R.layout.fragment_add_clothing, container, false)
 
-        val view = inflater.inflate(R.layout.fragment_closet, container, false)
-
-        val closetRecyclerViewItem = view.findViewById<RecyclerView>(R.id.closetRecycler)
-
-        val layoutManager = LinearLayoutManager(requireContext())
-
-        val closetAdapter = ClosetAdapter(closetData)
-
-        closetRecyclerViewItem.adapter = closetAdapter
-        closetRecyclerViewItem.layoutManager = layoutManager
-
-        val addButton = view.findViewById<ImageButton>(R.id.addButton)
-        addButton.setOnClickListener(View.OnClickListener {
+        //backButton logic
+        val backButton = view.findViewById<ImageButton>(R.id.backButton)
+        backButton.setOnClickListener(View.OnClickListener {
             val transaction = requireActivity().supportFragmentManager.beginTransaction()
 
             val currentFragment = requireActivity().supportFragmentManager.findFragmentById(R.id.closetView)
             if (currentFragment != null) {
                 transaction.remove(currentFragment)
             }
-            transaction.replace(R.id.frame, AddClothingFragment()) // Replace with your destination fragment
+            transaction.replace(R.id.frame, ClosetFragment()) // Replace with your destination fragment
             transaction.addToBackStack(null)
             transaction.commit()
         })
 
+        //finishAdding Button logic
+        val finishAddingButton = view.findViewById<ImageButton>(R.id.checkButton)
+        finishAddingButton.setOnClickListener(View.OnClickListener {
+            val transaction = requireActivity().supportFragmentManager.beginTransaction()
 
-        val editButton = view.findViewById<ImageButton>(R.id.editButton)
-
-        editButton.setOnClickListener(View.OnClickListener {
-            closetAdapter.toggleEditMode()
-            closetAdapter.notifyDataSetChanged()
+            val currentFragment = requireActivity().supportFragmentManager.findFragmentById(R.id.closetView)
+            if (currentFragment != null) {
+                transaction.remove(currentFragment)
+            }
+            transaction.replace(R.id.frame, ClosetFragment()) // Replace with your destination fragment
+            transaction.addToBackStack(null)
+            transaction.commit()
         })
 
+        //Adding clothing types to the spinner (drop-down list)
+        val spinner = view.findViewById<Spinner>(R.id.spinner_clothing_type)
+        val adapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, clothingTypes)
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+        spinner.adapter = adapter
+
         return view
+
     }
 
     companion object {
@@ -86,12 +96,12 @@ class ClosetFragment : Fragment() {
          *
          * @param param1 Parameter 1.
          * @param param2 Parameter 2.
-         * @return A new instance of fragment ClosetFragment.
+         * @return A new instance of fragment AddClothingFragment.
          */
         // TODO: Rename and change types and number of parameters
         @JvmStatic
         fun newInstance(param1: String, param2: String) =
-            ClosetFragment().apply {
+            AddClothingFragment().apply {
                 arguments = Bundle().apply {
                     putString(ARG_PARAM1, param1)
                     putString(ARG_PARAM2, param2)

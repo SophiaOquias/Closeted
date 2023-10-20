@@ -5,6 +5,8 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -20,6 +22,9 @@ class LaundryFragment : Fragment() {
     // TODO: Rename and change types of parameters
     private var param1: String? = null
     private var param2: String? = null
+    private val closetData: ArrayList<Closet> = DataGenerator.generateClosetData()
+    private val laundryData: ArrayList<Closet> = DataGenerator.getLaundry(closetData)
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -34,7 +39,19 @@ class LaundryFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_laundry, container, false)
+        //return inflater.inflate(R.layout.fragment_laundry, container, false)
+        val view = inflater.inflate(R.layout.fragment_laundry, container, false)
+
+        val laundryRecyclerViewItem = view.findViewById<RecyclerView>(R.id.laundryRecycler)
+
+        val layoutManager = LinearLayoutManager(requireContext())
+
+        val laundryAdapter = LaundryAdapter(laundryData)
+
+        laundryRecyclerViewItem.adapter = laundryAdapter
+        laundryRecyclerViewItem.layoutManager = layoutManager
+
+        return view
     }
 
     companion object {
