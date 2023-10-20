@@ -5,6 +5,9 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ArrayAdapter
+import android.widget.ImageButton
+import android.widget.Spinner
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -20,6 +23,18 @@ class AddClothingFragment : Fragment() {
     // TODO: Rename and change types of parameters
     private var param1: String? = null
     private var param2: String? = null
+    private var clothingTypes =arrayOf(
+        "Blouse",
+        "Dress",
+        "Hoodie",
+        "Jeans",
+        "Jacket",
+        "Pants",
+        "Shirt",
+        "Skirt",
+        "Sweater",
+        "T-Shirt"
+    )
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -34,7 +49,44 @@ class AddClothingFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_add_clothing, container, false)
+        val view = inflater.inflate(R.layout.fragment_add_clothing, container, false)
+
+        //backButton logic
+        val backButton = view.findViewById<ImageButton>(R.id.backButton)
+        backButton.setOnClickListener(View.OnClickListener {
+            val transaction = requireActivity().supportFragmentManager.beginTransaction()
+
+            val currentFragment = requireActivity().supportFragmentManager.findFragmentById(R.id.closetView)
+            if (currentFragment != null) {
+                transaction.remove(currentFragment)
+            }
+            transaction.replace(R.id.frame, ClosetFragment()) // Replace with your destination fragment
+            transaction.addToBackStack(null)
+            transaction.commit()
+        })
+
+        //finishAdding Button logic
+        val finishAddingButton = view.findViewById<ImageButton>(R.id.checkButton)
+        finishAddingButton.setOnClickListener(View.OnClickListener {
+            val transaction = requireActivity().supportFragmentManager.beginTransaction()
+
+            val currentFragment = requireActivity().supportFragmentManager.findFragmentById(R.id.closetView)
+            if (currentFragment != null) {
+                transaction.remove(currentFragment)
+            }
+            transaction.replace(R.id.frame, ClosetFragment()) // Replace with your destination fragment
+            transaction.addToBackStack(null)
+            transaction.commit()
+        })
+
+        //Adding clothing types to the spinner (drop-down list)
+        val spinner = view.findViewById<Spinner>(R.id.spinner_clothing_type)
+        val adapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, clothingTypes)
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+        spinner.adapter = adapter
+
+        return view
+
     }
 
     companion object {

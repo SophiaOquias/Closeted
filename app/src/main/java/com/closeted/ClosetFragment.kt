@@ -67,7 +67,6 @@ class ClosetFragment : Fragment() {
                 transaction.remove(currentFragment)
             }
             transaction.replace(R.id.frame, AddClothingFragment()) // Replace with your destination fragment
-            closetRecyclerViewItem.removeAllViews()
             transaction.addToBackStack(null)
             transaction.commit()
         })

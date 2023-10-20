@@ -105,7 +105,7 @@
             app:layout_constraintTop_toBottomOf="@+id/addImage" />
 
         <Spinner
-            android:id="@+id/spinner"
+            android:id="@+id/spinner_clothing_type"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:background="@color/white"
@@ -120,8 +120,8 @@
             android:text="Notes"
             android:textSize="24sp"
             android:textStyle="bold"
-            app:layout_constraintStart_toStartOf="@+id/spinner"
-            app:layout_constraintTop_toBottomOf="@+id/spinner" />
+            app:layout_constraintStart_toStartOf="@+id/spinner_clothing_type"
+            app:layout_constraintTop_toBottomOf="@+id/spinner_clothing_type" />
 
         <EditText
             android:id="@+id/etNotes"
