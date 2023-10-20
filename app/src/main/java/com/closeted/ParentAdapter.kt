@@ -3,6 +3,7 @@ package com.closeted
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.annotation.NonNull
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.closeted.databinding.HorizontalOutfitsBinding
@@ -14,17 +15,17 @@ class ParentAdapter(private val data: ArrayList<ParentModel>) : RecyclerView.Ada
         return ViewHolder(view)
     }
 
-    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
+    override fun onBindViewHolder(@NonNull holder: ViewHolder, position: Int) {
         val collection = data[position]
+
+        val layoutManager = LinearLayoutManager(holder.childRecyclerView.context, LinearLayoutManager.HORIZONTAL, false)
+        layoutManager.initialPrefetchItemCount = collection.clothingItems.size
+
         val childItemAdapter = ChildAdapter(collection.clothingItems)
-        //holder.childRecyclerView.layoutManager = layoutManager
+        holder.childRecyclerView.layoutManager = layoutManager
         holder.childRecyclerView.adapter = childItemAdapter
         holder.childRecyclerView.setRecycledViewPool(viewPool)
-        /*holder.binding.apply {
-            val collection = data[position]
-            val outfitAdapter = ChildAdapter(collection.clothingItems)
-            outfitChildRv.adapter=outfitAdapter
-        }*/
+
     }
 
     override fun getItemCount(): Int {
