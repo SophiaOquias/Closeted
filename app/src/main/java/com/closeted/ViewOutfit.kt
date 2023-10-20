@@ -12,7 +12,7 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton
 class ViewOutfit : AppCompatActivity() {
 
     private lateinit var recyclerView: RecyclerView
-    private lateinit var adapter: ViewAdapter
+    private lateinit var adapter: ViewOutfitAdapter
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_view_outfit)
@@ -25,7 +25,7 @@ class ViewOutfit : AppCompatActivity() {
         }
 
         this.recyclerView = findViewById(R.id.recyclerView)
-        this.adapter = ViewAdapter(imgList)
+        this.adapter = ViewOutfitAdapter(imgList)
         this.recyclerView.adapter = adapter
         this.recyclerView.layoutManager = LinearLayoutManager(
             this,

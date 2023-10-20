@@ -6,7 +6,7 @@ import android.view.ViewGroup
 import android.widget.ImageButton
 import androidx.recyclerview.widget.RecyclerView.Adapter
 
-class ViewAdapter(private val data: ArrayList<Int>): Adapter<ImageViewHolder>() {
+class ViewOutfitAdapter(private val data: ArrayList<Int>): Adapter<ImageViewHolder>() {
     var isEditModeEnabled = false
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ImageViewHolder {
         val inflater = LayoutInflater.from(parent.context)
