@@ -39,6 +39,8 @@ public class ClosetAdapter (private val data: ArrayList<Closet>): RecyclerView.A
         holder.childRecyclerView.layoutManager = layoutManager
         holder.childRecyclerView.adapter = childItemAdapter
         holder.childRecyclerView.setRecycledViewPool(viewPool)
+
+
     }
 
     override fun getItemCount(): Int {

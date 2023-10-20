@@ -1,9 +1,12 @@
 package com.closeted
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
+import android.widget.ImageButton
 import androidx.annotation.NonNull
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.GridLayoutManager
@@ -34,6 +37,7 @@ class ClosetFragment : Fragment() {
             param2 = it.getString(ARG_PARAM2)
         }
 
+
     }
 
     override fun onCreateView(
@@ -53,8 +57,23 @@ class ClosetFragment : Fragment() {
         closetRecyclerViewItem.adapter = closetAdapter
         closetRecyclerViewItem.layoutManager = layoutManager
 
+        val addButton = view.findViewById<ImageButton>(R.id.addButton)
+
+        addButton.setOnClickListener(View.OnClickListener {
+            val transaction = requireActivity().supportFragmentManager.beginTransaction()
+
+            val currentFragment = requireActivity().supportFragmentManager.findFragmentById(R.id.closetView)
+            if (currentFragment != null) {
+                transaction.remove(currentFragment)
+            }
+            transaction.replace(R.id.frame, AddClothingFragment()) // Replace with your destination fragment
+            closetRecyclerViewItem.removeAllViews()
+            transaction.addToBackStack(null)
+            transaction.commit()
+        })
+
+
         return view
-        //return inflater.inflate(R.layout.fragment_closet, container, false)
     }
 
     companion object {
