@@ -1,10 +1,12 @@
 package com.closeted.outfits
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageButton
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.closeted.DataGenerator
@@ -51,6 +53,17 @@ class OutfitsFragment : Fragment() {
         outfitListRV.layoutManager = LinearLayoutManager(context)
         outfitListRV.adapter = ParentAdapter(ChildGenerator.collections)*/
         return view
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        val btn = view.findViewById<ImageButton>(R.id.addOutfit)
+
+        btn.setOnClickListener {
+            val intent = Intent(view.context, AddClothingActivity::class.java)
+            this.startActivity(intent)
+        }
     }
 
     companion object {
