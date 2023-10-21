@@ -58,6 +58,7 @@ class LaundryFragment : Fragment() {
 
         val selectAllButton = view.findViewById<Button>(R.id.selectAllButton)
         val selectButton = view.findViewById<Button>(R.id.selectButton)
+        val addToClosetButton = view.findViewById<Button>(R.id.addToCloset)
 
 
         selectAllButton.setOnClickListener(View.OnClickListener {
@@ -69,16 +70,14 @@ class LaundryFragment : Fragment() {
             for (i in laundryData.indices) {
                 for (j in laundryData[i].clothing.indices) {
                     laundryData[i].clothing[j].selectAllMode = isSelectAllMode
-                    //laundryAdapter.childItemAdapter?.notifyItemChanged(j)
+                    addToClosetButton.visibility = if (laundryData[i].clothing[j].selectAllMode || laundryData[i].clothing[j].selectMode) View.VISIBLE else View.GONE
                 }
-                //laundryAdapter.notifyItemChanged(i)
             }
             laundryAdapter.notifyDataSetChanged()
+
         })
 
         selectButton.setOnClickListener(View.OnClickListener {
-            //laundryAdapter.toggleSelectMode()
-            //laundryAdapter.notifyDataSetChanged()
 
             val isSelectMode = !laundryAdapter.selectMode
 
@@ -86,9 +85,8 @@ class LaundryFragment : Fragment() {
             for (i in laundryData.indices) {
                 for (j in laundryData[i].clothing.indices) {
                     laundryData[i].clothing[j].selectMode = isSelectMode
-                    //laundryAdapter.childItemAdapter?.notifyItemChanged(j)
+                    addToClosetButton.visibility = if (laundryData[i].clothing[j].selectAllMode || laundryData[i].clothing[j].selectMode) View.VISIBLE else View.GONE
                 }
-               // laundryAdapter.notifyItemChanged(i)
             }
 
             // Notify the adapter to refresh the RecyclerView.
