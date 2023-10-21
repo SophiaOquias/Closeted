@@ -10,4 +10,6 @@ class Clothing(imageId: Int, laundry: Boolean){
     var isEditMode = false
 
     var selectAllMode = false
+
+    var selectMode = false
 }

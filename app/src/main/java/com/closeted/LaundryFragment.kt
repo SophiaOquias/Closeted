@@ -1,5 +1,6 @@
 package com.closeted
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -27,7 +28,7 @@ class LaundryFragment : Fragment() {
     private var param2: String? = null
     private val closetData: ArrayList<Closet> = DataGenerator.generateClosetData()
     private val laundryData: ArrayList<Closet> = DataGenerator.getLaundry(closetData)
-
+    private var isSelectAllMode = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -37,6 +38,7 @@ class LaundryFragment : Fragment() {
         }
     }
 
+    //@SuppressLint("MissingInflatedId")
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -55,20 +57,44 @@ class LaundryFragment : Fragment() {
         laundryRecyclerViewItem.layoutManager = layoutManager
 
         val selectAllButton = view.findViewById<Button>(R.id.selectAllButton)
+        val selectButton = view.findViewById<Button>(R.id.selectButton)
+
+
         selectAllButton.setOnClickListener(View.OnClickListener {
-            laundryAdapter.toggleSelectAllMode()
+            //laundryAdapter.toggleSelectMode()
+            //laundryAdapter.notifyDataSetChanged()
+            isSelectAllMode = !isSelectAllMode
+
+            // Iterate through the clothing items and set their selectMode based on isSelectMode.
+            for (i in laundryData.indices) {
+                for (j in laundryData[i].clothing.indices) {
+                    laundryData[i].clothing[j].selectAllMode = isSelectAllMode
+                    //laundryAdapter.childItemAdapter?.notifyItemChanged(j)
+                }
+                //laundryAdapter.notifyItemChanged(i)
+            }
             laundryAdapter.notifyDataSetChanged()
         })
 
-        /*
-        val addButton = view.findViewById<Button>(R.id.addButton)
-        addButton.setOnClickListener(View.OnClickListener {
-            laundryAdapter.toggleSelectAllMode()
+        selectButton.setOnClickListener(View.OnClickListener {
+            //laundryAdapter.toggleSelectMode()
+            //laundryAdapter.notifyDataSetChanged()
+
+            val isSelectMode = !laundryAdapter.selectMode
+
+            // Iterate through the clothing items and set their selectMode based on isSelectMode.
+            for (i in laundryData.indices) {
+                for (j in laundryData[i].clothing.indices) {
+                    laundryData[i].clothing[j].selectMode = isSelectMode
+                    //laundryAdapter.childItemAdapter?.notifyItemChanged(j)
+                }
+               // laundryAdapter.notifyItemChanged(i)
+            }
+
+            // Notify the adapter to refresh the RecyclerView.
+            laundryAdapter.selectMode = isSelectMode
             laundryAdapter.notifyDataSetChanged()
         })
-
-         */
-
 
         return view
     }

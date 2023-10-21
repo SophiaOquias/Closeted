@@ -1,15 +1,11 @@
 package com.closeted
 
-import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
 import android.widget.ImageButton
-import androidx.annotation.NonNull
 import androidx.fragment.app.Fragment
-import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 
@@ -55,7 +51,7 @@ class ClosetFragment : Fragment() {
         closetRecyclerViewItem.adapter = closetAdapter
         closetRecyclerViewItem.layoutManager = layoutManager
 
-        val addButton = view.findViewById<ImageButton>(R.id.addButton)
+        val addButton = view.findViewById<ImageButton>(R.id.selectButton)
         addButton.setOnClickListener(View.OnClickListener {
             val transaction = requireActivity().supportFragmentManager.beginTransaction()
 

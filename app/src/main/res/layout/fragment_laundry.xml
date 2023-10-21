@@ -24,13 +24,11 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:background="#00FFFFFF"
-                android:paddingLeft="10dp"
                 android:text="Select All"
                 android:textColor="@color/white"
                 android:textSize="16sp"
+                android:padding="0dp"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toStartOf="@id/textView"
                 app:layout_constraintTop_toTopOf="parent" />
 
             <TextView
@@ -41,24 +39,22 @@
                 android:textColor="@color/white"
                 android:textSize="24sp"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toStartOf="@+id/addButton"
+                app:layout_constraintEnd_toStartOf="@+id/selectButton"
                 app:layout_constraintStart_toEndOf="@+id/selectAllButton"
                 app:layout_constraintTop_toTopOf="parent" />
 
 
             <Button
-                android:id="@+id/addButton"
+                android:id="@+id/selectButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:background="#00FFFFFF"
-                android:text="Add to Closet"
+                android:text="Select"
                 android:textColor="@color/white"
                 android:textSize="16sp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintStart_toEndOf="@id/textView"
-                app:layout_constraintEnd_toEndOf="parent"
-                tools:layout_editor_absoluteX="255dp" />
+                app:layout_constraintEnd_toEndOf="parent"/>
 
 
         </androidx.constraintlayout.widget.ConstraintLayout>

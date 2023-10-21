@@ -9,11 +9,11 @@ class DataGenerator {
         private val item5 : Clothing = Clothing(R.drawable.shirt3_sample, true)
         private val item6 : Clothing = Clothing(R.drawable.shirt4_sample, true)
 
-        private val item7 : Clothing = Clothing(R.drawable.top_sample, true, false)
-        private val item8 : Clothing = Clothing(R.drawable.dress2_sample, false, false)
-        private val item9 : Clothing = Clothing(R.drawable.pants_sample,  false, false)
-        private val item10 : Clothing = Clothing(R.drawable.skirt2_sample, true, false)
-        private val item11 : Clothing = Clothing(R.drawable.shoes_sample, true, false)
+        private val item7 : Clothing = Clothing(R.drawable.top_sample, true)
+        private val item8 : Clothing = Clothing(R.drawable.dress2_sample, false)
+        private val item9 : Clothing = Clothing(R.drawable.pants_sample,  false)
+        private val item10 : Clothing = Clothing(R.drawable.skirt2_sample, true)
+        private val item11 : Clothing = Clothing(R.drawable.shoes_sample, true)
 
         private val section3: Closet = Closet(arrayListOf(item3), "Dresses")
         private val section1: Closet = Closet(arrayListOf(item1, item4, item5, item6), "Shirts")

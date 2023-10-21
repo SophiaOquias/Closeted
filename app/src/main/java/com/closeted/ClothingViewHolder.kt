@@ -3,6 +3,7 @@ package com.closeted
 import android.graphics.Color
 import android.view.View
 import android.widget.CheckBox
+import android.widget.Checkable
 import android.widget.ImageButton
 import android.widget.ImageView
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
@@ -31,17 +32,13 @@ class ClothingViewHolder(itemView:View): ViewHolder(itemView) {
             deleteButton.isClickable = false
             deleteButton.isEnabled = false
         }
+        
+        // Set the visibility and checked state of the select button based on selectAllMode and selectMode.
+        selectButton.visibility = if (clothing.selectAllMode || clothing.selectMode) View.VISIBLE else View.GONE
+        selectButton.isClickable = clothing.selectMode
 
-        // Set the visibility of the select all button based on the selectAllMode flag
-        if (clothing.selectAllMode) {
-            selectButton.visibility = View.VISIBLE
-            selectButton.isChecked = true
-
-        } else {
-            selectButton.visibility = View.GONE
-            selectButton.isChecked = false
-        }
-
+        // Check the select button if in selectAllMode.
+        selectButton.isChecked = clothing.selectAllMode
 
     }
 }
