@@ -9,6 +9,7 @@ import androidx.recyclerview.widget.RecyclerView
 
 public class LaundryAdapter (private val data: ArrayList<Closet>): RecyclerView.Adapter<ClosetViewHolder>() {
     private val viewPool = RecyclerView.RecycledViewPool()
+    var selectAllMode: Boolean = false
 
     override fun onCreateViewHolder(@NonNull parent: ViewGroup, viewType: Int): ClosetViewHolder {
         val view = LayoutInflater
@@ -39,6 +40,17 @@ public class LaundryAdapter (private val data: ArrayList<Closet>): RecyclerView.
         holder.childRecyclerView.layoutManager = layoutManager
         holder.childRecyclerView.adapter = childItemAdapter
         holder.childRecyclerView.setRecycledViewPool(viewPool)
+    }
+
+    fun toggleSelectAllMode() {
+        selectAllMode = !selectAllMode
+        if(selectAllMode){
+            for(i in data){
+                for(j in i.clothing){
+                    j.selectAllMode = !j.selectAllMode
+                }
+            }
+        }
     }
 
     override fun getItemCount(): Int {

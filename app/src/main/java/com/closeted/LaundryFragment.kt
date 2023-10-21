@@ -5,8 +5,11 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
+import android.widget.ImageButton
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.chip.Chip
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -50,6 +53,22 @@ class LaundryFragment : Fragment() {
 
         laundryRecyclerViewItem.adapter = laundryAdapter
         laundryRecyclerViewItem.layoutManager = layoutManager
+
+        val selectAllButton = view.findViewById<Button>(R.id.selectAllButton)
+        selectAllButton.setOnClickListener(View.OnClickListener {
+            laundryAdapter.toggleSelectAllMode()
+            laundryAdapter.notifyDataSetChanged()
+        })
+
+        /*
+        val addButton = view.findViewById<Button>(R.id.addButton)
+        addButton.setOnClickListener(View.OnClickListener {
+            laundryAdapter.toggleSelectAllMode()
+            laundryAdapter.notifyDataSetChanged()
+        })
+
+         */
+
 
         return view
     }

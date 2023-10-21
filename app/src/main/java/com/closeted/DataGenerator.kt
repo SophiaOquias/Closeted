@@ -2,12 +2,12 @@ package com.closeted
 
 class DataGenerator {
     companion object {
-        private val item1 : Clothing = Clothing(R.drawable.shirt_sample, false, false)
-        private val item2 : Clothing = Clothing(R.drawable.skirt_sample, true, false)
-        private val item3 : Clothing = Clothing(R.drawable.dress_sample, false, false)
-        private val item4 : Clothing = Clothing(R.drawable.shirt2_sample,  false, false)
-        private val item5 : Clothing = Clothing(R.drawable.shirt3_sample, true, false)
-        private val item6 : Clothing = Clothing(R.drawable.shirt4_sample, true, false)
+        private val item1 : Clothing = Clothing(R.drawable.shirt_sample, false)
+        private val item2 : Clothing = Clothing(R.drawable.skirt_sample, true)
+        private val item3 : Clothing = Clothing(R.drawable.dress_sample, false)
+        private val item4 : Clothing = Clothing(R.drawable.shirt2_sample,  false)
+        private val item5 : Clothing = Clothing(R.drawable.shirt3_sample, true)
+        private val item6 : Clothing = Clothing(R.drawable.shirt4_sample, true)
 
         private val item7 : Clothing = Clothing(R.drawable.top_sample, true, false)
         private val item8 : Clothing = Clothing(R.drawable.dress2_sample, false, false)

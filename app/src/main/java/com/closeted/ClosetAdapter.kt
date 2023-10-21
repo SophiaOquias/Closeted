@@ -56,14 +56,20 @@ public class ClosetAdapter (private val data: ArrayList<Closet>): RecyclerView.A
 
     fun toggleEditMode() {
         isEditMode = !isEditMode
-
         if(isEditMode){
-            for(i in data){
-                for(j in i.clothing){
-                    j.isEditMode = !j.isEditMode
+            for(i in data.indices){
+                for(j in data[i].clothing.indices){
+                    data[i].clothing[j].isEditMode = !data[i].clothing[j].isEditMode
+                    childItemAdapter?.notifyItemRemoved(j)
+                }
+                if(data[i].clothing.size == 0)
+                {
+                    data.removeAt(i)
+                    notifyItemRemoved(i)
                 }
             }
         }
+
 
     }
 

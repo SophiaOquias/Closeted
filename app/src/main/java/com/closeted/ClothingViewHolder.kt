@@ -2,13 +2,16 @@ package com.closeted
 
 import android.graphics.Color
 import android.view.View
+import android.widget.CheckBox
 import android.widget.ImageButton
 import android.widget.ImageView
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
+import com.google.android.material.chip.Chip
 
 class ClothingViewHolder(itemView:View): ViewHolder(itemView) {
     private val img: ImageView = itemView.findViewById(R.id.imageView)
     private val deleteButton: ImageButton = itemView.findViewById(R.id.trashButton)
+    private val selectButton: CheckBox = itemView.findViewById(R.id.selectOption)
 
     fun bindData(clothing: Clothing, laundryView: Boolean) {
         img.setImageResource(clothing.imageId)
@@ -27,6 +30,16 @@ class ClothingViewHolder(itemView:View): ViewHolder(itemView) {
             deleteButton.visibility = View.GONE
             deleteButton.isClickable = false
             deleteButton.isEnabled = false
+        }
+
+        // Set the visibility of the select all button based on the selectAllMode flag
+        if (clothing.selectAllMode) {
+            selectButton.visibility = View.VISIBLE
+            selectButton.isChecked = true
+
+        } else {
+            selectButton.visibility = View.GONE
+            selectButton.isChecked = false
         }
 
 

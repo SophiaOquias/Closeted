@@ -2,8 +2,10 @@ package com.closeted
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.CheckBox
 import android.widget.ImageButton
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.chip.Chip
 
 public class ClothingAdapter(private val data: ArrayList<Clothing>, private val laundryView: Boolean): RecyclerView.Adapter<ClothingViewHolder>() {
 
@@ -17,15 +19,16 @@ public class ClothingAdapter(private val data: ArrayList<Clothing>, private val 
         holder.bindData(data[position], laundryView)
 
         val xBtn = holder.itemView.findViewById<ImageButton>(R.id.trashButton)
-
         if(xBtn.isEnabled){
             xBtn.setOnClickListener {
                 val itemPosition = holder.adapterPosition
                 data.removeAt(itemPosition)
                 notifyItemRemoved(itemPosition)
+                notifyDataSetChanged()
             }
         }
-        
+
+
     }
 
     override fun getItemCount(): Int {
