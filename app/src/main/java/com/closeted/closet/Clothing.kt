@@ -1,4 +1,4 @@
-package com.closeted
+package com.closeted.closet
 
 class Clothing(imageId: Int, laundry: Boolean){
     var imageId = imageId

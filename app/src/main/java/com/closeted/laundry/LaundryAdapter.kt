@@ -1,10 +1,13 @@
-package com.closeted
+package com.closeted.laundry
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.annotation.NonNull
 import androidx.recyclerview.widget.GridLayoutManager
-import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.closeted.R
+import com.closeted.closet.Closet
+import com.closeted.closet.ClosetViewHolder
+import com.closeted.closet.ClothingAdapter
 
 
 public class LaundryAdapter (private val data: ArrayList<Closet>): RecyclerView.Adapter<ClosetViewHolder>() {

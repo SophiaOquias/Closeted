@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingEnd="8dp">
+
+        <ImageView
+            android:id="@+id/clothingIv"
+            android:layout_width="wrap_content"
+            android:layout_height="320dp"
+            android:layout_marginTop="16dp"
+            android:adjustViewBounds="true"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:srcCompat="@drawable/temp_pic" />
+
+        <ImageButton
+            android:id="@+id/viewRemoveBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@null"
+            android:clickable="false"
+            android:contentDescription="remove clothing"
+            android:foreground="@drawable/baseline_cancel_24"
+            android:foregroundTint="#000000"
+            android:src="@drawable/baseline_cancel_24"
+            android:visibility="invisible"
+            app:layout_constraintBottom_toTopOf="@+id/clothingIv"
+            app:layout_constraintEnd_toEndOf="@+id/clothingIv"
+            app:layout_constraintStart_toEndOf="@+id/clothingIv"
+            app:layout_constraintTop_toTopOf="@id/clothingIv" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</LinearLayout>

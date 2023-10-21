@@ -1,4 +1,4 @@
-package com.closeted
+package com.closeted.laundry
 
 import android.annotation.SuppressLint
 import android.os.Bundle
@@ -10,7 +10,9 @@ import android.widget.Button
 import android.widget.ImageButton
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.google.android.material.chip.Chip
+import com.closeted.DataGenerator
+import com.closeted.R
+import com.closeted.closet.Closet
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -38,7 +40,6 @@ class LaundryFragment : Fragment() {
         }
     }
 
-    //@SuppressLint("MissingInflatedId")
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
