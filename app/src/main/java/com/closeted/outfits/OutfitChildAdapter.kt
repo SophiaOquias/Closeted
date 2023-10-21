@@ -8,7 +8,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.closeted.Clothing
 import com.closeted.R
 
-class ChildAdapter(private val data: List<Clothing>) : RecyclerView.Adapter<ChildAdapter.ViewHolder>() {
+class OutfitChildAdapter(private val data: List<Clothing>) : RecyclerView.Adapter<OutfitChildAdapter.ViewHolder>() {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val view =LayoutInflater.from(parent.context).inflate(R.layout.outfit_item,parent,false)
         return ViewHolder(view)

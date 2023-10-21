@@ -25,7 +25,7 @@ class OutfitsFragment : Fragment() {
     private var param1: String? = null
     private var param2: String? = null
     private lateinit var outfitListRV: RecyclerView
-    private val outfitData: ArrayList<ParentModel> = DataGenerator.generateOutfitData()
+    private val outfitData: ArrayList<Outfit> = DataGenerator.generateOutfitData()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -43,7 +43,7 @@ class OutfitsFragment : Fragment() {
         val outfitRecyclerViewItem = view.findViewById<RecyclerView>(R.id.outfitsList_rv)
         val layoutManager = LinearLayoutManager(requireContext())
         //val outfitAdapter = ParentAdapter(ChildGenerator.collections)
-        val outfitAdapter = ParentAdapter(outfitData)
+        val outfitAdapter = OutfitParentAdapter(outfitData)
         outfitRecyclerViewItem.adapter = outfitAdapter
         outfitRecyclerViewItem.layoutManager = layoutManager
 

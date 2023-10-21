@@ -1,7 +1,7 @@
 package com.closeted
 
 import com.closeted.closet.Closet
-import com.closeted.outfits.ParentModel
+import com.closeted.outfits.Outfit
 
 class DataGenerator {
     companion object {
@@ -22,16 +22,16 @@ class DataGenerator {
         private val section1: Closet = Closet(arrayListOf(item1, item4, item5, item6), "Shirts")
         private val section2: Closet = Closet(arrayListOf(item2), "Skirts")
 
-        private val outfit1: ParentModel = ParentModel(arrayListOf(item1, item2, item5))
-        private val outfit2: ParentModel = ParentModel(arrayListOf(item7, item10, item11))
-        private val outfit3: ParentModel = ParentModel(arrayListOf(item8, item11))
-        private val outfit4: ParentModel = ParentModel(arrayListOf(item7, item9, item11))
+        private val outfit1: Outfit = Outfit(arrayListOf(item1, item2, item5))
+        private val outfit2: Outfit = Outfit(arrayListOf(item7, item10, item11))
+        private val outfit3: Outfit = Outfit(arrayListOf(item8, item11))
+        private val outfit4: Outfit = Outfit(arrayListOf(item7, item9, item11))
 
         fun generateClosetData(): ArrayList<Closet> {
             return arrayListOf(section1, section2, section3)
         }
 
-        fun generateOutfitData(): ArrayList<ParentModel> {
+        fun generateOutfitData(): ArrayList<Outfit> {
             return arrayListOf(outfit1,outfit2,outfit3,outfit4)
         }
 

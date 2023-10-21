@@ -8,7 +8,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.closeted.R
 
-class ParentAdapter(private val data: ArrayList<ParentModel>) : RecyclerView.Adapter<ParentAdapter.ViewHolder>() {
+class OutfitParentAdapter(private val data: ArrayList<Outfit>) : RecyclerView.Adapter<OutfitParentAdapter.ViewHolder>() {
     private val viewPool = RecyclerView.RecycledViewPool()
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val view =LayoutInflater.from(parent.context).inflate(R.layout.horizontal_outfits,parent,false)
@@ -25,7 +25,7 @@ class ParentAdapter(private val data: ArrayList<ParentModel>) : RecyclerView.Ada
         )
         layoutManager.initialPrefetchItemCount = collection.clothingItems.size
 
-        val childItemAdapter = ChildAdapter(collection.clothingItems)
+        val childItemAdapter = OutfitChildAdapter(collection.clothingItems)
         holder.childRecyclerView.layoutManager = layoutManager
         holder.childRecyclerView.adapter = childItemAdapter
         holder.childRecyclerView.setRecycledViewPool(viewPool)
