@@ -1,5 +1,5 @@
 package com.closeted
-
+import android.content.Intent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -14,6 +14,11 @@ class ChildAdapter(private val data: List<Clothing>) : RecyclerView.Adapter<Chil
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         holder.bind(data[position])
+
+        holder.itemView.setOnClickListener {
+            val intent = Intent(holder.itemView.context, ViewOutfit::class.java)
+            holder.itemView.context.startActivity(intent)
+        }
     }
 
     override fun getItemCount(): Int {

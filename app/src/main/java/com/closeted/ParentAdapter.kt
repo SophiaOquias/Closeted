@@ -3,6 +3,7 @@ package com.closeted
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.annotation.NonNull
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -17,7 +18,11 @@ class ParentAdapter(private val data: ArrayList<ParentModel>) : RecyclerView.Ada
     override fun onBindViewHolder(@NonNull holder: ViewHolder, position: Int) {
         val collection = data[position]
 
-        val layoutManager = LinearLayoutManager(holder.childRecyclerView.context, LinearLayoutManager.HORIZONTAL, false)
+        val layoutManager = LinearLayoutManager(
+            holder.childRecyclerView.context,
+            LinearLayoutManager.HORIZONTAL,
+            false
+        )
         layoutManager.initialPrefetchItemCount = collection.clothingItems.size
 
         val childItemAdapter = ChildAdapter(collection.clothingItems)

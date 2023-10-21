@@ -17,7 +17,7 @@ class ViewOutfit : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_view_outfit)
 
-        val imgList: ArrayList<Int> = ArrayList<Int>()
+        val imgList: ArrayList<Int> = ArrayList()
 
         // fill sample data
         repeat(10) {
