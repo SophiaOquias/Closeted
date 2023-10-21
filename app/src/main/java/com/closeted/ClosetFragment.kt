@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import android.widget.ImageButton
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -65,11 +66,28 @@ class ClosetFragment : Fragment() {
         })
 
         val editButton = view.findViewById<ImageButton>(R.id.editButton)
-
         editButton.setOnClickListener(View.OnClickListener {
             closetAdapter.toggleEditMode()
             closetAdapter.notifyDataSetChanged()
         })
+
+
+        val laundryButton = view.findViewById<ImageButton>(R.id.laundryButton)
+        val addToLaundryButton = view.findViewById<Button>(R.id.addToLaundry)
+        laundryButton.setOnClickListener(View.OnClickListener {
+            val isSelectMode = !closetAdapter.selectMode
+            // Iterate through the clothing items and set their selectMode based on isSelectMode.
+            for (i in closetData.indices) {
+                for (j in closetData[i].clothing.indices) {
+                    closetData[i].clothing[j].selectMode = isSelectMode
+                    addToLaundryButton.visibility = if (closetData[i].clothing[j].selectAllMode || closetData[i].clothing[j].selectMode) View.VISIBLE else View.GONE
+                }
+            }
+            // Notify the adapter to refresh the RecyclerView.
+            closetAdapter.selectMode = isSelectMode
+            closetAdapter.notifyDataSetChanged()
+        })
+
 
         return view
     }

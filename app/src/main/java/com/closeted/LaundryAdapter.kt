@@ -9,7 +9,6 @@ import androidx.recyclerview.widget.RecyclerView
 
 public class LaundryAdapter (private val data: ArrayList<Closet>): RecyclerView.Adapter<ClosetViewHolder>() {
     private val viewPool = RecyclerView.RecycledViewPool()
-    var selectAllMode: Boolean = false
     var selectMode: Boolean = false
 
     var childItemAdapter: ClothingAdapter? = null
@@ -46,33 +45,6 @@ public class LaundryAdapter (private val data: ArrayList<Closet>): RecyclerView.
         holder.childRecyclerView.adapter = childItemAdapter
         holder.childRecyclerView.setRecycledViewPool(viewPool)
     }
-
-    /*
-    fun toggleSelectAllMode() {
-        selectAllMode = !selectAllMode
-        if(selectAllMode){
-            for(i in data){
-                for(j in i.clothing){
-                    j.selectAllMode = !j.selectAllMode
-                    childItemAdapter?.notifyDataSetChanged()
-                }
-            }
-        }
-    }
-
-
-
-    fun toggleSelectMode() {
-        selectMode = !selectMode
-        for(closet in data){
-            for(clothing in closet.clothing){
-                clothing.selectMode = selectMode
-            }
-        }
-        notifyDataSetChanged()
-    }
-
-     */
 
     override fun getItemCount(): Int {
         return data.size

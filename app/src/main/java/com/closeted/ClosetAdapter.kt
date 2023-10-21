@@ -13,6 +13,7 @@ import androidx.recyclerview.widget.RecyclerView
 public class ClosetAdapter (private val data: ArrayList<Closet>): RecyclerView.Adapter<ClosetViewHolder>() {
     private val viewPool = RecyclerView.RecycledViewPool()
     var isEditMode: Boolean = false
+    var selectMode: Boolean = false
 
     private var childItemAdapter: ClothingAdapter? = null
 

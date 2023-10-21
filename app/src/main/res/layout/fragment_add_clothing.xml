@@ -16,7 +16,7 @@
             android:id="@+id/addClothesBanner"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="#62C1A6"
+            android:background="#673AB7"
             android:orientation="horizontal"
             android:paddingTop="10dp"
             android:paddingBottom="10dp"
