@@ -1,9 +1,11 @@
 package com.closeted
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageButton
 import androidx.recyclerview.widget.RecyclerView
 
-public class ClothingAdapter(private val data: List<Clothing>, private val laundryView: Boolean): RecyclerView.Adapter<ClothingViewHolder>() {
+public class ClothingAdapter(private val data: ArrayList<Clothing>, private val laundryView: Boolean): RecyclerView.Adapter<ClothingViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ClothingViewHolder {
         val inflater = LayoutInflater.from(parent.context)
@@ -13,6 +15,17 @@ public class ClothingAdapter(private val data: List<Clothing>, private val laund
 
     override fun onBindViewHolder(holder: ClothingViewHolder, position: Int) {
         holder.bindData(data[position], laundryView)
+
+        val xBtn = holder.itemView.findViewById<ImageButton>(R.id.trashButton)
+
+        if(xBtn.isEnabled){
+            xBtn.setOnClickListener {
+                val itemPosition = holder.adapterPosition
+                data.removeAt(itemPosition)
+                notifyItemRemoved(itemPosition)
+            }
+        }
+        
     }
 
     override fun getItemCount(): Int {
