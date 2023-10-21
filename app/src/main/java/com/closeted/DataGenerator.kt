@@ -1,6 +1,7 @@
 package com.closeted
 
 import com.closeted.closet.Closet
+import com.closeted.outfits.ParentModel
 
 class DataGenerator {
     companion object {

@@ -1,12 +1,12 @@
-package com.closeted
+package com.closeted.outfits
 
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.annotation.NonNull
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.closeted.R
 
 class ParentAdapter(private val data: ArrayList<ParentModel>) : RecyclerView.Adapter<ParentAdapter.ViewHolder>() {
     private val viewPool = RecyclerView.RecycledViewPool()

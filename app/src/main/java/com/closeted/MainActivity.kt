@@ -6,8 +6,11 @@ import androidx.appcompat.app.AppCompatDelegate
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentTransaction
+import com.closeted.calendar.CalendarFragment
 import com.closeted.databinding.ActivityMainBinding
 import com.closeted.closet.ClosetFragment
+import com.closeted.laundry.LaundryFragment
+import com.closeted.outfits.OutfitsFragment
 
 class MainActivity : AppCompatActivity() {
 

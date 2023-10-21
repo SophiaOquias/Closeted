@@ -1,10 +1,11 @@
-package com.closeted
+package com.closeted.outfits
 
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageButton
 import androidx.recyclerview.widget.RecyclerView.Adapter
+import com.closeted.R
 
 class ViewOutfitAdapter(private val data: ArrayList<Int>): Adapter<ImageViewHolder>() {
     var isEditModeEnabled = false

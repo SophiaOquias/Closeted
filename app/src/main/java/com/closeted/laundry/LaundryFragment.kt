@@ -1,10 +1,15 @@
-package com.closeted
+package com.closeted.laundry
 
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import com.closeted.DataGenerator
+import com.closeted.R
+import com.closeted.closet.Closet
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -13,13 +18,16 @@ private const val ARG_PARAM2 = "param2"
 
 /**
  * A simple [Fragment] subclass.
- * Use the [CalendarFragment.newInstance] factory method to
+ * Use the [LaundryFragment.newInstance] factory method to
  * create an instance of this fragment.
  */
-class CalendarFragment : Fragment() {
+class LaundryFragment : Fragment() {
     // TODO: Rename and change types of parameters
     private var param1: String? = null
     private var param2: String? = null
+    private val closetData: ArrayList<Closet> = DataGenerator.generateClosetData()
+    private val laundryData: ArrayList<Closet> = DataGenerator.getLaundry(closetData)
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -34,7 +42,19 @@ class CalendarFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_calendar, container, false)
+        //return inflater.inflate(R.layout.fragment_laundry, container, false)
+        val view = inflater.inflate(R.layout.fragment_laundry, container, false)
+
+        val laundryRecyclerViewItem = view.findViewById<RecyclerView>(R.id.laundryRecycler)
+
+        val layoutManager = LinearLayoutManager(requireContext())
+
+        val laundryAdapter = LaundryAdapter(laundryData)
+
+        laundryRecyclerViewItem.adapter = laundryAdapter
+        laundryRecyclerViewItem.layoutManager = layoutManager
+
+        return view
     }
 
     companion object {
@@ -44,12 +64,12 @@ class CalendarFragment : Fragment() {
          *
          * @param param1 Parameter 1.
          * @param param2 Parameter 2.
-         * @return A new instance of fragment AddFragment.
+         * @return A new instance of fragment LaundryFragment.
          */
         // TODO: Rename and change types and number of parameters
         @JvmStatic
         fun newInstance(param1: String, param2: String) =
-            CalendarFragment().apply {
+            LaundryFragment().apply {
                 arguments = Bundle().apply {
                     putString(ARG_PARAM1, param1)
                     putString(ARG_PARAM2, param2)

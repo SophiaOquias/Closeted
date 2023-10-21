@@ -1,4 +1,4 @@
-package com.closeted
+package com.closeted.outfits
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -7,6 +7,7 @@ import android.widget.ImageButton
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.closeted.R
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 
 class ViewOutfitActivity : AppCompatActivity() {

@@ -1,10 +1,12 @@
-package com.closeted
+package com.closeted.outfits
 import android.content.Intent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import androidx.recyclerview.widget.RecyclerView
+import com.closeted.Clothing
+import com.closeted.R
 
 class ChildAdapter(private val data: List<Clothing>) : RecyclerView.Adapter<ChildAdapter.ViewHolder>() {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {

@@ -7,7 +7,7 @@
     android:background="#00FFFFFF"
     android:backgroundTint="#00FFFFFF"
     android:padding="8dp"
-    tools:context=".ViewOutfitActivity">
+    tools:context=".outfits.ViewOutfitActivity">
 
     <Button
         android:id="@+id/viewConfirmBtn"
