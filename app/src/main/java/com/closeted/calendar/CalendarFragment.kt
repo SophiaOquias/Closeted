@@ -1,14 +1,17 @@
 package com.closeted.calendar
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageButton
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.closeted.DataGenerator
 import com.closeted.R
+import com.closeted.outfits.AddClothingActivity
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -48,6 +51,17 @@ class CalendarFragment : Fragment() {
         closetRecyclerViewItem.layoutManager = layoutManager
 
         return view
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        val btn = view.findViewById<ImageButton>(R.id.addOutfitCalendar)
+
+        btn.setOnClickListener {
+            val intent = Intent(view.context, AddOutfitToCalendarActivity::class.java)
+            this.startActivity(intent)
+        }
     }
 
     companion object {
