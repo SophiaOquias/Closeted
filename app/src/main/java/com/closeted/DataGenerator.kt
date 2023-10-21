@@ -1,5 +1,7 @@
 package com.closeted
 
+import com.closeted.closet.Closet
+
 class DataGenerator {
     companion object {
         private val item1 : Clothing = Clothing(R.drawable.shirt_sample, false, false)

@@ -16,7 +16,7 @@ class ChildAdapter(private val data: List<Clothing>) : RecyclerView.Adapter<Chil
         holder.bind(data[position])
 
         holder.itemView.setOnClickListener {
-            val intent = Intent(holder.itemView.context, ViewOutfit::class.java)
+            val intent = Intent(holder.itemView.context, ViewOutfitActivity::class.java)
             holder.itemView.context.startActivity(intent)
         }
     }

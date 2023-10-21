@@ -1,9 +1,10 @@
-package com.closeted
+package com.closeted.closet
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageButton
 import androidx.recyclerview.widget.RecyclerView
+import com.closeted.Clothing
+import com.closeted.R
 
 public class ClothingAdapter(private val data: ArrayList<Clothing>, private val laundryView: Boolean): RecyclerView.Adapter<ClothingViewHolder>() {
 
