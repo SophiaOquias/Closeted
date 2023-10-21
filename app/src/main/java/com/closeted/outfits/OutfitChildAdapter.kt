@@ -5,7 +5,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import androidx.recyclerview.widget.RecyclerView
-import com.closeted.Clothing
+import com.closeted.closet.Clothing
 import com.closeted.R
 
 class OutfitChildAdapter(private val data: List<Clothing>) : RecyclerView.Adapter<OutfitChildAdapter.ViewHolder>() {

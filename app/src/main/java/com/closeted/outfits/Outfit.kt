@@ -1,6 +1,6 @@
 package com.closeted.outfits
 
-import com.closeted.Clothing
+import com.closeted.closet.Clothing
 
 class Outfit(clothingItems: List<Clothing>) {
     var clothingItems = clothingItems

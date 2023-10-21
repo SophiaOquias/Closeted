@@ -1,6 +1,8 @@
 package com.closeted
 
+import com.closeted.calendar.Calendar
 import com.closeted.closet.Closet
+import com.closeted.closet.Clothing
 import com.closeted.outfits.Outfit
 
 class DataGenerator {
@@ -27,12 +29,20 @@ class DataGenerator {
         private val outfit3: Outfit = Outfit(arrayListOf(item8, item11))
         private val outfit4: Outfit = Outfit(arrayListOf(item7, item9, item11))
 
+        private val calendar1: Calendar = Calendar(outfit1, "March 21, 2024")
+        private val calendar2: Calendar = Calendar(outfit2, "April 16, 2024")
+        private val calendar3: Calendar = Calendar(outfit3, "September 25, 2024")
+
         fun generateClosetData(): ArrayList<Closet> {
             return arrayListOf(section1, section2, section3)
         }
 
         fun generateOutfitData(): ArrayList<Outfit> {
             return arrayListOf(outfit1,outfit2,outfit3,outfit4)
+        }
+
+        fun generateCalendarData(): ArrayList<Calendar> {
+            return arrayListOf(calendar1, calendar2, calendar3)
         }
 
         fun getLaundry(closet : ArrayList<Closet>): ArrayList<Closet>  {
