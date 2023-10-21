@@ -22,10 +22,14 @@ class ClothingViewHolder(itemView:View): ViewHolder(itemView) {
         if (clothing.isEditMode) {
             deleteButton.visibility = View.VISIBLE
             deleteButton.isClickable = true
+            deleteButton.isEnabled = true
         } else {
             deleteButton.visibility = View.GONE
             deleteButton.isClickable = false
+            deleteButton.isEnabled = false
         }
+
+
     }
 }
 

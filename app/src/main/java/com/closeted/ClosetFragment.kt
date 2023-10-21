@@ -68,7 +68,6 @@ class ClosetFragment : Fragment() {
             transaction.commit()
         })
 
-
         val editButton = view.findViewById<ImageButton>(R.id.editButton)
 
         editButton.setOnClickListener(View.OnClickListener {
