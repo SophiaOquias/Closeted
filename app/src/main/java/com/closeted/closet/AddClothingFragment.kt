@@ -14,7 +14,9 @@ import android.widget.Spinner
 import androidx.core.content.ContextCompat
 import android.Manifest
 import android.app.Activity
+import android.app.Activity.RESULT_OK
 import android.graphics.Bitmap
+import android.net.Uri
 import android.widget.ImageView
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
@@ -26,7 +28,7 @@ import com.closeted.R
 private const val ARG_PARAM1 = "param1"
 private const val ARG_PARAM2 = "param2"
 private const val CAMERA_PERMISSION_CODE = 1
-private const val CAMERA_REQUEST_CODE = 2
+private const val GALLERY_REQUEST_CODE = 2
 
 /**
  * A simple [Fragment] subclass.
@@ -160,6 +162,13 @@ class AddClothingFragment : Fragment() {
             checkCameraPermission()
         }
 
+        val galleryBtn = view.findViewById<ImageButton>(R.id.galleryButton)
+
+        galleryBtn.setOnClickListener {
+            val intent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
+            startActivityForResult(intent, GALLERY_REQUEST_CODE)
+        }
+
         return view
 
     }
@@ -184,14 +193,13 @@ class AddClothingFragment : Fragment() {
         }
     }
 
-    @Deprecated("Deprecated in Java")
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        if(resultCode == Activity.RESULT_OK) {
-            if(requestCode == CAMERA_REQUEST_CODE) {
-                val captured: Bitmap = data!!.extras!!.get("data") as Bitmap
-                val image: ImageView = requireView().findViewById(R.id.addImage)
-                image.setImageBitmap(captured)
-            }
+        super.onActivityResult(requestCode, resultCode, data)
+
+        if(resultCode == RESULT_OK) {
+            val selected: Uri = data!!.data!!
+            val image = requireView().findViewById<ImageView>(R.id.addImage)
+            image.setImageURI(selected)
         }
     }
 
