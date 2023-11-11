@@ -17,6 +17,7 @@ import android.app.Activity
 import android.graphics.Bitmap
 import android.widget.ImageView
 import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.app.ActivityCompat
 import com.closeted.R
 
@@ -55,6 +56,49 @@ class AddClothingFragment : Fragment() {
             param1 = it.getString(ARG_PARAM1)
             param2 = it.getString(ARG_PARAM2)
         }
+    }
+
+    private val requestPermissionLauncher =
+        registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted: Boolean ->
+            if (isGranted) {
+                // Permission granted, proceed with the camera action
+                openCamera()
+            } else {
+                Toast.makeText(
+                    requireContext(),
+                    "Please allow this app to access the camera",
+                    Toast.LENGTH_LONG
+                ).show()
+            }
+        }
+
+    private val takePictureLauncher =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            if (result.resultCode == Activity.RESULT_OK) {
+                val data: Intent? = result.data
+                val captured: Bitmap? = data?.extras?.get("data") as Bitmap?
+                captured?.let { bitmap ->
+                    val image: ImageView = requireView().findViewById(R.id.addImage)
+                    image.setImageBitmap(bitmap)
+                }
+            }
+        }
+
+    private fun checkCameraPermission() {
+        if (ContextCompat.checkSelfPermission(
+                requireContext(),
+                Manifest.permission.CAMERA
+            ) == PackageManager.PERMISSION_GRANTED
+        ) {
+            openCamera()
+        } else {
+            requestPermissionLauncher.launch(Manifest.permission.CAMERA)
+        }
+    }
+
+    private fun openCamera() {
+        val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
+        takePictureLauncher.launch(intent)
     }
 
     override fun onCreateView(
@@ -113,51 +157,35 @@ class AddClothingFragment : Fragment() {
         val cameraBtn = view.findViewById<ImageButton>(R.id.cameraButton)
 
         cameraBtn.setOnClickListener {
-            if(ContextCompat.checkSelfPermission(
-                requireContext(),
-                Manifest.permission.CAMERA
-                ) == PackageManager.PERMISSION_GRANTED
-            ) {
-                val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
-                startActivityForResult(intent, CAMERA_REQUEST_CODE)
-            }
-            else {
-                Toast.makeText(
-                    requireContext(),
-                    "Please allow this app to access the camera",
-                    Toast.LENGTH_LONG
-                )
-            }
+            checkCameraPermission()
         }
 
         return view
 
     }
 
+    @Deprecated("Deprecated in Java")
     override fun onRequestPermissionsResult(
         requestCode: Int,
         permissions: Array<out String>,
         grantResults: IntArray
     ) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         if(requestCode == CAMERA_PERMISSION_CODE) {
             if(grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
-                startActivityForResult(intent, CAMERA_REQUEST_CODE)
+                openCamera()
             }
             else {
                 Toast.makeText(
                     requireContext(),
                     "You denied permission for camera, you can still allow it in settings",
                     Toast.LENGTH_LONG
-                )
+                ).show()
             }
         }
     }
 
+    @Deprecated("Deprecated in Java")
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-
         if(resultCode == Activity.RESULT_OK) {
             if(requestCode == CAMERA_REQUEST_CODE) {
                 val captured: Bitmap = data!!.extras!!.get("data") as Bitmap
