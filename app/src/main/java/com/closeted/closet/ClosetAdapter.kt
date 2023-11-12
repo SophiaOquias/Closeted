@@ -1,6 +1,8 @@
 package com.closeted.closet
+import android.content.Intent
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import android.widget.ImageView
 import androidx.annotation.NonNull
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -46,9 +48,11 @@ public class ClosetAdapter (private val data: ArrayList<Closet>): RecyclerView.A
         layoutManager.initialPrefetchItemCount = parentItem.clothing.size
 
         val childItemAdapter = ClothingAdapter(parentItem.clothing, false)
+
         holder.childRecyclerView.layoutManager = layoutManager
         holder.childRecyclerView.adapter = childItemAdapter
         holder.childRecyclerView.setRecycledViewPool(viewPool)
+
 
     }
 
@@ -59,12 +63,6 @@ public class ClosetAdapter (private val data: ArrayList<Closet>): RecyclerView.A
                 for(j in data[i].clothing.indices){
                     data[i].clothing[j].isEditMode = !data[i].clothing[j].isEditMode
                 }
-                /*
-                if(data[i].clothing.size == 0)
-                {
-                    data.removeAt(i)
-                    notifyItemRemoved(i)
-                }*/
             }
         }
     }

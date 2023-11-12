@@ -4,13 +4,14 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".closet.AddClothingFragment">
+    tools:context=".closet.OpenClothingItem">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/AddClothing"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="#E6E5E5">
+        android:background="#E6E5E5"
+        >
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/editClothesBanner"
@@ -34,15 +35,33 @@
                 app:layout_constraintTop_toTopOf="parent" />
 
             <TextView
-                android:id="@+id/textView2"
+                android:id="@+id/itemType"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Adding Clothes"
+                android:text="Item Type"
                 android:textColor="@color/white"
                 android:textSize="24sp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toStartOf="@+id/editButton"
+                app:layout_constraintHorizontal_bias="0.537"
                 app:layout_constraintStart_toEndOf="@+id/backButton"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0.421" />
+
+            <ImageButton
+                android:id="@+id/trashButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="16dp"
+                android:background="#00FFFFFF"
+                android:paddingLeft="10dp"
+                android:paddingRight="10dp"
+                android:scaleX="1.5"
+                android:scaleY="1.5"
+                android:src="@drawable/baseline_red_delete_24"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="@id/editButton"
+                app:layout_constraintStart_toEndOf="@id/itemType"
                 app:layout_constraintTop_toTopOf="parent" />
 
             <ImageButton
@@ -52,7 +71,7 @@
                 android:background="#00FFFFFF"
                 android:paddingLeft="10dp"
                 android:paddingRight="10dp"
-                android:src="@drawable/baseline_check_50"
+                android:src="@drawable/baseline_edit_note_50"
                 app:layout_constraintEnd_toEndOf="parent" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
@@ -63,17 +82,20 @@
             android:layout_height="300dp"
             android:background="@color/white"
             android:maxHeight="300dp"
+            android:scaleType="fitCenter"
+            android:src="@drawable/pants_sample"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/editClothesBanner" />
 
         <LinearLayout
-            android:id="@+id/uploadImage"
+            android:id="@+id/changeImage"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="240dp"
             android:orientation="horizontal"
             android:paddingRight="10dp"
+            android:visibility="gone"
             app:layout_constraintBottom_toBottomOf="@+id/clothingImage"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/editClothesBanner">
@@ -92,48 +114,86 @@
                 android:src="@drawable/baseline_photo_camera_24" />
         </LinearLayout>
 
-        <TextView
-            android:id="@+id/typesOfClothes"
+        <LinearLayout
+            android:id="@+id/typeLayout"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="10dp"
-            android:layout_marginTop="20dp"
-            android:text="Type of Clothes"
-            android:textSize="24sp"
-            android:textStyle="bold"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="24dp"
+            android:orientation="vertical"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/clothingImage" />
+            app:layout_constraintTop_toBottomOf="@+id/clothingImage">
 
-        <Spinner
-            android:id="@+id/spinner_clothing_type"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="@color/white"
-            app:layout_constraintStart_toStartOf="@+id/typesOfClothes"
-            app:layout_constraintTop_toBottomOf="@+id/typesOfClothes" />
+            <Spinner
+                android:id="@+id/spinner_clothing_type"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@color/white"
+                android:visibility="gone"
+                />
+
+            <LinearLayout
+                android:id="@+id/outfitInfo"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:visibility="visible"
+                app:layout_constraintTop_toBottomOf="@+id/spinner_clothing_type">
+
+                <TextView
+                    android:id="@+id/appearsIn"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="24dp"
+                    android:text="Appears in "
+                    android:textSize="16sp"
+                    />
+
+                <TextView
+                    android:id="@+id/outfitCount"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="24dp"
+                    android:text="#"
+                    android:textSize="16sp"
+                    app:layout_constraintStart_toEndOf="@id/appearsIn" />
+
+                <TextView
+                    android:id="@+id/outfitsPhrase"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="24dp"
+                    android:text=" outfits"
+                    android:textSize="16sp"
+                    app:layout_constraintStart_toEndOf="@id/outfitCount" />
+            </LinearLayout>
+        </LinearLayout>
 
         <TextView
             android:id="@+id/Notes"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="32dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="24dp"
             android:text="Notes"
             android:textSize="24sp"
             android:textStyle="bold"
-            app:layout_constraintStart_toStartOf="@+id/spinner_clothing_type"
-            app:layout_constraintTop_toBottomOf="@+id/spinner_clothing_type" />
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/typeLayout" />
 
         <EditText
             android:id="@+id/clothingNotes"
-            android:layout_width="390dp"
+            android:layout_width="380dp"
             android:layout_height="100dp"
+            android:layout_marginTop="16dp"
             android:background="@color/white"
+            android:enabled="false"
             android:gravity="top"
-            android:hint="Write something here"
-            android:inputType="text"
-            android:maxWidth="390dp"
+            android:maxWidth="380dp"
+            android:text="Notes"
             android:textSize="16sp"
-            app:layout_constraintStart_toStartOf="@+id/Notes"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/Notes" />
 
 

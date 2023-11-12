@@ -20,9 +20,9 @@ class DataGenerator {
         private val item10 : Clothing = Clothing(R.drawable.skirt2_sample, true)
         private val item11 : Clothing = Clothing(R.drawable.shoes_sample, true)
 
-        private val section3: Closet = Closet(arrayListOf(item3), "Dresses")
-        private val section1: Closet = Closet(arrayListOf(item1, item4, item5, item6), "Shirts")
-        private val section2: Closet = Closet(arrayListOf(item2), "Skirts")
+        private val section1: Closet = Closet(arrayListOf(item1, item4, item5, item6), "Shirt")
+        private val section3: Closet = Closet(arrayListOf(item3), "Dress")
+        private val section2: Closet = Closet(arrayListOf(item2), "Skirt")
 
         private val outfit1: Outfit = Outfit(arrayListOf(item1, item2, item5))
         private val outfit2: Outfit = Outfit(arrayListOf(item7, item10, item11))
@@ -34,6 +34,9 @@ class DataGenerator {
         private val calendar3: Calendar = Calendar(outfit3, "September 25, 2024")
 
         fun generateClosetData(): ArrayList<Closet> {
+            section1.setClothingTypes(section1.section)
+            section2.setClothingTypes(section2.section)
+            section3.setClothingTypes(section3.section)
             return arrayListOf(section1, section2, section3)
         }
 

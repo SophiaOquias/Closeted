@@ -13,6 +13,12 @@
         android:theme="@style/Theme.Closeted"
         tools:targetApi="31">
         <activity
+            android:name=".closet.EditClothing"
+            android:exported="false" />
+        <activity
+            android:name=".closet.OpenClothingItem"
+            android:exported="false" />
+        <activity
             android:name=".calendar.AddOutfitToCalendarActivity"
             android:exported="false" />
         <activity

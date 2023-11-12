@@ -67,7 +67,7 @@ class AddClothingFragment : Fragment() {
         })
 
         //finishAdding Button logic
-        val finishAddingButton = view.findViewById<ImageButton>(R.id.checkButton)
+        val finishAddingButton = view.findViewById<ImageButton>(R.id.editButton)
         finishAddingButton.setOnClickListener(View.OnClickListener {
             val transaction = requireActivity().supportFragmentManager.beginTransaction()
 

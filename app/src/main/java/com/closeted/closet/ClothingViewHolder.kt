@@ -33,6 +33,7 @@ class ClothingViewHolder(itemView:View): ViewHolder(itemView) {
             deleteButton.isEnabled = false
         }
 
+
         // Set the visibility and checked state of the select button based on selectAllMode and selectMode.
         selectButton.visibility = if (clothing.selectAllMode || clothing.selectMode) View.VISIBLE else View.GONE
         selectButton.isClickable = clothing.selectMode
