@@ -11,6 +11,7 @@ import com.closeted.R
 import com.closeted.closet.OpenClothingItem
 
 public class ClothingAdapter(private val data: ArrayList<Clothing>, private val laundryView: Boolean): RecyclerView.Adapter<ClothingViewHolder>() {
+    private var checkBool: Boolean = false
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ClothingViewHolder {
         val inflater = LayoutInflater.from(parent.context)
@@ -31,17 +32,26 @@ public class ClothingAdapter(private val data: ArrayList<Clothing>, private val 
             }
         }
 
+        val checkButton = holder.itemView.findViewById<CheckBox>(R.id.selectOption)
 
         val clothing = holder.itemView.findViewById<ImageView>(R.id.imageView)
         clothing.setOnClickListener {
-            val context = holder.itemView.context
-            val clickedClothing = data[position]
-            val intent = Intent(context, OpenClothingItem::class.java)
+            if(data[position].selectMode == false){
+                val context = holder.itemView.context
+                val clickedClothing = data[position]
+                val intent = Intent(context, OpenClothingItem::class.java)
 
-            intent.putExtra("image_url", clickedClothing.imageId)
-            intent.putExtra("clothing_type", clickedClothing.type)
+                intent.putExtra("image_url", clickedClothing.imageId)
+                intent.putExtra("clothing_type", clickedClothing.type)
 
-            context.startActivity(intent)
+                context.startActivity(intent)
+            }
+            else{
+                checkBool = !checkBool
+                checkButton.isChecked = checkBool
+
+            }
+
         }
 
 
