@@ -39,17 +39,4 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/selectBanner" />
 
-    <Button
-        android:id="@+id/selectOutfitConfirmBtn"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginRight="8dp"
-        android:backgroundTint="#673AB6"
-        android:drawableTint="#673AB6"
-        android:text="Confirm"
-        android:textColorLink="#673AB6"
-        app:layout_constraintBottom_toBottomOf="@+id/selectBanner"
-        app:layout_constraintEnd_toEndOf="@+id/selectBanner"
-        app:layout_constraintTop_toTopOf="parent" />
-
 </androidx.constraintlayout.widget.ConstraintLayout>
