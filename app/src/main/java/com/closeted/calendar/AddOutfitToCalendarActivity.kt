@@ -15,7 +15,7 @@ class AddOutfitToCalendarActivity : AppCompatActivity() {
     private lateinit var outfitRecyclerViewItem: RecyclerView
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_add_outfit_to_calendar)
+        setContentView(R.layout.activity_calendar_add_outfit)
 
         outfitRecyclerViewItem = findViewById(R.id.selectOutfitRecycler)
         val layoutManager = LinearLayoutManager(this)
