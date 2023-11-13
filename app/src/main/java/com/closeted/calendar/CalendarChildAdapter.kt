@@ -8,7 +8,6 @@ import android.widget.ImageView
 import androidx.recyclerview.widget.RecyclerView
 import com.closeted.R
 import com.closeted.closet.Clothing
-import com.closeted.outfits.Outfit
 import com.closeted.outfits.ViewOutfitActivity
 
 class CalendarChildAdapter(private val data: List<Clothing>) : RecyclerView.Adapter<CalendarChildAdapter.ViewHolder>() {
@@ -33,9 +32,9 @@ class CalendarChildAdapter(private val data: List<Clothing>) : RecyclerView.Adap
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         holder.bind(data[position])
 
-//        holder.itemView.setOnClickListener {
-//            val intent = Intent(holder.itemView.context, ViewOutfitActivity::class.java)
-//            holder.itemView.context.startActivity(intent)
-//        }
+        holder.itemView.setOnClickListener {
+            val intent = Intent(holder.itemView.context, ViewOutfitActivity::class.java)
+            holder.itemView.context.startActivity(intent)
+        }
     }
 }
