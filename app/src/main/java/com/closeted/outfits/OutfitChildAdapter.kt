@@ -16,11 +16,6 @@ class OutfitChildAdapter(private val data: List<Clothing>) : RecyclerView.Adapte
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         holder.bind(data[position])
-
-        holder.itemView.setOnClickListener {
-            val intent = Intent(holder.itemView.context, ViewOutfitActivity::class.java)
-            holder.itemView.context.startActivity(intent)
-        }
     }
 
     override fun getItemCount(): Int {

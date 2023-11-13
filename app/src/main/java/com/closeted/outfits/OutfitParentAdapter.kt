@@ -1,5 +1,6 @@
 package com.closeted.outfits
 
+import android.content.Intent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -30,6 +31,10 @@ class OutfitParentAdapter(private val data: ArrayList<Outfit>) : RecyclerView.Ad
         holder.childRecyclerView.adapter = childItemAdapter
         holder.childRecyclerView.setRecycledViewPool(viewPool)
 
+        holder.itemView.setOnClickListener {
+            val intent = Intent(holder.itemView.context, ViewOutfitActivity::class.java)
+            holder.itemView.context.startActivity(intent)
+        }
     }
 
     override fun getItemCount(): Int {
