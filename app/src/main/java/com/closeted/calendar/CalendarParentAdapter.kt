@@ -47,7 +47,7 @@ class CalendarParentAdapter(private val data: ArrayList<Calendar>): RecyclerView
         holder.childRecyclerView.setRecycledViewPool(viewPool)
 
         holder.itemView.setOnClickListener {
-            val intent = Intent(holder.itemView.context, ViewOutfitActivity::class.java)
+            val intent = Intent(holder.itemView.context, ViewCalendarOutfitActivity::class.java)
             holder.itemView.context.startActivity(intent)
         }
     }

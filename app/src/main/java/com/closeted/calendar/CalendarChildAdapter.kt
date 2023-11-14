@@ -33,7 +33,7 @@ class CalendarChildAdapter(private val data: List<Clothing>) : RecyclerView.Adap
         holder.bind(data[position])
 
         holder.itemView.setOnClickListener {
-            val intent = Intent(holder.itemView.context, ViewOutfitActivity::class.java)
+            val intent = Intent(holder.itemView.context, ViewCalendarOutfitActivity::class.java)
             holder.itemView.context.startActivity(intent)
         }
     }
