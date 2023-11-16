@@ -1,6 +1,9 @@
 package com.closeted.closet
 
+import android.content.Intent
+import android.content.pm.PackageManager
 import android.os.Bundle
+import android.provider.MediaStore
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -8,12 +11,24 @@ import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.ImageButton
 import android.widget.Spinner
+import androidx.core.content.ContextCompat
+import android.Manifest
+import android.app.Activity
+import android.app.Activity.RESULT_OK
+import android.graphics.Bitmap
+import android.net.Uri
+import android.widget.ImageView
+import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.app.ActivityCompat
 import com.closeted.R
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
 private const val ARG_PARAM1 = "param1"
 private const val ARG_PARAM2 = "param2"
+private const val CAMERA_PERMISSION_CODE = 1
+private const val GALLERY_REQUEST_CODE = 2
 
 /**
  * A simple [Fragment] subclass.
@@ -45,12 +60,67 @@ class AddClothingFragment : Fragment() {
         }
     }
 
+    private val requestPermissionLauncher =
+        registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted: Boolean ->
+            if (isGranted) {
+                // Permission granted, proceed with the camera action
+                openCamera()
+            } else {
+                Toast.makeText(
+                    requireContext(),
+                    "Please allow this app to access the camera",
+                    Toast.LENGTH_LONG
+                ).show()
+            }
+        }
+
+    private val takePictureLauncher =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            if (result.resultCode == Activity.RESULT_OK) {
+                val data: Intent? = result.data
+                val captured: Bitmap? = data?.extras?.get("data") as Bitmap?
+                captured?.let { bitmap ->
+                    val image: ImageView = requireView().findViewById(R.id.addImage)
+                    image.setImageBitmap(bitmap)
+                }
+            }
+        }
+
+    private fun checkCameraPermission() {
+        if (ContextCompat.checkSelfPermission(
+                requireContext(),
+                Manifest.permission.CAMERA
+            ) == PackageManager.PERMISSION_GRANTED
+        ) {
+            openCamera()
+        } else {
+            requestPermissionLauncher.launch(Manifest.permission.CAMERA)
+        }
+    }
+
+    private fun openCamera() {
+        val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
+        takePictureLauncher.launch(intent)
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
         val view = inflater.inflate(R.layout.fragment_add_clothing, container, false)
+
+        if(ContextCompat.checkSelfPermission(
+                requireContext(),
+                Manifest.permission.CAMERA
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
+            ActivityCompat.requestPermissions(
+                requireActivity(),
+                arrayOf(Manifest.permission.CAMERA),
+                CAMERA_PERMISSION_CODE
+            )
+        }
 
         //backButton logic
         val backButton = view.findViewById<ImageButton>(R.id.backButton)
@@ -86,8 +156,51 @@ class AddClothingFragment : Fragment() {
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         spinner.adapter = adapter
 
+        val cameraBtn = view.findViewById<ImageButton>(R.id.cameraButton)
+
+        cameraBtn.setOnClickListener {
+            checkCameraPermission()
+        }
+
+        val galleryBtn = view.findViewById<ImageButton>(R.id.galleryButton)
+
+        galleryBtn.setOnClickListener {
+            val intent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
+            startActivityForResult(intent, GALLERY_REQUEST_CODE)
+        }
+
         return view
 
+    }
+
+    @Deprecated("Deprecated in Java")
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
+        if(requestCode == CAMERA_PERMISSION_CODE) {
+            if(grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                openCamera()
+            }
+            else {
+                Toast.makeText(
+                    requireContext(),
+                    "You denied permission for camera, you can still allow it in settings",
+                    Toast.LENGTH_LONG
+                ).show()
+            }
+        }
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+
+        if(resultCode == RESULT_OK) {
+            val selected: Uri = data!!.data!!
+            val image = requireView().findViewById<ImageView>(R.id.addImage)
+            image.setImageURI(selected)
+        }
     }
 
     companion object {

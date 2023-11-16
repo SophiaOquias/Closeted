@@ -1,16 +1,24 @@
-package com.closeted.outfits
+package com.closeted.calendar
 
+import android.app.Activity
 import android.content.Intent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.annotation.NonNull
+import androidx.core.app.ActivityCompat.startActivityForResult
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.closeted.R
+import com.closeted.outfits.Outfit
+import com.closeted.outfits.OutfitChildAdapter
 
-class OutfitParentAdapter(private val data: ArrayList<Outfit>) : RecyclerView.Adapter<OutfitParentAdapter.ViewHolder>() {
+class OutfitPickerAdapter(private val data: ArrayList<Outfit>, private val activity: Activity) : RecyclerView.Adapter<OutfitPickerAdapter.ViewHolder>() {
     private val viewPool = RecyclerView.RecycledViewPool()
+
+    companion object {
+        private const val CALENDAR_DATE_REQUEST_CODE = 1
+    }
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val view =LayoutInflater.from(parent.context).inflate(R.layout.outfits_horizontal_section,parent,false)
         return ViewHolder(view)
@@ -26,14 +34,14 @@ class OutfitParentAdapter(private val data: ArrayList<Outfit>) : RecyclerView.Ad
         )
         layoutManager.initialPrefetchItemCount = collection.clothingItems.size
 
-        val childItemAdapter = OutfitChildAdapter(collection.clothingItems)
+        val childItemAdapter = OutfitPickerChildAdapter(collection.clothingItems, activity)
         holder.childRecyclerView.layoutManager = layoutManager
         holder.childRecyclerView.adapter = childItemAdapter
         holder.childRecyclerView.setRecycledViewPool(viewPool)
 
         holder.itemView.setOnClickListener {
-            val intent = Intent(holder.itemView.context, ViewOutfitActivity::class.java)
-            holder.itemView.context.startActivity(intent)
+            val intent = Intent(holder.itemView.context, CalendarOutfitSetDate::class.java)
+            startActivityForResult(activity, intent, CALENDAR_DATE_REQUEST_CODE, null)
         }
     }
 
