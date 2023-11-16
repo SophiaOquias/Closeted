@@ -20,7 +20,7 @@ class OutfitPickerAdapter(private val data: ArrayList<Outfit>, private val activ
         private const val CALENDAR_DATE_REQUEST_CODE = 1
     }
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        val view =LayoutInflater.from(parent.context).inflate(R.layout.horizontal_outfits,parent,false)
+        val view =LayoutInflater.from(parent.context).inflate(R.layout.outfits_horizontal_section,parent,false)
         return ViewHolder(view)
     }
 
