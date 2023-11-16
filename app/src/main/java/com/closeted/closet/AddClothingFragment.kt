@@ -224,10 +224,7 @@ class AddClothingFragment : Fragment() {
             galleryLauncher.launch(intent)
         }
 
-
-
         return view
-
     }
 
     @Deprecated("Deprecated in Java")
