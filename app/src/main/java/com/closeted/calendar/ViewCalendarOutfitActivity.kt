@@ -23,7 +23,7 @@ class ViewCalendarOutfitActivity : AppCompatActivity() {
     private lateinit var adapter: ViewOutfitAdapter
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.calendar_view_outfit)
+        setContentView(R.layout.activity_calendar_view_outfit)
 
         val imgList: ArrayList<Int> = ArrayList()
 
