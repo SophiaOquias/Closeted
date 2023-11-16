@@ -17,11 +17,18 @@ import android.app.Activity
 import android.app.Activity.RESULT_OK
 import android.graphics.Bitmap
 import android.net.Uri
+import android.os.Environment
 import android.widget.ImageView
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.app.ActivityCompat
+import androidx.core.content.FileProvider
 import com.closeted.R
+import java.io.File
+import java.io.IOException
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -51,6 +58,8 @@ class AddClothingFragment : Fragment() {
         "Sweater",
         "T-Shirt"
     )
+    private lateinit var image: ImageView
+    private var currentPhotoUri: Uri? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -76,12 +85,30 @@ class AddClothingFragment : Fragment() {
 
     private val takePictureLauncher =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-            if (result.resultCode == Activity.RESULT_OK) {
+            if (result.resultCode == RESULT_OK) {
+                if (currentPhotoUri != null) {
+                    this.image = requireView().findViewById(R.id.addImage)
+                    this.image.setImageURI(currentPhotoUri)
+                } else {
+                    Toast.makeText(
+                        requireContext(),
+                        "Failed to retrieve the photo",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
+            }
+        }
+
+    private val galleryLauncher =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            if (result.resultCode == RESULT_OK) {
                 val data: Intent? = result.data
-                val captured: Bitmap? = data?.extras?.get("data") as Bitmap?
-                captured?.let { bitmap ->
-                    val image: ImageView = requireView().findViewById(R.id.addImage)
-                    image.setImageBitmap(bitmap)
+                if (data != null) {
+                    val selected: Uri? = data.data
+                    selected?.let {
+                        this.image = requireView().findViewById(R.id.addImage)
+                        this.image.setImageURI(it)
+                    }
                 }
             }
         }
@@ -100,8 +127,36 @@ class AddClothingFragment : Fragment() {
 
     private fun openCamera() {
         val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
-        takePictureLauncher.launch(intent)
+        val photoFile: File? = createImageFile()
+        if (photoFile != null) {
+            currentPhotoUri = FileProvider.getUriForFile(
+                requireContext(),
+                "com.closeted.closet.fileprovider",
+                photoFile
+            )
+            intent.putExtra(MediaStore.EXTRA_OUTPUT, currentPhotoUri)
+            takePictureLauncher.launch(intent)
+        }
+        else {
+            Toast.makeText(
+                requireContext(),
+                "Failed to create an image file",
+                Toast.LENGTH_SHORT
+            ).show()
+        }
     }
+
+    @Throws(IOException::class)
+    private fun createImageFile(): File? {
+        val timeStamp: String = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(Date())
+        val storageDir: File? = requireContext().getExternalFilesDir(Environment.DIRECTORY_PICTURES)
+        return File.createTempFile(
+            "JPEG_${timeStamp}_",
+            ".jpg",
+            storageDir
+        )
+    }
+
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -166,8 +221,10 @@ class AddClothingFragment : Fragment() {
 
         galleryBtn.setOnClickListener {
             val intent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
-            startActivityForResult(intent, GALLERY_REQUEST_CODE)
+            galleryLauncher.launch(intent)
         }
+
+
 
         return view
 
@@ -198,8 +255,12 @@ class AddClothingFragment : Fragment() {
 
         if(resultCode == RESULT_OK) {
             val selected: Uri = data!!.data!!
-            val image = requireView().findViewById<ImageView>(R.id.addImage)
-            image.setImageURI(selected)
+            this.image = requireView().findViewById(R.id.addImage)
+            this.image.setImageURI(selected)
+        }
+        else if (requestCode == takePictureLauncher.hashCode() && currentPhotoUri != null) {
+            this.image = requireView().findViewById(R.id.addImage)
+            this.image.setImageURI(currentPhotoUri)
         }
     }
 
