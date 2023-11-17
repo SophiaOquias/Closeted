@@ -72,15 +72,19 @@ public class ClosetAdapter (private val data: ArrayList<Closet>): RecyclerView.A
 
     }
 
+
     fun toggleEditMode() {
         isEditMode = !isEditMode
         if(isEditMode){
             for(i in data.indices){
                 for(j in data[i].clothing.indices){
-                    data[i].clothing[j].isEditMode = !data[i].clothing[j].isEditMode
+                    if(data[i].clothing[j].laundry == false){
+                        data[i].clothing[j].isEditMode = !data[i].clothing[j].isEditMode
+                    }
                 }
             }
         }
+        notifyDataSetChanged()
     }
 
     override fun getItemCount(): Int {
