@@ -1,8 +1,7 @@
 package com.closeted.closet
-import android.content.Intent
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
 import androidx.annotation.NonNull
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -35,8 +34,25 @@ public class ClosetAdapter (private val data: ArrayList<Closet>): RecyclerView.A
     }
 
     override fun onBindViewHolder(@NonNull holder: ClosetViewHolder, position: Int) {
+        //parent item refers to section of clothes (tops, skirts, dresses, trousers, etc.)
         val parentItem = data[position]
         holder.parentItemTitle.text = parentItem.section
+
+        // Check if all clothes under the parent item are in the laundry
+        val clothesNotInLaundry = parentItem.clothing.filter { !it.laundry }
+
+        // If all clothes are in the laundry, skip binding data for this parent item
+        if (clothesNotInLaundry.isEmpty()) {
+            holder.itemView.visibility = View.GONE
+            holder.itemView.layoutParams = RecyclerView.LayoutParams(0, 0)
+            return
+        } else {
+            holder.itemView.visibility = View.VISIBLE
+            holder.itemView.layoutParams = RecyclerView.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT
+            )
+        }
 
         val layoutManager = GridLayoutManager(
             holder.childRecyclerView.context,
@@ -45,14 +61,14 @@ public class ClosetAdapter (private val data: ArrayList<Closet>): RecyclerView.A
             false
         )
 
-        layoutManager.initialPrefetchItemCount = parentItem.clothing.size
-
-        val childItemAdapter = ClothingAdapter(parentItem.clothing, false)
+        //layoutManager.initialPrefetchItemCount = parentItem.clothing.size
+        layoutManager.initialPrefetchItemCount = clothesNotInLaundry.size
+        val clothesNotInLaundryList = ArrayList(clothesNotInLaundry)
+        val childItemAdapter = ClothingAdapter(clothesNotInLaundryList, false)
 
         holder.childRecyclerView.layoutManager = layoutManager
         holder.childRecyclerView.adapter = childItemAdapter
         holder.childRecyclerView.setRecycledViewPool(viewPool)
-
 
     }
 

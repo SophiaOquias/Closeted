@@ -20,6 +20,11 @@ public class ClothingAdapter(private val data: ArrayList<Clothing>, private val 
     }
 
     override fun onBindViewHolder(holder: ClothingViewHolder, position: Int) {
+        if (data[position].laundry && !laundryView) {
+            // Do not bind laundry items for closet view
+            return
+        }
+
         holder.bindData(data[position], laundryView)
 
         val xBtn = holder.itemView.findViewById<ImageButton>(R.id.trashButton)

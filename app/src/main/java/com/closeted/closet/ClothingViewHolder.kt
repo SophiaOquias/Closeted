@@ -18,9 +18,11 @@ class ClothingViewHolder(itemView:View): ViewHolder(itemView) {
         img.setImageResource(clothing.imageId)
         img.scaleType = ImageView.ScaleType.CENTER_CROP
 
+        /*
         if(laundryView.equals(false) && clothing.laundry){
             img.setColorFilter(Color.parseColor("#C8434141"))
         }
+         */
 
         // Set the visibility of the delete button based on the isEditMode flag
         if (clothing.isEditMode) {
