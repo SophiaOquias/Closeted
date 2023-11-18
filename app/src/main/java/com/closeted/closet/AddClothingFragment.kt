@@ -15,15 +15,20 @@ import androidx.core.content.ContextCompat
 import android.Manifest
 import android.app.Activity
 import android.app.Activity.RESULT_OK
+import android.content.ContentValues.TAG
 import android.graphics.Bitmap
 import android.net.Uri
 import android.os.Environment
+import android.util.Log
+import android.widget.EditText
 import android.widget.ImageView
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.app.ActivityCompat
 import androidx.core.content.FileProvider
 import com.closeted.R
+import com.google.firebase.Firebase
+import com.google.firebase.firestore.firestore
 import java.io.File
 import java.io.IOException
 import java.text.SimpleDateFormat
@@ -60,6 +65,9 @@ class AddClothingFragment : Fragment() {
     )
     private lateinit var image: ImageView
     private var currentPhotoUri: Uri? = null
+    private var notes: String? = null
+    private var type: String? = null
+    private lateinit var spinner: Spinner
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -69,6 +77,7 @@ class AddClothingFragment : Fragment() {
         }
     }
 
+    // this basically just asks user for permission to use camera
     private val requestPermissionLauncher =
         registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted: Boolean ->
             if (isGranted) {
@@ -83,6 +92,7 @@ class AddClothingFragment : Fragment() {
             }
         }
 
+    // gets result from taking a picture and sets the thumbnail to the captured image and gets URI of image
     private val takePictureLauncher =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
             if (result.resultCode == RESULT_OK) {
@@ -99,6 +109,7 @@ class AddClothingFragment : Fragment() {
             }
         }
 
+    // gets the result from picking an image from photo gallery and updates image thumbnail and gets URI of image
     private val galleryLauncher =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
             if (result.resultCode == RESULT_OK) {
@@ -146,6 +157,7 @@ class AddClothingFragment : Fragment() {
         }
     }
 
+    // saves image captured from camera to local
     @Throws(IOException::class)
     private fun createImageFile(): File? {
         val timeStamp: String = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(Date())
@@ -200,13 +212,38 @@ class AddClothingFragment : Fragment() {
             if (currentFragment != null) {
                 transaction.remove(currentFragment)
             }
+
+            this.type = spinner.selectedItem.toString()
+            this.notes = view.findViewById<EditText>(R.id.etNotes).text.toString()
+
+            // FIREBASE FIRESTORE TEST
+            val db = Firebase.firestore
+
+            val clothing = hashMapOf(
+                "clothingImg" to "$currentPhotoUri",
+                "type" to "$type",
+                "notes" to "$notes"
+            )
+
+            Log.d("TEST", "Adding item: $currentPhotoUri, $type, $notes")
+
+            db.collection("clothes")
+                .add(clothing)
+                .addOnSuccessListener { documentReference ->
+                    Log.d(TAG, "DocumentSnapshot added with ID: ${documentReference.id}")
+                    Log.d("TEST", "DocumentSnapshot added with ID: ${documentReference.id}")
+                }
+                .addOnFailureListener { e ->
+                    Log.w(TAG, "Error adding document", e)
+                }
+
             transaction.replace(R.id.frame, ClosetFragment()) // Replace with your destination fragment
             transaction.addToBackStack(null)
             transaction.commit()
         })
 
         //Adding clothing types to the spinner (drop-down list)
-        val spinner = view.findViewById<Spinner>(R.id.spinner_clothing_type)
+        spinner = view.findViewById<Spinner>(R.id.spinner_clothing_type)
         val adapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, clothingTypes)
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         spinner.adapter = adapter
