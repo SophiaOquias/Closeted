@@ -9,6 +9,7 @@ import androidx.core.app.ActivityCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.closeted.closet.Clothing
 import com.closeted.R
+import com.squareup.picasso.Picasso
 
 class OutfitPickerChildAdapter(private val data: List<Clothing>, private val activity: Activity) : RecyclerView.Adapter<OutfitPickerChildAdapter.ViewHolder>() {
 
@@ -41,7 +42,8 @@ class OutfitPickerChildAdapter(private val data: List<Clothing>, private val act
     inner class ViewHolder(itemView : View) : RecyclerView.ViewHolder(itemView){
         private val imageView: ImageView = itemView.findViewById(R.id.outfit_img)
         fun bind(childItem: Clothing) {
-            imageView.setImageResource(childItem.imageId)
+//            imageView.setImageResource(childItem.imageId)
+            Picasso.get().load(childItem.imageUrl).into(imageView)
         }
     }
 }

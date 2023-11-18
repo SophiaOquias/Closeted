@@ -28,8 +28,10 @@ class LaundryFragment : Fragment() {
     // TODO: Rename and change types of parameters
     private var param1: String? = null
     private var param2: String? = null
-    private val closetData: ArrayList<Closet> = DataGenerator.generateClosetData()
-    private val laundryData: ArrayList<Closet> = DataGenerator.getLaundry(closetData)
+//    private val closetData: ArrayList<Closet> = DataGenerator.generateClosetData()
+//    private val laundryData: ArrayList<Closet> = DataGenerator.getLaundry(closetData)
+    private val closetData: ArrayList<Closet> = ArrayList()
+    private val laundryData: ArrayList<Closet> = ArrayList()
     private var isSelectAllMode = false
 
     override fun onCreate(savedInstanceState: Bundle?) {

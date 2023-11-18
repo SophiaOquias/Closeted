@@ -11,7 +11,8 @@ import com.closeted.R
 import com.closeted.outfits.Outfit
 
 class AddOutfitToCalendarActivity : AppCompatActivity() {
-    private val outfitData: ArrayList<Outfit> = DataGenerator.generateOutfitData()
+//    private val outfitData: ArrayList<Outfit> = DataGenerator.generateOutfitData()
+    private val outfitData: ArrayList<Outfit> = ArrayList()
     private lateinit var outfitRecyclerViewItem: RecyclerView
 
     companion object {

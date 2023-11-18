@@ -1,16 +1,25 @@
 package com.closeted.closet
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.ImageButton
+import android.widget.ImageView
+import androidx.core.net.toUri
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.closeted.DataGenerator
 import com.closeted.R
+import com.closeted.database.Clothes
+import com.closeted.database.FirebaseReferences
+import com.google.firebase.Firebase
+import com.google.firebase.firestore.firestore
+import com.squareup.picasso.Picasso
+import java.util.concurrent.Executors
 
 
 // TODO: Rename parameter arguments, choose names that match
@@ -27,7 +36,9 @@ class ClosetFragment : Fragment() {
     // TODO: Rename and change types of parameters
     private var param1: String? = null
     private var param2: String? = null
-    private val closetData: ArrayList<Closet> = DataGenerator.generateClosetData()
+//    private val closetData: ArrayList<Closet> = DataGenerator.generateClosetData()
+    private val closetData: ArrayList<Closet> = ArrayList()
+    private val firebase = FirebaseReferences()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -90,6 +101,7 @@ class ClosetFragment : Fragment() {
             closetAdapter.notifyDataSetChanged()
         })
 
+        firebase.getAllClothes(closetData, closetAdapter)
 
         return view
     }

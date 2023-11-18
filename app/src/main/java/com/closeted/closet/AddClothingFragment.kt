@@ -27,6 +27,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.app.ActivityCompat
 import androidx.core.content.FileProvider
 import com.closeted.R
+import com.closeted.database.FirebaseReferences
 import com.google.firebase.Firebase
 import com.google.firebase.firestore.firestore
 import java.io.File
@@ -64,10 +65,11 @@ class AddClothingFragment : Fragment() {
         "T-Shirt"
     )
     private lateinit var image: ImageView
-    private var currentPhotoUri: Uri? = null
+    private lateinit var currentPhotoUri: Uri
     private var notes: String? = null
-    private var type: String? = null
+    private lateinit var type: String
     private lateinit var spinner: Spinner
+    private val firebase = FirebaseReferences()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -119,6 +121,7 @@ class AddClothingFragment : Fragment() {
                     selected?.let {
                         this.image = requireView().findViewById(R.id.addImage)
                         this.image.setImageURI(it)
+                        this.currentPhotoUri = it
                     }
                 }
             }
@@ -145,6 +148,7 @@ class AddClothingFragment : Fragment() {
                 "com.closeted.closet.fileprovider",
                 photoFile
             )
+            Log.d("ASDF", "Saved to Uri $currentPhotoUri")
             intent.putExtra(MediaStore.EXTRA_OUTPUT, currentPhotoUri)
             takePictureLauncher.launch(intent)
         }
@@ -216,26 +220,16 @@ class AddClothingFragment : Fragment() {
             this.type = spinner.selectedItem.toString()
             this.notes = view.findViewById<EditText>(R.id.etNotes).text.toString()
 
-            // FIREBASE FIRESTORE TEST
-            val db = Firebase.firestore
-
-            val clothing = hashMapOf(
-                "clothingImg" to "$currentPhotoUri",
-                "type" to "$type",
-                "notes" to "$notes"
+            firebase.uploadImageToFirebaseStorage(
+                currentPhotoUri,
+                requireContext(),
+                Clothing(
+                    currentPhotoUri.toString(),
+                    type,
+                    notes,
+                    false
+                )
             )
-
-            Log.d("TEST", "Adding item: $currentPhotoUri, $type, $notes")
-
-            db.collection("clothes")
-                .add(clothing)
-                .addOnSuccessListener { documentReference ->
-                    Log.d(TAG, "DocumentSnapshot added with ID: ${documentReference.id}")
-                    Log.d("TEST", "DocumentSnapshot added with ID: ${documentReference.id}")
-                }
-                .addOnFailureListener { e ->
-                    Log.w(TAG, "Error adding document", e)
-                }
 
             transaction.replace(R.id.frame, ClosetFragment()) // Replace with your destination fragment
             transaction.addToBackStack(null)

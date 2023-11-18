@@ -27,7 +27,8 @@ class CalendarFragment : Fragment() {
     // TODO: Rename and change types of parameters
     private var param1: String? = null
     private var param2: String? = null
-    private val calendarData: ArrayList<Calendar> = DataGenerator.generateCalendarData()
+//    private val calendarData: ArrayList<Calendar> = DataGenerator.generateCalendarData()
+    private val calendarData: ArrayList<Calendar> = ArrayList()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

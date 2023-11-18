@@ -7,6 +7,7 @@ import android.widget.ImageView
 import androidx.recyclerview.widget.RecyclerView
 import com.closeted.closet.Clothing
 import com.closeted.R
+import com.squareup.picasso.Picasso
 
 class OutfitChildAdapter(private val data: List<Clothing>) : RecyclerView.Adapter<OutfitChildAdapter.ViewHolder>() {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -30,7 +31,8 @@ class OutfitChildAdapter(private val data: List<Clothing>) : RecyclerView.Adapte
     inner class ViewHolder(itemView : View) : RecyclerView.ViewHolder(itemView){
         private val imageView: ImageView = itemView.findViewById(R.id.outfit_img)
         fun bind(childItem: Clothing) {
-            imageView.setImageResource(childItem.imageId)
+//            imageView.setImageResource(childItem.imageId)
+            Picasso.get().load(childItem.imageUrl).into(imageView)
         }
     }
 }

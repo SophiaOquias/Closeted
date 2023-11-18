@@ -8,6 +8,7 @@ import android.widget.ImageButton
 import android.widget.ImageView
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import com.closeted.R
+import com.squareup.picasso.Picasso
 
 class ClothingViewHolder(itemView:View): ViewHolder(itemView) {
     private val img: ImageView = itemView.findViewById(R.id.imageView)
@@ -15,7 +16,8 @@ class ClothingViewHolder(itemView:View): ViewHolder(itemView) {
     private val selectButton: CheckBox = itemView.findViewById(R.id.selectOption)
 
     fun bindData(clothing: Clothing, laundryView: Boolean) {
-        img.setImageResource(clothing.imageId)
+//        img.setImageResource(clothing.imageId)
+        Picasso.get().load(clothing.imageUrl).into(img)
         img.scaleType = ImageView.ScaleType.CENTER_CROP
 
         if(laundryView.equals(false) && clothing.laundry){
