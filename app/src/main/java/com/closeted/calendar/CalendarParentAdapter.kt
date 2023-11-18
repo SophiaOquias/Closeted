@@ -1,5 +1,6 @@
 package com.closeted.calendar
 
+import android.content.Intent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -8,6 +9,7 @@ import androidx.annotation.NonNull
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.closeted.R
+import com.closeted.outfits.ViewOutfitActivity
 
 class CalendarParentAdapter(private val data: ArrayList<Calendar>): RecyclerView.Adapter<CalendarParentAdapter.ViewHolder>() {
     private val viewPool = RecyclerView.RecycledViewPool()
@@ -43,5 +45,10 @@ class CalendarParentAdapter(private val data: ArrayList<Calendar>): RecyclerView
         holder.childRecyclerView.layoutManager = layoutManager
         holder.childRecyclerView.adapter = childItemAdapter
         holder.childRecyclerView.setRecycledViewPool(viewPool)
+
+        holder.itemView.setOnClickListener {
+            val intent = Intent(holder.itemView.context, ViewCalendarOutfitActivity::class.java)
+            holder.itemView.context.startActivity(intent)
+        }
     }
 }

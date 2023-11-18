@@ -12,11 +12,12 @@ import com.closeted.closet.ClosetAdapter
 
 class AddClothingActivity : AppCompatActivity() {
 
-    private val closetData: ArrayList<Closet> = DataGenerator.generateClosetData()
+//    private val closetData: ArrayList<Closet> = DataGenerator.generateClosetData()
+    private val closetData: ArrayList<Closet> = ArrayList()
     private lateinit var closetRecyclerViewItem:RecyclerView
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_add_clothing)
+        setContentView(R.layout.activity_outfit_add_clothing)
 
 
         closetRecyclerViewItem = findViewById(R.id.addClothesRecycler)

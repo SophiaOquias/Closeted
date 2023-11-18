@@ -1,7 +1,5 @@
 package com.closeted.closet
-import android.content.Intent
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
 import android.widget.CheckBox
 import android.widget.ImageButton
@@ -10,8 +8,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.closeted.R
 import com.closeted.closet.OpenClothingItem
 
-public class ClothingAdapter(private val data: ArrayList<Clothing>, private val laundryView: Boolean): RecyclerView.Adapter<ClothingViewHolder>() {
-    private var checkBool: Boolean = false
+class ClothingAdapter(private val data: ArrayList<Clothing>, private val laundryView: Boolean): RecyclerView.Adapter<ClothingViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ClothingViewHolder {
         val inflater = LayoutInflater.from(parent.context)

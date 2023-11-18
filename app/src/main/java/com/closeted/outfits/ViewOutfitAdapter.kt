@@ -11,7 +11,7 @@ class ViewOutfitAdapter(private val data: ArrayList<Int>): Adapter<OutfitImageVi
     var isEditModeEnabled = false
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): OutfitImageViewHolder {
         val inflater = LayoutInflater.from(parent.context)
-        val view = inflater.inflate(R.layout.view_item_layout, parent, false)
+        val view = inflater.inflate(R.layout.outfits_view_item_layout, parent, false)
         return OutfitImageViewHolder(view)
     }
 

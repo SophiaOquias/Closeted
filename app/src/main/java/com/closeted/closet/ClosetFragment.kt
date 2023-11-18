@@ -1,17 +1,25 @@
 package com.closeted.closet
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.ImageButton
 import android.widget.ImageView
+import androidx.core.net.toUri
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.closeted.DataGenerator
 import com.closeted.R
+import com.closeted.database.Clothes
+import com.closeted.database.FirebaseReferences
+import com.google.firebase.Firebase
+import com.google.firebase.firestore.firestore
+import com.squareup.picasso.Picasso
+import java.util.concurrent.Executors
 
 
 // TODO: Rename parameter arguments, choose names that match
@@ -28,7 +36,11 @@ class ClosetFragment : Fragment() {
     // TODO: Rename and change types of parameters
     private var param1: String? = null
     private var param2: String? = null
-    private val closetData: ArrayList<Closet> = DataGenerator.generateClosetData()
+//    private val closetData: ArrayList<Closet> = DataGenerator.generateClosetData()
+    private val closetData: ArrayList<Closet> = ArrayList()
+    private val firebase = FirebaseReferences()
+    private lateinit var closetRecyclerViewItem: RecyclerView
+    private lateinit var closetAdapter: ClosetAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -46,11 +58,11 @@ class ClosetFragment : Fragment() {
 
         val view = inflater.inflate(R.layout.fragment_closet, container, false)
 
-        val closetRecyclerViewItem = view.findViewById<RecyclerView>(R.id.closetRecycler)
+        closetRecyclerViewItem = view.findViewById<RecyclerView>(R.id.closetRecycler)
 
         val layoutManager = LinearLayoutManager(requireContext())
 
-        val closetAdapter = ClosetAdapter(closetData)
+        closetAdapter = ClosetAdapter(closetData)
 
         closetRecyclerViewItem.adapter = closetAdapter
         closetRecyclerViewItem.layoutManager = layoutManager
@@ -71,8 +83,9 @@ class ClosetFragment : Fragment() {
         val editButton = view.findViewById<ImageButton>(R.id.editButton)
         editButton.setOnClickListener(View.OnClickListener {
             closetAdapter.toggleEditMode()
-            //closetAdapter.notifyDataSetChanged()
+            closetAdapter.notifyDataSetChanged()
         })
+
 
         val laundryButton = view.findViewById<ImageButton>(R.id.laundryButton)
         val addToLaundryButton = view.findViewById<Button>(R.id.addToLaundry)
@@ -93,6 +106,29 @@ class ClosetFragment : Fragment() {
             closetAdapter.notifyDataSetChanged()
         })
 
+        firebase.getAllClothes(closetData, closetAdapter)
+
+        parentFragmentManager.setFragmentResultListener("addClothingResult", this) { _, result ->
+            val newItem = Clothing(
+                result.getString("imageUri")!!,
+                result.getString("type")!!,
+                result.getString("notes"),
+                result.getBoolean("laundry")
+            )
+
+            var isAppended = false
+            for(closet in closetData) {
+                if(closet.section == newItem.type) {
+                    isAppended = true
+                    closet.clothing.add(newItem)
+                }
+            }
+
+            if(!isAppended) {
+                closetData.add(Closet(arrayListOf(newItem), newItem.type))
+            }
+            closetAdapter.notifyDataSetChanged()
+        }
 
         return view
     }
