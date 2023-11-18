@@ -6,11 +6,14 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import android.widget.ImageButton
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.closeted.DataGenerator
 import com.closeted.R
+import com.closeted.closet.Closet
+import com.closeted.closet.ClosetAdapter
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -28,6 +31,7 @@ class OutfitsFragment : Fragment() {
     private var param2: String? = null
     private lateinit var outfitListRV: RecyclerView
     private val outfitData: ArrayList<Outfit> = DataGenerator.generateOutfitData()
+    private val closetData: ArrayList<Closet> = DataGenerator.generateClosetData()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -44,14 +48,11 @@ class OutfitsFragment : Fragment() {
         val view = inflater.inflate(R.layout.fragment_outfits, container, false)
         val outfitRecyclerViewItem = view.findViewById<RecyclerView>(R.id.outfitsList_rv)
         val layoutManager = LinearLayoutManager(requireContext())
-        //val outfitAdapter = ParentAdapter(ChildGenerator.collections)
+
         val outfitAdapter = OutfitParentAdapter(outfitData)
         outfitRecyclerViewItem.adapter = outfitAdapter
         outfitRecyclerViewItem.layoutManager = layoutManager
 
-        /*outfitListRV = view.findViewById(R.id.outfitsList_rv)
-        outfitListRV.layoutManager = LinearLayoutManager(context)
-        outfitListRV.adapter = ParentAdapter(ChildGenerator.collections)*/
         return view
     }
 
@@ -59,10 +60,28 @@ class OutfitsFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         val btn = view.findViewById<ImageButton>(R.id.addOutfit)
+        val closetAdapter = ClosetAdapter(closetData)
+        val addOutfitButton = view.findViewById<Button>(R.id.selectClothingforOutfit)
 
         btn.setOnClickListener {
             val intent = Intent(view.context, AddClothingActivity::class.java)
             this.startActivity(intent)
+
+            val isSelectMode = !closetAdapter.selectMode
+            // Iterate through the clothing items and set their selectMode based on isSelectMode.
+            for (i in closetData.indices) {
+                for (j in closetData[i].clothing.indices) {
+                    closetData[i].clothing[j].selectMode = isSelectMode
+                }
+            }
+
+            addOutfitButton?.let {
+                it.visibility = if (closetData.any { it.clothing.any { clothing -> clothing.selectAllMode || clothing.selectMode } }) View.VISIBLE else View.GONE
+            }
+
+            // Notify the adapter to refresh the RecyclerView.
+            closetAdapter.selectMode = isSelectMode
+            closetAdapter.notifyDataSetChanged()
         }
     }
 
