@@ -1,4 +1,5 @@
 package com.closeted.closet
+import android.content.Intent
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.CheckBox
@@ -9,6 +10,7 @@ import com.closeted.R
 import com.closeted.closet.OpenClothingItem
 
 class ClothingAdapter(private val data: ArrayList<Clothing>, private val laundryView: Boolean): RecyclerView.Adapter<ClothingViewHolder>() {
+    private var checkBool = false
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ClothingViewHolder {
         val inflater = LayoutInflater.from(parent.context)
@@ -43,7 +45,7 @@ class ClothingAdapter(private val data: ArrayList<Clothing>, private val laundry
                 val clickedClothing = data[position]
                 val intent = Intent(context, OpenClothingItem::class.java)
 
-                intent.putExtra("image_url", clickedClothing.imageId)
+                intent.putExtra("image_url", clickedClothing.id)
                 intent.putExtra("clothing_type", clickedClothing.type)
 
                 context.startActivity(intent)

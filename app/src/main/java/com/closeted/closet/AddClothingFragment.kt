@@ -13,10 +13,7 @@ import android.widget.ImageButton
 import android.widget.Spinner
 import androidx.core.content.ContextCompat
 import android.Manifest
-import android.app.Activity
 import android.app.Activity.RESULT_OK
-import android.content.ContentValues.TAG
-import android.graphics.Bitmap
 import android.net.Uri
 import android.os.Environment
 import android.util.Log
@@ -28,8 +25,6 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.FileProvider
 import com.closeted.R
 import com.closeted.database.FirebaseReferences
-import com.google.firebase.Firebase
-import com.google.firebase.firestore.firestore
 import java.io.File
 import java.io.IOException
 import java.text.SimpleDateFormat
@@ -99,7 +94,7 @@ class AddClothingFragment : Fragment() {
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
             if (result.resultCode == RESULT_OK) {
                 if (currentPhotoUri != null) {
-                    this.image = requireView().findViewById(R.id.addImage)
+                    this.image = requireView().findViewById(R.id.clothingImage)
                     this.image.setImageURI(currentPhotoUri)
                 } else {
                     Toast.makeText(
@@ -119,7 +114,7 @@ class AddClothingFragment : Fragment() {
                 if (data != null) {
                     val selected: Uri? = data.data
                     selected?.let {
-                        this.image = requireView().findViewById(R.id.addImage)
+                        this.image = requireView().findViewById(R.id.clothingImage)
                         this.image.setImageURI(it)
                         this.currentPhotoUri = it
                     }
@@ -291,11 +286,11 @@ class AddClothingFragment : Fragment() {
 
         if(resultCode == RESULT_OK) {
             val selected: Uri = data!!.data!!
-            this.image = requireView().findViewById(R.id.addImage)
+            this.image = requireView().findViewById(R.id.editButton)
             this.image.setImageURI(selected)
         }
         else if (requestCode == takePictureLauncher.hashCode() && currentPhotoUri != null) {
-            this.image = requireView().findViewById(R.id.addImage)
+            this.image = requireView().findViewById(R.id.editButton)
             this.image.setImageURI(currentPhotoUri)
         }
     }

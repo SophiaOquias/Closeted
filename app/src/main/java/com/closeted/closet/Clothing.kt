@@ -26,10 +26,4 @@ class Clothing {
     }
 
 
-
-    fun setType(newType: String) {
-        type = newType
-    }
-
-
 }
