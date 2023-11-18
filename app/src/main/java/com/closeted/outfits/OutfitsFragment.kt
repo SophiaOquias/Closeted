@@ -30,8 +30,8 @@ class OutfitsFragment : Fragment() {
     private var param1: String? = null
     private var param2: String? = null
     private lateinit var outfitListRV: RecyclerView
-    private val outfitData: ArrayList<Outfit> = DataGenerator.generateOutfitData()
-    private val closetData: ArrayList<Closet> = DataGenerator.generateClosetData()
+//    private val outfitData: ArrayList<Outfit> = DataGenerator.generateOutfitData()
+    private val outfitData: ArrayList<Outfit> = ArrayList()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
