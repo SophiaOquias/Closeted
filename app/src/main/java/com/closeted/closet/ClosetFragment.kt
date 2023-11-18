@@ -39,6 +39,8 @@ class ClosetFragment : Fragment() {
 //    private val closetData: ArrayList<Closet> = DataGenerator.generateClosetData()
     private val closetData: ArrayList<Closet> = ArrayList()
     private val firebase = FirebaseReferences()
+    private lateinit var closetRecyclerViewItem: RecyclerView
+    private lateinit var closetAdapter: ClosetAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -56,11 +58,11 @@ class ClosetFragment : Fragment() {
 
         val view = inflater.inflate(R.layout.fragment_closet, container, false)
 
-        val closetRecyclerViewItem = view.findViewById<RecyclerView>(R.id.closetRecycler)
+        closetRecyclerViewItem = view.findViewById<RecyclerView>(R.id.closetRecycler)
 
         val layoutManager = LinearLayoutManager(requireContext())
 
-        val closetAdapter = ClosetAdapter(closetData)
+        closetAdapter = ClosetAdapter(closetData)
 
         closetRecyclerViewItem.adapter = closetAdapter
         closetRecyclerViewItem.layoutManager = layoutManager
@@ -102,6 +104,28 @@ class ClosetFragment : Fragment() {
         })
 
         firebase.getAllClothes(closetData, closetAdapter)
+
+        parentFragmentManager.setFragmentResultListener("addClothingResult", this) { _, result ->
+            val newItem = Clothing(
+                result.getString("imageUri")!!,
+                result.getString("type")!!,
+                result.getString("notes"),
+                result.getBoolean("laundry")
+            )
+
+            var isAppended = false
+            for(closet in closetData) {
+                if(closet.section == newItem.type) {
+                    isAppended = true
+                    closet.clothing.add(newItem)
+                }
+            }
+
+            if(!isAppended) {
+                closetData.add(Closet(arrayListOf(newItem), newItem.type))
+            }
+            closetAdapter.notifyDataSetChanged()
+        }
 
         return view
     }

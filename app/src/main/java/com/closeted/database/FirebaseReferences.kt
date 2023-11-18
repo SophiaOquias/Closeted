@@ -3,7 +3,6 @@ package com.closeted.database
 import android.content.Context
 import android.net.Uri
 import android.util.Log
-import android.widget.Adapter
 import android.widget.Toast
 import com.closeted.closet.Closet
 import com.closeted.closet.ClosetAdapter
@@ -23,11 +22,25 @@ class FirebaseReferences {
         const val CLOTHING_TYPE = "type"
         const val CLOTHING_NOTE = "notes"
         const val CLOTHING_LAUNDRY = "laundry"
+
+        private var clothingTypes = arrayOf(
+            "Blouse",
+            "Dress",
+            "Hoodie",
+            "Jeans",
+            "Jacket",
+            "Pants",
+            "Shirt",
+            "Skirt",
+            "Sweater",
+            "T-Shirt"
+        )
     }
 
     fun getAllClothes(closet: ArrayList<Closet>, adapter: ClosetAdapter) {
         val db = Firebase.firestore
         val clothes: ArrayList<Clothing> = ArrayList()
+        closet.clear()
 
         db.collection(CLOTHES_COLLECTION)
             .get()
@@ -45,9 +58,21 @@ class FirebaseReferences {
                     )
                 }
 
-                // TODO: create a method that separates clothing items by type
-                closet.add(Closet(clothes, "Blouse"))
-                adapter.notifyDataSetChanged()
+                // separates clothes into clothing types
+                for(type in clothingTypes) {
+                    val temp: ArrayList<Clothing> = ArrayList()
+                    for(clothing in clothes) {
+                        if(clothing.type.equals(type)) {
+                            temp.add(clothing)
+                        }
+                    }
+                    if(temp.isNotEmpty()) {
+                        closet.add(Closet(temp, type))
+                    }
+                }
+                if(closet.isNotEmpty()) {
+                    adapter.notifyDataSetChanged()
+                }
 
             }
             .addOnFailureListener { exception ->

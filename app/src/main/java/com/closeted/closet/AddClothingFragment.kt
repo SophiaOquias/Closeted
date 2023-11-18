@@ -52,7 +52,7 @@ class AddClothingFragment : Fragment() {
     // TODO: Rename and change types of parameters
     private var param1: String? = null
     private var param2: String? = null
-    private var clothingTypes =arrayOf(
+    private var clothingTypes = arrayOf(
         "Blouse",
         "Dress",
         "Hoodie",
@@ -230,6 +230,14 @@ class AddClothingFragment : Fragment() {
                     false
                 )
             )
+
+            val result = Bundle().apply {
+                putString("imageUri", currentPhotoUri.toString())
+                putString("type", type)
+                putString("notes", notes)
+                putBoolean("laundry", false)
+            }
+            parentFragmentManager.setFragmentResult("addClothingResult", result)
 
             transaction.replace(R.id.frame, ClosetFragment()) // Replace with your destination fragment
             transaction.addToBackStack(null)
