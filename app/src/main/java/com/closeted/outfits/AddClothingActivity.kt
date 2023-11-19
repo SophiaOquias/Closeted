@@ -17,16 +17,15 @@ class AddClothingActivity : AppCompatActivity() {
     private val closetData: ArrayList<Closet> = ArrayList()
     private lateinit var closetRecyclerViewItem:RecyclerView
     private val firebase: FirebaseReferences = FirebaseReferences()
-    private lateinit var closetAdapter: ClosetAdapter
+    private lateinit var closetAdapter: AddClothingAdapter
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_outfit_add_clothing)
 
-
         closetRecyclerViewItem = findViewById(R.id.addClothesRecycler)
 
         val layoutManager = LinearLayoutManager(this)
-        closetAdapter = ClosetAdapter(closetData)
+        closetAdapter = AddClothingAdapter(closetData)
         closetRecyclerViewItem.adapter = closetAdapter
         closetRecyclerViewItem.layoutManager = layoutManager
 
