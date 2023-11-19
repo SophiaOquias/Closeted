@@ -324,5 +324,39 @@ class FirebaseReferences {
         }
     }
 
+    suspend fun deleteOutfitById(outfitId: String) {
+        return withContext(Dispatchers.IO) {
+            val db = Firebase.firestore
 
+            try {
+                // Delete the outfit document
+                db.collection(OUTFITS_COLLECTION).document(outfitId).delete().await()
+                Log.d(TAG, "Outfit with ID $outfitId deleted successfully")
+            } catch (e: Exception) {
+                Log.e(TAG, "Error deleting outfit document: $e")
+                throw e
+            }
+        }
+    }
+
+    suspend fun updateOutfit(outfitId: String, updatedClothingList: ArrayList<Clothing>) {
+        return withContext(Dispatchers.IO) {
+            val db = Firebase.firestore
+
+            try {
+                // Extract the IDs from the updatedClothingList
+                val updatedClothingIds = updatedClothingList.map { it.id }
+
+                // Update the outfit document with the new clothing list
+                db.collection(OUTFITS_COLLECTION).document(outfitId)
+                    .update(OUTFIT_CLOTHING_LIST, updatedClothingIds).await()
+
+                Log.d(TAG, "Outfit with ID $outfitId updated successfully")
+            } catch (e: Exception) {
+                // Handle exceptions (e.g., FirestoreException)
+                Log.e(TAG, "Error updating outfit document: $e")
+                throw e
+            }
+        }
+    }
 }

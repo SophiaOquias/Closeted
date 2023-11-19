@@ -2,6 +2,7 @@ package com.closeted.outfits
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.widget.Button
 import android.widget.ImageButton
 import androidx.core.view.isVisible
@@ -30,10 +31,13 @@ class ViewOutfitActivity : AppCompatActivity() {
         clothingList = ArrayList()
         outfitId = intent.getStringExtra("outfit_id")!!
 
+        var initialCount = 0
+
         lifecycleScope.launch {
             val asyncJob = async {outfit = firebase.getOutfitById(outfitId)!!}
             asyncJob.await()
             adapter.setData(outfit.clothingItems)
+            initialCount = outfit.clothingItems.size
         }
 
 
@@ -49,6 +53,7 @@ class ViewOutfitActivity : AppCompatActivity() {
         val editButton = findViewById<ImageButton>(R.id.viewEditBtn)
         val confirmButton = findViewById<Button>(R.id.viewConfirmBtn)
         val addButton = findViewById<FloatingActionButton>(R.id.viewAddBtn)
+        val deleteButton = findViewById<ImageButton>(R.id.viewDeleteBtn)
 
         editButton.setOnClickListener {
             // Toggle the edit mode flag
@@ -73,6 +78,27 @@ class ViewOutfitActivity : AppCompatActivity() {
             addButton.isClickable = false
             editButton.isEnabled = true
             editButton.isVisible = true
+
+            if(initialCount != clothingList.size) {
+                lifecycleScope.launch {
+                    firebase.updateOutfit(outfitId, clothingList)
+                }
+            }
+
+            // delete whole outfit if user deletes all clothes in the outfit
+            if(clothingList.size == 0) {
+                lifecycleScope.launch {
+                    firebase.deleteOutfitById(outfitId)
+                }
+            }
+        }
+
+        deleteButton.setOnClickListener {
+            lifecycleScope.launch {
+                val asyncJob = async { firebase.deleteOutfitById(outfitId) }
+                asyncJob.await()
+                finish()
+            }
         }
     }
 
