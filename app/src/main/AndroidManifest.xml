@@ -34,6 +34,12 @@
             android:name=".calendar.CalendarOutfitSetDate"
             android:exported="false" />
         <activity
+            android:name=".closet.EditClothing"
+            android:exported="false" />
+        <activity
+            android:name=".closet.OpenClothingItem"
+            android:exported="false" />
+        <activity
             android:name=".calendar.AddOutfitToCalendarActivity"
             android:exported="false" />
         <activity

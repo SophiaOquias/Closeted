@@ -3,17 +3,22 @@ package com.closeted.outfits
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
+import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.ImageButton
+import androidx.lifecycle.lifecycleScope
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.closeted.R
 import com.closeted.closet.Closet
 import com.closeted.closet.ClosetAdapter
+import com.closeted.database.FirebaseReferences
+import kotlinx.coroutines.async
+import kotlinx.coroutines.launch
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -31,8 +36,11 @@ class OutfitsFragment : Fragment() {
     private var param2: String? = null
     private lateinit var outfitListRV: RecyclerView
 //    private val outfitData: ArrayList<Outfit> = DataGenerator.generateOutfitData()
+    private var outfitData: ArrayList<Outfit> = ArrayList()
+    private val firebase: FirebaseReferences = FirebaseReferences()
+    private lateinit var outfitRecyclerViewItem: RecyclerView
+    private lateinit var outfitAdapter: OutfitParentAdapter
     private val closetData: ArrayList<Closet> = ArrayList()
-    private val outfitData: ArrayList<Outfit> = ArrayList()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -47,10 +55,11 @@ class OutfitsFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         val view = inflater.inflate(R.layout.fragment_outfits, container, false)
-        val outfitRecyclerViewItem = view.findViewById<RecyclerView>(R.id.outfitsList_rv)
-        val layoutManager = LinearLayoutManager(requireContext())
 
-        val outfitAdapter = OutfitParentAdapter(outfitData)
+        outfitRecyclerViewItem = view.findViewById(R.id.outfitsList_rv)
+        val layoutManager = LinearLayoutManager(requireContext())
+        outfitAdapter = OutfitParentAdapter(outfitData)
+
         outfitRecyclerViewItem.adapter = outfitAdapter
         outfitRecyclerViewItem.layoutManager = layoutManager
 
@@ -136,6 +145,19 @@ class OutfitsFragment : Fragment() {
             closetAdapter.notifyDataSetChanged()
         }
     }*/
+
+    override fun onStart() {
+        super.onStart()
+
+        lifecycleScope.launch {
+            Log.d("TEST", "getting all outfits")
+            val asyncJob = async { outfitData = firebase.getAllOutfits() }
+            asyncJob.await()
+
+            outfitAdapter.setData(outfitData)
+            Log.d("TEST", "data passed to outfitAdapter: ${outfitData.size}")
+        }
+    }
 
     companion object {
         /**

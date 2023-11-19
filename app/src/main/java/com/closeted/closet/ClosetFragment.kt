@@ -1,25 +1,16 @@
 package com.closeted.closet
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.ImageButton
-import android.widget.ImageView
-import androidx.core.net.toUri
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.closeted.DataGenerator
 import com.closeted.R
-import com.closeted.database.Clothes
 import com.closeted.database.FirebaseReferences
-import com.google.firebase.Firebase
-import com.google.firebase.firestore.firestore
-import com.squareup.picasso.Picasso
-import java.util.concurrent.Executors
 
 
 // TODO: Rename parameter arguments, choose names that match
@@ -94,8 +85,11 @@ class ClosetFragment : Fragment() {
             // Iterate through the clothing items and set their selectMode based on isSelectMode.
             for (i in closetData.indices) {
                 for (j in closetData[i].clothing.indices) {
-                    closetData[i].clothing[j].selectMode = isSelectMode
-                    addToLaundryButton.visibility = if (closetData[i].clothing[j].selectAllMode || closetData[i].clothing[j].selectMode) View.VISIBLE else View.GONE
+                    if(closetData[i].clothing[j].laundry == false) {
+                        closetData[i].clothing[j].selectMode = isSelectMode
+                        addToLaundryButton.visibility =
+                            if (closetData[i].clothing[j].selectAllMode || closetData[i].clothing[j].selectMode) View.VISIBLE else View.GONE
+                    }
                 }
             }
             // Notify the adapter to refresh the RecyclerView.
@@ -103,31 +97,13 @@ class ClosetFragment : Fragment() {
             closetAdapter.notifyDataSetChanged()
         })
 
-        firebase.getAllClothes(closetData, closetAdapter)
-
-        parentFragmentManager.setFragmentResultListener("addClothingResult", this) { _, result ->
-            val newItem = Clothing(
-                result.getString("imageUri")!!,
-                result.getString("type")!!,
-                result.getString("notes"),
-                result.getBoolean("laundry")
-            )
-
-            var isAppended = false
-            for(closet in closetData) {
-                if(closet.section == newItem.type) {
-                    isAppended = true
-                    closet.clothing.add(newItem)
-                }
-            }
-
-            if(!isAppended) {
-                closetData.add(Closet(arrayListOf(newItem), newItem.type))
-            }
-            closetAdapter.notifyDataSetChanged()
-        }
-
         return view
+    }
+
+    override fun onResume() {
+        super.onResume()
+
+        firebase.getAllClothes(closetData, closetAdapter)
     }
 
     companion object {

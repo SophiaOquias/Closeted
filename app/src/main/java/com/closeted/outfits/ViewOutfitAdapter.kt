@@ -6,8 +6,9 @@ import android.view.ViewGroup
 import android.widget.ImageButton
 import androidx.recyclerview.widget.RecyclerView.Adapter
 import com.closeted.R
+import com.closeted.closet.Clothing
 
-class ViewOutfitAdapter(private val data: ArrayList<Int>): Adapter<OutfitImageViewHolder>() {
+class ViewOutfitAdapter(private val data: ArrayList<Clothing>, private val id: String): Adapter<OutfitImageViewHolder>() {
     var isEditModeEnabled = false
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): OutfitImageViewHolder {
         val inflater = LayoutInflater.from(parent.context)
@@ -37,5 +38,10 @@ class ViewOutfitAdapter(private val data: ArrayList<Int>): Adapter<OutfitImageVi
         holder.bindData(data[position])
     }
 
+    fun setData(clothes: ArrayList<Clothing>) {
+        this.data.clear()
+        this.data.addAll(clothes)
+        notifyDataSetChanged()
+    }
 
 }
