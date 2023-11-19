@@ -221,7 +221,24 @@ class FirebaseReferences {
         }
     }
 
-    fun setLaundry(id: String) {
+    suspend fun setLaundry(id: String, bool: Boolean) {
+        val db = Firebase.firestore
 
+        // Reference to the Firestore document
+        val docRef = db.collection(CLOTHES_COLLECTION).document(id)
+
+        try {
+            val updates = hashMapOf(
+                CLOTHING_LAUNDRY to bool
+            )
+
+            docRef.update(updates as Map<String, Any>).await()
+
+            Log.d(TAG, "Document ${id} updated successfully")
+        } catch (e: Exception) {
+            // Handle exceptions (e.g., FirestoreException)
+            Log.d(TAG, "Error updating document: $e")
+            throw e
+        }
     }
 }
