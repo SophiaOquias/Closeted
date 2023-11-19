@@ -86,7 +86,8 @@ class OutfitsFragment : Fragment() {
             }
 
             addOutfitButton?.let {
-                it.visibility = if (closetData.any { it.clothing.any { clothing -> clothing.selectAllMode || clothing.selectMode } }) View.VISIBLE else View.GONE
+                it.visibility =
+                    if (closetData.any { it.clothing.any { clothing -> clothing.selectAllMode || clothing.selectMode } }) View.VISIBLE else View.GONE
             }
 
             closetAdapter.selectMode = isSelectMode
@@ -103,7 +104,14 @@ class OutfitsFragment : Fragment() {
                         }
                     }
                 }
-                    Log.d("Tag", "Clothing IDs: $selectedClothingIds")
+                Log.d("CLOTHINGID", "Clothing IDs: $selectedClothingIds")
+
+                if (selectedClothingIds.isNotEmpty()) {
+                    // Add the list of clothing IDs to the outfitData array list.
+                    //outfitData.add(selectedClothingIds)
+
+                    // Notify the adapter to refresh the RecyclerView.
+                    outfitAdapter.notifyDataSetChanged()
 
                     // Clear the selection mode in the closetData.
                     for (i in closetData.indices) {
@@ -112,10 +120,15 @@ class OutfitsFragment : Fragment() {
                             closetData[i].clothing[j].selectAllMode = false
                         }
                     }
-
                     // Hide the button after adding clothing to the outfit.
+<<<<<<< Updated upstream
                     addOutfitButton.visibility = View.GONE
             }*/
+=======
+                    //addOutfitButton.visibility = View.GONE
+                }
+            }
+>>>>>>> Stashed changes
         }
     }
 
