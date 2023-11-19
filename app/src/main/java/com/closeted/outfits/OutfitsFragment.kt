@@ -3,12 +3,12 @@ package com.closeted.outfits
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.ImageButton
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -89,7 +89,10 @@ class OutfitsFragment : Fragment() {
                 it.visibility = if (closetData.any { it.clothing.any { clothing -> clothing.selectAllMode || clothing.selectMode } }) View.VISIBLE else View.GONE
             }
 
-            confirmButton?.setOnClickListener {
+            closetAdapter.selectMode = isSelectMode
+            closetAdapter.notifyDataSetChanged()
+
+           /* confirmButton?.setOnClickListener {
                 val selectedClothingIds = ArrayList<String>()
 
                 for (i in closetData.indices) {
@@ -112,7 +115,7 @@ class OutfitsFragment : Fragment() {
 
                     // Hide the button after adding clothing to the outfit.
                     addOutfitButton.visibility = View.GONE
-            }
+            }*/
         }
     }
 
