@@ -97,9 +97,13 @@ class ClosetFragment : Fragment() {
             closetAdapter.notifyDataSetChanged()
         })
 
-        firebase.getAllClothes(closetData, closetAdapter)
-
         return view
+    }
+
+    override fun onResume() {
+        super.onResume()
+
+        firebase.getAllClothes(closetData, closetAdapter)
     }
 
     companion object {

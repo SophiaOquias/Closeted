@@ -164,8 +164,21 @@ class FirebaseReferences {
         }
     }
 
-    fun deleteClothing(id: String) {
+    suspend fun deleteClothingById(id: String) {
+        val db = Firebase.firestore
 
+        // Reference to the Firestore document
+        val docRef = db.collection(CLOTHES_COLLECTION).document(id)
+
+        try {
+            // Suspend function to delete the document
+            docRef.delete().await()
+            println("Document deleted successfully")
+        } catch (e: Exception) {
+            // Handle exceptions (e.g., FirestoreException)
+            println("Error deleting document: $e")
+            throw e
+        }
     }
 
     fun editClothing(id: String, edits: Clothing) {
