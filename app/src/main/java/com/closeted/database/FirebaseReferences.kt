@@ -1,9 +1,7 @@
 package com.closeted.database
 
-import android.content.Context
 import android.net.Uri
 import android.util.Log
-import android.widget.Toast
 import com.closeted.closet.Closet
 import com.closeted.closet.ClosetAdapter
 import com.closeted.closet.Clothing
@@ -11,6 +9,9 @@ import com.google.firebase.Firebase
 import com.google.firebase.firestore.firestore
 import com.google.firebase.storage.storage
 import java.util.UUID
+import kotlinx.coroutines.tasks.await
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 
 class FirebaseReferences {
 
@@ -82,77 +83,85 @@ class FirebaseReferences {
 
     }
 
-    fun getClothingById(id: String) {
-        val db = Firebase.firestore
+    suspend fun getClothingById(id: String): Clothing {
+        return withContext(Dispatchers.IO) {
+            val db = Firebase.firestore
 
-        val clothes = db.collection(CLOTHES_COLLECTION)
-        val docRef = clothes.document(id)
+            val clothes = db.collection(CLOTHES_COLLECTION)
+            val docRef = clothes.document(id)
 
-        docRef.get()
-            .addOnSuccessListener { documentSnapshot ->
-            if (documentSnapshot.exists()) {
-                val data = documentSnapshot.data
-                Log.d(TAG, "Document data: $data")
+            try {
+                val documentSnapshot = docRef.get().await()
 
-                // TODO: load data into components of page
-
-            } else {
-                Log.d(TAG, "No such document")
+                if (documentSnapshot.exists()) {
+                    return@withContext Clothing(
+                        documentSnapshot.id,
+                        documentSnapshot.getString(CLOTHING_IMAGE)!!,
+                        documentSnapshot.getString(CLOTHING_TYPE)!!,
+                        documentSnapshot.getString(CLOTHING_NOTE),
+                        documentSnapshot.getString(CLOTHING_LAUNDRY).toBoolean()
+                    )
+                } else {
+                    Log.d(TAG, "No such document")
+                    throw NoSuchElementException("No such document")
+                }
+            } catch (e: Exception) {
+                Log.d(TAG, e.toString())
+                throw e
             }
         }
-            .addOnFailureListener { e ->
-                Log.w(TAG, "Error getting document", e)
-            }
     }
 
-    fun uploadImageToFirebaseStorage(imageUri: Uri, context: Context, clothing: Clothing) {
-        val storage = Firebase.storage
-        val storageRef = storage.reference
+    private suspend fun uploadImageToFirebaseStorage(imageUri: Uri): String {
+        return withContext(Dispatchers.IO) {
+            val storage = Firebase.storage
+            val storageRef = storage.reference
 
-        // Create a reference to the image file in Firebase Storage
-        val imageRef = storageRef.child("images/${UUID.randomUUID()}.jpg")
+            // Create a reference to the image file in Firebase Storage
+            val imageRef = storageRef.child("images/${UUID.randomUUID()}.jpg")
 
-        // Upload the image to Firebase Storage
-        imageRef.putFile(imageUri)
-            .addOnSuccessListener { taskSnapshot ->
-                // Image upload successful
-                // Now, you can get the download URL
-                imageRef.downloadUrl.addOnSuccessListener { uri ->
-                    clothing.imageUrl = uri.toString()
+            return@withContext try {
+                // Upload the image to Firebase Storage
+                imageRef.putFile(imageUri).await()
 
-                    // Now, you can save the download URL and other details to Firestore
-                    saveClothing(clothing)
-                }
+                val url = imageRef.downloadUrl.await()
+
+                // Return the URL
+                url.toString()
+            } catch (e: Exception) {
+                // Handle upload failure
+                Log.e(TAG, "Error uploading image", e)
+                throw e
             }
-            .addOnFailureListener { exception ->
-                // Handle failures
-                Toast.makeText(
-                    context,
-                    "Failed to upload image to Firebase Storage",
-                    Toast.LENGTH_SHORT
-                ).show()
-                Log.w(TAG, "Error adding document", exception)
-            }
+        }
     }
 
-    fun saveClothing(c: Clothing) {
-        val db = Firebase.firestore
 
-        val clothing = hashMapOf(
-            CLOTHING_IMAGE to c.imageUrl,
-            CLOTHING_TYPE to c.type,
-            CLOTHING_NOTE to "${c.notes}",
-            CLOTHING_LAUNDRY to "${c.laundry}"
-        )
+    suspend fun saveClothing(c: Clothing, uri: Uri): String {
+        return withContext(Dispatchers.IO) {
+            val db = Firebase.firestore
 
-        db.collection(CLOTHES_COLLECTION)
-            .add(clothing)
-            .addOnSuccessListener { documentReference ->
-                Log.d(TAG, "DocumentSnapshot added with ID: ${documentReference.id}")
+            val imageUrl = uploadImageToFirebaseStorage(uri)
+
+            val clothing = hashMapOf(
+                CLOTHING_IMAGE to imageUrl,
+                CLOTHING_TYPE to c.type,
+                CLOTHING_NOTE to "${c.notes}",
+                CLOTHING_LAUNDRY to "${c.laundry}"
+            )
+
+            return@withContext try {
+                // Save the clothing details to Firestore
+                val documentReference = db.collection(CLOTHES_COLLECTION).add(clothing).await()
+
+                // Return the document ID
+                documentReference.id
+            } catch (e: Exception) {
+                // Handle save failure
+                Log.e(TAG, "Error saving clothing", e)
+                throw e
             }
-            .addOnFailureListener { e ->
-                Log.w(TAG, "Error adding document", e)
-            }
+        }
     }
 
     fun deleteClothing(id: String) {

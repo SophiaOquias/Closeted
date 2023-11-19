@@ -105,28 +105,6 @@ class ClosetFragment : Fragment() {
 
         firebase.getAllClothes(closetData, closetAdapter)
 
-        parentFragmentManager.setFragmentResultListener("addClothingResult", this) { _, result ->
-            val newItem = Clothing(
-                result.getString("imageUri")!!,
-                result.getString("type")!!,
-                result.getString("notes"),
-                result.getBoolean("laundry")
-            )
-
-            var isAppended = false
-            for(closet in closetData) {
-                if(closet.section == newItem.type) {
-                    isAppended = true
-                    closet.clothing.add(newItem)
-                }
-            }
-
-            if(!isAppended) {
-                closetData.add(Closet(arrayListOf(newItem), newItem.type))
-            }
-            closetAdapter.notifyDataSetChanged()
-        }
-
         return view
     }
 
