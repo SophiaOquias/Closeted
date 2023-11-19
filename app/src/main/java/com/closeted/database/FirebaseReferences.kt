@@ -47,15 +47,16 @@ class FirebaseReferences {
             .addOnSuccessListener { result ->
                 for(document in result) {
                     Log.d("TEST", "${document.id} => ${document.data}")
-                    clothes.add(
-                        Clothing(
-                            document.id,
-                            document.getString(CLOTHING_IMAGE)!!,
-                            document.getString(CLOTHING_TYPE)!!,
-                            document.getString(CLOTHING_NOTE),
-                            document.getString(CLOTHING_LAUNDRY).toBoolean()
-                        )
+                    val temp = Clothing(
+                        document.id,
+                        document.getString(CLOTHING_IMAGE)!!,
+                        document.getString(CLOTHING_TYPE)!!,
+                        document.getString(CLOTHING_NOTE),
+                        document.getString(CLOTHING_LAUNDRY).toBoolean()
                     )
+                    if(!temp.laundry) {
+                        clothes.add(temp)
+                    }
                 }
 
                 // separates clothes into clothing types
@@ -79,6 +80,29 @@ class FirebaseReferences {
                 Log.d("TEST", "Error getting documents: $exception")
             }
 
+    }
+
+    fun getClothingById(id: String) {
+        val db = Firebase.firestore
+
+        val clothes = db.collection(CLOTHES_COLLECTION)
+        val docRef = clothes.document(id)
+
+        docRef.get()
+            .addOnSuccessListener { documentSnapshot ->
+            if (documentSnapshot.exists()) {
+                val data = documentSnapshot.data
+                Log.d(TAG, "Document data: $data")
+
+                // TODO: load data into components of page
+
+            } else {
+                Log.d(TAG, "No such document")
+            }
+        }
+            .addOnFailureListener { e ->
+                Log.w(TAG, "Error getting document", e)
+            }
     }
 
     fun uploadImageToFirebaseStorage(imageUri: Uri, context: Context, clothing: Clothing) {
@@ -129,5 +153,17 @@ class FirebaseReferences {
             .addOnFailureListener { e ->
                 Log.w(TAG, "Error adding document", e)
             }
+    }
+
+    fun deleteClothing(id: String) {
+
+    }
+
+    fun editClothing(id: String, edits: Clothing) {
+
+    }
+
+    fun setLaundry(id: String) {
+
     }
 }
