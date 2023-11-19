@@ -5,6 +5,7 @@ import android.util.Log
 import com.closeted.closet.Closet
 import com.closeted.closet.ClosetAdapter
 import com.closeted.closet.Clothing
+import com.closeted.outfits.AddClothingAdapter
 import com.closeted.outfits.Outfit
 import com.google.firebase.Firebase
 import com.google.firebase.firestore.firestore
@@ -43,6 +44,51 @@ class FirebaseReferences {
     }
 
     fun getAllClothes(closet: ArrayList<Closet>, adapter: ClosetAdapter) {
+        val db = Firebase.firestore
+        val clothes: ArrayList<Clothing> = ArrayList()
+        closet.clear()
+
+        db.collection(CLOTHES_COLLECTION)
+            .get()
+            .addOnSuccessListener { result ->
+                for(document in result) {
+                    Log.d("TEST", "${document.id} => ${document.data}")
+                    val temp = Clothing(
+                        document.id,
+                        document.getString(CLOTHING_IMAGE)!!,
+                        document.getString(CLOTHING_TYPE)!!,
+                        document.getString(CLOTHING_NOTE),
+                        document.getString(CLOTHING_LAUNDRY).toBoolean()
+                    )
+                    if(!temp.laundry) {
+                        clothes.add(temp)
+                    }
+                }
+
+                // separates clothes into clothing types
+                for(type in clothingTypes) {
+                    val temp: ArrayList<Clothing> = ArrayList()
+                    for(clothing in clothes) {
+                        if(clothing.type == type && !clothing.laundry) {
+                            temp.add(clothing)
+                        }
+                    }
+                    if(temp.isNotEmpty()) {
+                        closet.add(Closet(temp, type))
+                    }
+                }
+                if(closet.isNotEmpty()) {
+                    adapter.notifyDataSetChanged()
+                }
+
+            }
+            .addOnFailureListener { exception ->
+                Log.d("TEST", "Error getting documents: $exception")
+            }
+
+    }
+
+    fun getAllClothes(closet: ArrayList<Closet>, adapter: AddClothingAdapter) {
         val db = Firebase.firestore
         val clothes: ArrayList<Clothing> = ArrayList()
         closet.clear()
