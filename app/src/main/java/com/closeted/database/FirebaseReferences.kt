@@ -64,7 +64,7 @@ class FirebaseReferences {
                 for(type in clothingTypes) {
                     val temp: ArrayList<Clothing> = ArrayList()
                     for(clothing in clothes) {
-                        if(clothing.type.equals(type)) {
+                        if(clothing.type == type && !clothing.laundry) {
                             temp.add(clothing)
                         }
                     }
