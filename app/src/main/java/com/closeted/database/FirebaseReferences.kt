@@ -229,7 +229,7 @@ class FirebaseReferences {
 
         try {
             val updates = hashMapOf(
-                CLOTHING_LAUNDRY to bool
+                CLOTHING_LAUNDRY to bool.toString()
             )
 
             docRef.update(updates as Map<String, Any>).await()
