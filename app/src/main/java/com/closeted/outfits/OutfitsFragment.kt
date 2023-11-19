@@ -2,15 +2,15 @@ package com.closeted.outfits
 
 import android.content.Intent
 import android.os.Bundle
-import androidx.fragment.app.Fragment
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.ImageButton
+import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.closeted.DataGenerator
 import com.closeted.R
 import com.closeted.closet.Closet
 import com.closeted.closet.ClosetAdapter
@@ -31,6 +31,7 @@ class OutfitsFragment : Fragment() {
     private var param2: String? = null
     private lateinit var outfitListRV: RecyclerView
 //    private val outfitData: ArrayList<Outfit> = DataGenerator.generateOutfitData()
+    private val closetData: ArrayList<Closet> = ArrayList()
     private val outfitData: ArrayList<Outfit> = ArrayList()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -61,6 +62,57 @@ class OutfitsFragment : Fragment() {
 
         val btn = view.findViewById<ImageButton>(R.id.addOutfit)
         val closetAdapter = ClosetAdapter(closetData)
+        val outfitAdapter = OutfitParentAdapter(outfitData)
+        val addOutfitButton = view.findViewById<Button>(R.id.selectClothingforOutfit)
+        val confirmButton = view.findViewById<Button>(R.id.addClothesConfirmBtn)
+
+        btn.setOnClickListener {
+            val intent = Intent(view.context, AddClothingActivity::class.java)
+            this.startActivity(intent)
+
+            val isSelectMode = !closetAdapter.selectMode
+            for (i in closetData.indices) {
+                for (j in closetData[i].clothing.indices) {
+                    closetData[i].clothing[j].selectMode = isSelectMode
+                }
+            }
+
+            addOutfitButton?.let {
+                it.visibility = if (closetData.any { it.clothing.any { clothing -> clothing.selectAllMode || clothing.selectMode } }) View.VISIBLE else View.GONE
+            }
+
+            confirmButton?.setOnClickListener {
+                val selectedClothingIds = ArrayList<String>()
+
+                for (i in closetData.indices) {
+                    for (j in closetData[i].clothing.indices) {
+                        val clothingItem = closetData[i].clothing[j]
+                        if (clothingItem.selectMode || clothingItem.selectAllMode) {
+                            selectedClothingIds.add(clothingItem.id)
+                        }
+                    }
+                }
+                    Log.d("Tag", "Clothing IDs: $selectedClothingIds")
+
+                    // Clear the selection mode in the closetData.
+                    for (i in closetData.indices) {
+                        for (j in closetData[i].clothing.indices) {
+                            closetData[i].clothing[j].selectMode = false
+                            closetData[i].clothing[j].selectAllMode = false
+                        }
+                    }
+
+                    // Hide the button after adding clothing to the outfit.
+                    addOutfitButton.visibility = View.GONE
+            }
+        }
+    }
+
+    /*override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        val btn = view.findViewById<ImageButton>(R.id.addOutfit)
+        val closetAdapter = ClosetAdapter(closetData)
         val addOutfitButton = view.findViewById<Button>(R.id.selectClothingforOutfit)
 
         btn.setOnClickListener {
@@ -83,7 +135,7 @@ class OutfitsFragment : Fragment() {
             closetAdapter.selectMode = isSelectMode
             closetAdapter.notifyDataSetChanged()
         }
-    }
+    }*/
 
     companion object {
         /**
