@@ -195,8 +195,30 @@ class FirebaseReferences {
         }
     }
 
-    fun editClothing(id: String, edits: Clothing) {
+    suspend fun updateClothing(newClothing: Clothing) {
+        val db = Firebase.firestore
 
+        // Reference to the Firestore document
+        val docRef = db.collection(CLOTHES_COLLECTION).document(newClothing.id)
+
+        try {
+            // Create a map of fields to be updated
+            Log.d(TAG, "notes ${newClothing.notes}")
+            val updates = hashMapOf(
+                CLOTHING_IMAGE to newClothing.imageUrl,
+                CLOTHING_TYPE to newClothing.type,
+                CLOTHING_NOTE to newClothing.notes.orEmpty(),
+                CLOTHING_LAUNDRY to newClothing.laundry.toString()
+            )
+
+            docRef.update(updates as Map<String, Any>).await()
+
+            Log.d(TAG, "Document ${newClothing.id} updated successfully")
+        } catch (e: Exception) {
+            // Handle exceptions (e.g., FirestoreException)
+            Log.d(TAG, "Error updating document: $e")
+            throw e
+        }
     }
 
     fun setLaundry(id: String) {

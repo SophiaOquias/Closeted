@@ -61,11 +61,13 @@ class OpenClothingItem : AppCompatActivity() {
         val clothingTypeView: TextView = findViewById(R.id.itemType)
         clothingTypeView.text = viewedClothing.type
 
+        val editNotes: EditText = findViewById(R.id.clothingNotes)
+        editNotes.setText(viewedClothing.notes)
+
         //Edit Button
         val editButton = findViewById<ImageButton>(R.id.editButton)
         editButton.setOnClickListener {
             val changeImage: LinearLayout = findViewById(R.id.changeImage)
-            val editNotes: EditText = findViewById(R.id.clothingNotes)
             val outfitInfo: LinearLayout = findViewById(R.id.outfitInfo)
             val clothingTypeOptions: Spinner = findViewById(R.id.spinner_clothing_type)
 
@@ -77,7 +79,18 @@ class OpenClothingItem : AppCompatActivity() {
                 clothingTypeOptions.visibility = View.GONE
 
                 // TODO: Save changes to your data model
-                //Need notes in datagenerator per clothing item
+                val edits = Clothing(
+                    viewedClothing.id,
+                    viewedClothing.imageUrl, // TODO: change this to new url
+                    clothingTypeOptions.selectedItem.toString(),
+                    editNotes.text.toString(),
+                    viewedClothing.laundry
+                )
+
+                lifecycleScope.launch {
+                    firebase.updateClothing(edits)
+                }
+
             } else {
                 // Edit mode logic
                 // TODO: add functionality to change image
