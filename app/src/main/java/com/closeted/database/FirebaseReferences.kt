@@ -164,19 +164,33 @@ class FirebaseReferences {
         }
     }
 
-    suspend fun deleteClothingById(id: String) {
+    suspend fun deleteClothing(c: Clothing) {
         val db = Firebase.firestore
 
         // Reference to the Firestore document
-        val docRef = db.collection(CLOTHES_COLLECTION).document(id)
+        val docRef = db.collection(CLOTHES_COLLECTION).document(c.id)
 
         try {
-            // Suspend function to delete the document
             docRef.delete().await()
-            println("Document deleted successfully")
+            Log.d(TAG, "Document deleted successfully")
+            deleteImageFromStorage(c.imageUrl)
         } catch (e: Exception) {
-            // Handle exceptions (e.g., FirestoreException)
-            println("Error deleting document: $e")
+            Log.d(TAG, "Error deleting document: $e")
+            throw e
+        }
+    }
+
+    private suspend fun deleteImageFromStorage(imageUrl: String) {
+        val storage = Firebase.storage
+
+        // Create a reference to the image file in Firebase Storage using the full URL
+        val imageRef = storage.getReferenceFromUrl(imageUrl)
+
+        try {
+            imageRef.delete().await()
+            Log.d(TAG, "Image deleted successfully")
+        } catch (e: Exception) {
+            Log.d(TAG, "Error deleting image: $e")
             throw e
         }
     }

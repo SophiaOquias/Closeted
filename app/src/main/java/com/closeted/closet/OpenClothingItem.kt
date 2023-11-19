@@ -109,7 +109,7 @@ class OpenClothingItem : AppCompatActivity() {
         deleteButton.setOnClickListener {
 
             lifecycleScope.launch {
-                val deletionJob = async { firebase.deleteClothingById(viewedClothing.id) }
+                val deletionJob = async { firebase.deleteClothing(viewedClothing) }
                 deletionJob.await()
                 finish()
             }
