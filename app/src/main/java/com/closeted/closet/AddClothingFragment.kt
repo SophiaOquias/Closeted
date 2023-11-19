@@ -97,7 +97,7 @@ class AddClothingFragment : Fragment() {
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
             if (result.resultCode == RESULT_OK) {
                 if (currentPhotoUri != null) {
-                    this.image = requireView().findViewById(R.id.addImage)
+                    this.image = requireView().findViewById(R.id.clothingImage)
                     this.image.setImageURI(currentPhotoUri)
                 } else {
                     Toast.makeText(
@@ -117,7 +117,7 @@ class AddClothingFragment : Fragment() {
                 if (data != null) {
                     val selected: Uri? = data.data
                     selected?.let {
-                        this.image = requireView().findViewById(R.id.addImage)
+                        this.image = requireView().findViewById(R.id.clothingImage)
                         this.image.setImageURI(it)
                         this.currentPhotoUri = it
                     }
@@ -206,7 +206,7 @@ class AddClothingFragment : Fragment() {
         })
 
         //finishAdding Button logic
-        val finishAddingButton = view.findViewById<ImageButton>(R.id.checkButton)
+        val finishAddingButton = view.findViewById<ImageButton>(R.id.editButton)
         finishAddingButton.setOnClickListener(View.OnClickListener {
             val transaction = requireActivity().supportFragmentManager.beginTransaction()
 
@@ -299,11 +299,11 @@ class AddClothingFragment : Fragment() {
 
         if(resultCode == RESULT_OK) {
             val selected: Uri = data!!.data!!
-            this.image = requireView().findViewById(R.id.addImage)
+            this.image = requireView().findViewById(R.id.editButton)
             this.image.setImageURI(selected)
         }
         else if (requestCode == takePictureLauncher.hashCode() && currentPhotoUri != null) {
-            this.image = requireView().findViewById(R.id.addImage)
+            this.image = requireView().findViewById(R.id.editButton)
             this.image.setImageURI(currentPhotoUri)
         }
     }

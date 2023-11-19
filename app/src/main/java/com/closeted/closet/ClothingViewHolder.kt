@@ -20,10 +20,6 @@ class ClothingViewHolder(itemView:View): ViewHolder(itemView) {
         Picasso.get().load(clothing.imageUrl).into(img)
         img.scaleType = ImageView.ScaleType.CENTER_CROP
 
-        if(laundryView.equals(false) && clothing.laundry){
-            img.setColorFilter(Color.parseColor("#C8434141"))
-        }
-
         // Set the visibility of the delete button based on the isEditMode flag
         if (clothing.isEditMode) {
             deleteButton.visibility = View.VISIBLE
@@ -34,6 +30,7 @@ class ClothingViewHolder(itemView:View): ViewHolder(itemView) {
             deleteButton.isClickable = false
             deleteButton.isEnabled = false
         }
+
 
         // Set the visibility and checked state of the select button based on selectAllMode and selectMode.
         selectButton.visibility = if (clothing.selectAllMode || clothing.selectMode) View.VISIBLE else View.GONE
