@@ -92,45 +92,9 @@ class OutfitsFragment : Fragment() {
 
             closetAdapter.selectMode = isSelectMode
             closetAdapter.notifyDataSetChanged()
-
-           /* confirmButton?.setOnClickListener {
-                val selectedClothingIds = ArrayList<String>()
-
-                for (i in closetData.indices) {
-                    for (j in closetData[i].clothing.indices) {
-                        val clothingItem = closetData[i].clothing[j]
-                        if (clothingItem.selectMode || clothingItem.selectAllMode) {
-                            selectedClothingIds.add(clothingItem.id)
-                        }
-                    }
-                }
-                Log.d("CLOTHINGID", "Clothing IDs: $selectedClothingIds")
-
-                if (selectedClothingIds.isNotEmpty()) {
-                    // Add the list of clothing IDs to the outfitData array list.
-                    //outfitData.add(selectedClothingIds)
-
-                    // Notify the adapter to refresh the RecyclerView.
-                    outfitAdapter.notifyDataSetChanged()
-
-                    // Clear the selection mode in the closetData.
-                    for (i in closetData.indices) {
-                        for (j in closetData[i].clothing.indices) {
-                            closetData[i].clothing[j].selectMode = false
-                            closetData[i].clothing[j].selectAllMode = false
-                        }
-                    }
-                    // Hide the button after adding clothing to the outfit.
-<<<<<<< Updated upstream
-                    addOutfitButton.visibility = View.GONE
-            }*/
-=======
-                    //addOutfitButton.visibility = View.GONE
-                }
-            }
->>>>>>> Stashed changes
         }
     }
+
 
     /*override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
