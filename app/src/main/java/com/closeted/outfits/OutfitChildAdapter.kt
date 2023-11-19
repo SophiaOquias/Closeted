@@ -9,7 +9,7 @@ import com.closeted.closet.Clothing
 import com.closeted.R
 import com.squareup.picasso.Picasso
 
-class OutfitChildAdapter(private val data: List<Clothing>) : RecyclerView.Adapter<OutfitChildAdapter.ViewHolder>() {
+class OutfitChildAdapter(private val data: List<Clothing>, private val outfitId: String) : RecyclerView.Adapter<OutfitChildAdapter.ViewHolder>() {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val view =LayoutInflater.from(parent.context).inflate(R.layout.outfit_item,parent,false)
         return ViewHolder(view)
@@ -20,6 +20,7 @@ class OutfitChildAdapter(private val data: List<Clothing>) : RecyclerView.Adapte
 
         holder.itemView.setOnClickListener {
             val intent = Intent(holder.itemView.context, ViewOutfitActivity::class.java)
+            intent.putExtra("outfit_id", outfitId)
             holder.itemView.context.startActivity(intent)
         }
     }
@@ -31,7 +32,6 @@ class OutfitChildAdapter(private val data: List<Clothing>) : RecyclerView.Adapte
     inner class ViewHolder(itemView : View) : RecyclerView.ViewHolder(itemView){
         private val imageView: ImageView = itemView.findViewById(R.id.outfit_img)
         fun bind(childItem: Clothing) {
-//            imageView.setImageResource(childItem.imageId)
             Picasso.get().load(childItem.imageUrl).into(imageView)
         }
     }

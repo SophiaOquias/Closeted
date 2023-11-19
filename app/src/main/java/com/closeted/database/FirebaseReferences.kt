@@ -5,6 +5,7 @@ import android.util.Log
 import com.closeted.closet.Closet
 import com.closeted.closet.ClosetAdapter
 import com.closeted.closet.Clothing
+import com.closeted.outfits.Outfit
 import com.google.firebase.Firebase
 import com.google.firebase.firestore.firestore
 import com.google.firebase.storage.storage
@@ -36,6 +37,9 @@ class FirebaseReferences {
             "Sweater",
             "T-Shirt"
         )
+
+        const val OUTFITS_COLLECTION = "outfits"
+        const val OUTFIT_CLOTHING_LIST = "clothing_list"
     }
 
     fun getAllClothes(closet: ArrayList<Closet>, adapter: ClosetAdapter) {
@@ -241,4 +245,84 @@ class FirebaseReferences {
             throw e
         }
     }
+
+    suspend fun getAllOutfits(): ArrayList<Outfit> {
+        return withContext(Dispatchers.IO) {
+            val db = Firebase.firestore
+
+            try {
+                val outfitsQuerySnapshot = db.collection(OUTFITS_COLLECTION).get().await()
+                Log.d(TAG, "queried outfits ${outfitsQuerySnapshot.size()}")
+
+                // Extract outfit data from the documents
+                return@withContext outfitsQuerySnapshot.documents.map { outfitDoc ->
+                    val outfitId = outfitDoc.id
+                    Log.d(TAG, "found $outfitId")
+                    val clothingIds = outfitDoc.get(OUTFIT_CLOTHING_LIST) as? ArrayList<String> ?: ArrayList()
+
+                    // Fetch details of each clothing item in the outfit
+                    val clothingItems = ArrayList<Clothing>()
+                    for (clothingId in clothingIds) {
+                        try {
+                            Log.d(TAG, "querying clothing by id $clothingId")
+                            val clothing = getClothingById(clothingId)
+                            clothingItems.add(clothing)
+                        } catch (e: Exception) {
+                            // Handle exceptions (e.g., NoSuchElementException)
+                            Log.e(TAG, "Error fetching clothing item: $e")
+                        }
+                    }
+
+                    Log.d(TAG, "outfit with id $outfitId has ${clothingItems.size} clothes")
+
+                    Outfit(outfitId, clothingItems)
+                } as ArrayList<Outfit>
+            }
+            catch (e: Exception) {
+                // Handle exceptions (e.g., FirestoreException)
+                Log.e(TAG, "Error getting outfit data: $e")
+                throw e
+            }
+        }
+    }
+
+    suspend fun getOutfitById(outfitId: String): Outfit? {
+        return withContext(Dispatchers.IO) {
+            val db = Firebase.firestore
+
+            try {
+                val outfitDoc = db.collection(OUTFITS_COLLECTION).document(outfitId).get().await()
+                Log.d(TAG, "queried outfit with ID $outfitId")
+
+                return@withContext if (outfitDoc.exists()) {
+                    val clothingIds = outfitDoc.get(OUTFIT_CLOTHING_LIST) as? ArrayList<String> ?: ArrayList()
+
+                    // Fetch details of each clothing item in the outfit
+                    val clothingItems = ArrayList<Clothing>()
+                    for (clothingId in clothingIds) {
+                        try {
+                            Log.d(TAG, "querying clothing by id $clothingId")
+                            val clothing = getClothingById(clothingId)
+                            clothingItems.add(clothing)
+                        } catch (e: Exception) {
+                            // Handle exceptions (e.g., NoSuchElementException)
+                            Log.e(TAG, "Error fetching clothing item: $e")
+                        }
+                    }
+
+                    Log.d(TAG, "outfit with id $outfitId has ${clothingItems.size} clothes")
+
+                    Outfit(outfitId, clothingItems)
+                } else {
+                    null
+                }
+            } catch (e: Exception) {
+                // Handle exceptions (e.g., FirestoreException)
+                Log.e(TAG, "Error getting outfit data: $e")
+                throw e
+            }
+        }
+    }
+
+
 }

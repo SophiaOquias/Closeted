@@ -5,28 +5,40 @@ import android.os.Bundle
 import android.widget.Button
 import android.widget.ImageButton
 import androidx.core.view.isVisible
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.closeted.R
+import com.closeted.closet.Clothing
+import com.closeted.database.FirebaseReferences
 import com.google.android.material.floatingactionbutton.FloatingActionButton
+import kotlinx.coroutines.async
+import kotlinx.coroutines.launch
 
 class ViewOutfitActivity : AppCompatActivity() {
 
     private lateinit var recyclerView: RecyclerView
     private lateinit var adapter: ViewOutfitAdapter
+    private lateinit var clothingList: ArrayList<Clothing>
+    private lateinit var outfitId: String
+    private val firebase: FirebaseReferences = FirebaseReferences()
+    private lateinit var outfit: Outfit
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_view_outfit)
 
-        val imgList: ArrayList<Int> = ArrayList()
+        clothingList = ArrayList()
+        outfitId = intent.getStringExtra("outfit_id")!!
 
-        // fill sample data
-        repeat(10) {
-            imgList.add(R.drawable.temp_pic)
+        lifecycleScope.launch {
+            val asyncJob = async {outfit = firebase.getOutfitById(outfitId)!!}
+            asyncJob.await()
+            adapter.setData(outfit.clothingItems)
         }
 
+
         this.recyclerView = findViewById(R.id.recyclerView)
-        this.adapter = ViewOutfitAdapter(imgList)
+        this.adapter = ViewOutfitAdapter(clothingList, outfitId)
         this.recyclerView.adapter = adapter
         this.recyclerView.layoutManager = LinearLayoutManager(
             this,
