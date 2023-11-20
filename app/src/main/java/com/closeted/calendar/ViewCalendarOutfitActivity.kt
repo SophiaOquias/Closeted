@@ -41,6 +41,7 @@ class ViewCalendarOutfitActivity : AppCompatActivity() {
         val confirmButton = findViewById<Button>(R.id.viewConfirmBtn)
         val addButton = findViewById<FloatingActionButton>(R.id.viewAddBtn)
         val dateTv = findViewById<TextView>(R.id.dateTv)
+        val deleteButton = findViewById<ImageButton>(R.id.viewDeleteBtn)
 
         clothingList = ArrayList()
         val calendarId = intent.getStringExtra("calendar_id")!!
@@ -99,6 +100,14 @@ class ViewCalendarOutfitActivity : AppCompatActivity() {
             dateTv.setOnClickListener(null)
 
             // TODO: update calendar
+        }
+
+        deleteButton.setOnClickListener {
+            lifecycleScope.launch {
+                val asyncJob = async { firebase.deleteCalendarEntryById(calendarId) }
+                asyncJob.await()
+                finish()
+            }
         }
     }
 

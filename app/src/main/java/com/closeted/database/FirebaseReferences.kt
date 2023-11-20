@@ -526,4 +526,20 @@ class FirebaseReferences {
             }
         }
     }
+
+    suspend fun deleteCalendarEntryById(calendarId: String) {
+        return withContext(Dispatchers.IO) {
+            val db = Firebase.firestore
+
+            try {
+                val calendarRef = db.collection(CALENDAR_COLLECTION).document(calendarId)
+                calendarRef.delete().await()
+                Log.d(TAG, "Calendar entry deleted successfully with ID: $calendarId")
+            } catch (e: Exception) {
+                // Handle exceptions (e.g., FirestoreException)
+                Log.e(TAG, "Error deleting calendar entry with ID $calendarId: $e")
+                throw e
+            }
+        }
+    }
 }
