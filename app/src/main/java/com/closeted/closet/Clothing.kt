@@ -6,9 +6,9 @@ class Clothing {
     var type: String
     var notes: String?
     var laundry: Boolean
-    var isEditMode = false
+    /*var isEditMode = false
     var selectAllMode = false
-    var selectMode = false
+    var selectMode = false*/
 
     constructor(imageUrl: String, type: String, notes: String?, laundry: Boolean) {
         this.imageUrl = imageUrl

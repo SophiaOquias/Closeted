@@ -10,15 +10,13 @@ import com.closeted.R
 
 public class ClosetAdapter (private val data: ArrayList<Closet>): RecyclerView.Adapter<ClosetViewHolder>() {
     private val viewPool = RecyclerView.RecycledViewPool()
-    var isEditMode: Boolean = false
-    var selectMode: Boolean = false
-
-    private var childItemAdapter: ClothingAdapter? = null
+    var editMode: EditMode = EditMode.NORMAL
+    private var childItemAdapter: ClothingAdapter
 
     init {
         // Initialize the child adapter here (if needed)
         // For example, you can set it as non-editable initially
-        childItemAdapter = ClothingAdapter(ArrayList(), false)
+        this.childItemAdapter = ClothingAdapter(ArrayList(), false, this.editMode)
     }
 
     override fun onCreateViewHolder(@NonNull parent: ViewGroup, viewType: Int): ClosetViewHolder {
@@ -37,6 +35,7 @@ public class ClosetAdapter (private val data: ArrayList<Closet>): RecyclerView.A
         //parent item refers to section of clothes (tops, skirts, dresses, trousers, etc.)
         val parentItem = data[position]
         holder.parentItemTitle.text = parentItem.section
+
 
         // Check if all clothes under the parent item are in the laundry
         val clothesNotInLaundry = parentItem.clothing.filter { !it.laundry }
@@ -64,7 +63,7 @@ public class ClosetAdapter (private val data: ArrayList<Closet>): RecyclerView.A
         //layoutManager.initialPrefetchItemCount = parentItem.clothing.size
         layoutManager.initialPrefetchItemCount = clothesNotInLaundry.size
         val clothesNotInLaundryList = ArrayList(clothesNotInLaundry)
-        val childItemAdapter = ClothingAdapter(clothesNotInLaundryList, false)
+        this.childItemAdapter = ClothingAdapter(clothesNotInLaundryList, false, this.editMode)
 
         holder.childRecyclerView.layoutManager = layoutManager
         holder.childRecyclerView.adapter = childItemAdapter
@@ -72,18 +71,28 @@ public class ClosetAdapter (private val data: ArrayList<Closet>): RecyclerView.A
 
     }
 
-
     fun toggleEditMode() {
-        isEditMode = !isEditMode
-        if(isEditMode){
-            for(i in data.indices){
-                for(j in data[i].clothing.indices){
-                    if(data[i].clothing[j].laundry == false){
-                        data[i].clothing[j].isEditMode = !data[i].clothing[j].isEditMode
-                    }
-                }
-            }
+        if(this.editMode != EditMode.DELETE){
+            this.editMode = EditMode.DELETE
         }
+        else{
+            this.editMode = EditMode.NORMAL
+        }
+
+        this.childItemAdapter.setEditMode(this.editMode)
+        notifyDataSetChanged()
+
+    }
+
+    fun toggleSelectMode() {
+        if(this.editMode != EditMode.SELECT){
+            this.editMode = EditMode.SELECT
+        }
+        else{
+            this.editMode = EditMode.NORMAL
+        }
+
+        this.childItemAdapter.setEditMode(this.editMode)
         notifyDataSetChanged()
     }
 

@@ -27,7 +27,7 @@ class ClosetFragment : Fragment() {
     // TODO: Rename and change types of parameters
     private var param1: String? = null
     private var param2: String? = null
-//    private val closetData: ArrayList<Closet> = DataGenerator.generateClosetData()
+    //    private val closetData: ArrayList<Closet> = DataGenerator.generateClosetData()
     private val closetData: ArrayList<Closet> = ArrayList()
     private val firebase = FirebaseReferences()
     private lateinit var closetRecyclerViewItem: RecyclerView
@@ -49,7 +49,7 @@ class ClosetFragment : Fragment() {
 
         val view = inflater.inflate(R.layout.fragment_closet, container, false)
 
-        closetRecyclerViewItem = view.findViewById<RecyclerView>(R.id.closetRecycler)
+        closetRecyclerViewItem = view.findViewById(R.id.closetRecycler)
 
         val layoutManager = LinearLayoutManager(requireContext())
 
@@ -74,36 +74,42 @@ class ClosetFragment : Fragment() {
         val editButton = view.findViewById<ImageButton>(R.id.editButton)
         editButton.setOnClickListener(View.OnClickListener {
             closetAdapter.toggleEditMode()
-            closetAdapter.notifyDataSetChanged()
         })
 
 
         val laundryButton = view.findViewById<ImageButton>(R.id.laundryButton)
         val addToLaundryButton = view.findViewById<Button>(R.id.addToLaundry)
         laundryButton.setOnClickListener(View.OnClickListener {
-            val isSelectMode = !closetAdapter.selectMode
-            // Iterate through the clothing items and set their selectMode based on isSelectMode.
-            for (i in closetData.indices) {
-                for (j in closetData[i].clothing.indices) {
-                    if(closetData[i].clothing[j].laundry == false) {
-                        closetData[i].clothing[j].selectMode = isSelectMode
-                        addToLaundryButton.visibility =
-                            if (closetData[i].clothing[j].selectAllMode || closetData[i].clothing[j].selectMode) View.VISIBLE else View.GONE
-                    }
-                }
-            }
-            // Notify the adapter to refresh the RecyclerView.
-            closetAdapter.selectMode = isSelectMode
-            closetAdapter.notifyDataSetChanged()
+            closetAdapter.toggleSelectMode()
+            addToLaundryButton.visibility =
+                if (closetAdapter.editMode == EditMode.SELECT || closetAdapter.editMode == EditMode.SELECT_ALL) View.VISIBLE else View.GONE
         })
 
-        return view
-    }
-
-    override fun onResume() {
-        super.onResume()
-
         firebase.getAllClothes(closetData, closetAdapter)
+
+        parentFragmentManager.setFragmentResultListener("addClothingResult", this) { _, result ->
+            val newItem = Clothing(
+                result.getString("imageUri")!!,
+                result.getString("type")!!,
+                result.getString("notes"),
+                result.getBoolean("laundry")
+            )
+
+            var isAppended = false
+            for(closet in closetData) {
+                if(closet.section == newItem.type) {
+                    isAppended = true
+                    closet.clothing.add(newItem)
+                }
+            }
+
+            if(!isAppended) {
+                closetData.add(Closet(arrayListOf(newItem), newItem.type))
+            }
+            closetAdapter.notifyDataSetChanged()
+        }
+
+        return view
     }
 
     companion object {
