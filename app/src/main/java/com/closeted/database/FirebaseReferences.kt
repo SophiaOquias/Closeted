@@ -9,6 +9,7 @@ import com.closeted.closet.Clothing
 import com.closeted.outfits.AddClothingAdapter
 import com.closeted.outfits.Outfit
 import com.google.firebase.Firebase
+import com.google.firebase.Timestamp
 import com.google.firebase.firestore.firestore
 import com.google.firebase.storage.storage
 import java.util.UUID
@@ -471,11 +472,14 @@ class FirebaseReferences {
             val db = Firebase.firestore
 
             try {
+                val currentTime = Timestamp.now()
+
                 val calendarQuerySnapshot = db.collection(CALENDAR_COLLECTION)
+                    .whereGreaterThanOrEqualTo(CALENDAR_DATE, currentTime)
                     .get()
                     .await()
 
-                Log.d(TAG, "Queried ${calendarQuerySnapshot.size()} calendar entries")
+                Log.d(TAG, "Queried ${calendarQuerySnapshot.size()} future calendar entries")
 
                 // Extract calendar entry data from the documents
                 val calendarList = calendarQuerySnapshot.documents.map { calendarDoc ->
@@ -493,7 +497,43 @@ class FirebaseReferences {
                 return@withContext calendarList
             } catch (e: Exception) {
                 // Handle exceptions (e.g., FirestoreException)
-                Log.e(TAG, "Error getting calendar entries: $e")
+                Log.e(TAG, "Error getting future calendar entries: $e")
+                throw e
+            }
+        }
+    }
+
+    suspend fun getHistoricOutfits(): ArrayList<Calendar> {
+        return withContext(Dispatchers.IO) {
+            val db = Firebase.firestore
+
+            try {
+                val currentTime = Timestamp.now()
+
+                val calendarQuerySnapshot = db.collection(CALENDAR_COLLECTION)
+                    .whereLessThan(CALENDAR_DATE, currentTime)
+                    .get()
+                    .await()
+
+                Log.d(TAG, "Queried ${calendarQuerySnapshot.size()} past calendar entries")
+
+                // Extract calendar entry data from the documents
+                val calendarList = calendarQuerySnapshot.documents.map { calendarDoc ->
+                    val calendarId = calendarDoc.id
+                    val outfitId = calendarDoc.getString(CALENDAR_OUTFIT) ?: ""
+                    val date = calendarDoc.getTimestamp(CALENDAR_DATE)!!
+                    val outfit = getOutfitById(outfitId)!!
+
+                    Calendar(calendarId, outfit, date)
+                } as ArrayList<Calendar>
+
+                // Sort the list by date
+                calendarList.sortBy { it.date.seconds }
+
+                return@withContext calendarList
+            } catch (e: Exception) {
+                // Handle exceptions (e.g., FirestoreException)
+                Log.e(TAG, "Error getting future calendar entries: $e")
                 throw e
             }
         }

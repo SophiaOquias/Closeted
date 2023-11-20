@@ -10,10 +10,8 @@ import android.widget.ImageButton
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.closeted.DataGenerator
 import com.closeted.R
 import com.closeted.database.FirebaseReferences
-import com.closeted.outfits.AddClothingActivity
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 
@@ -34,6 +32,8 @@ class CalendarFragment : Fragment() {
     private var calendarData: ArrayList<Calendar> = ArrayList()
     private val firebase: FirebaseReferences = FirebaseReferences()
     private lateinit var closetAdapter: CalendarParentAdapter
+    private lateinit var historyAdapter: CalendarParentAdapter
+    private var historyData: ArrayList<Calendar> = ArrayList()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -50,11 +50,18 @@ class CalendarFragment : Fragment() {
         // Inflate the layout for this fragment
 
         val view = inflater.inflate(R.layout.fragment_calendar, container, false)
-        val closetRecyclerViewItem = view.findViewById<RecyclerView>(R.id.calendarParentRecycler)
+        val calendarRecyclerView = view.findViewById<RecyclerView>(R.id.calendarParentRecycler)
         val layoutManager = LinearLayoutManager(requireContext())
         closetAdapter = CalendarParentAdapter(calendarData)
-        closetRecyclerViewItem.adapter = closetAdapter
-        closetRecyclerViewItem.layoutManager = layoutManager
+        calendarRecyclerView.adapter = closetAdapter
+        calendarRecyclerView.layoutManager = layoutManager
+
+        // history
+        val historyRecyclerView = view.findViewById<RecyclerView>(R.id.historyRecycler)
+        historyAdapter = CalendarParentAdapter(historyData)
+        historyRecyclerView.adapter = historyAdapter
+        val historyLayoutManager = LinearLayoutManager(requireContext())
+        historyRecyclerView.layoutManager = historyLayoutManager
 
         return view
     }
@@ -74,9 +81,13 @@ class CalendarFragment : Fragment() {
         super.onResume()
 
         lifecycleScope.launch {
-            val asyncJob = async { calendarData = firebase.getAllCalendarEntries() }
+            val asyncJob = async {
+                calendarData = firebase.getAllCalendarEntries()
+                historyData = firebase.getHistoricOutfits()
+            }
             asyncJob.await()
             closetAdapter.setData(calendarData)
+            historyAdapter.setData(historyData)
         }
     }
 
