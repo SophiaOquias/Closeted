@@ -18,6 +18,10 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Closeted"
         tools:targetApi="31">
+        <activity
+            android:name=".calendar.ViewHistoryActivity"
+            android:exported="false" />
+
         <provider
             android:name="androidx.core.content.FileProvider"
             android:authorities="com.closeted.closet.fileprovider"
@@ -27,6 +31,7 @@
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/file_paths" />
         </provider>
+
         <activity
             android:name=".calendar.ViewCalendarOutfitActivity"
             android:exported="false" />
