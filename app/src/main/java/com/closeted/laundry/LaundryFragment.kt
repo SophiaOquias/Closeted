@@ -28,9 +28,6 @@ class LaundryFragment : Fragment() {
     // TODO: Rename and change types of parameters
     private var param1: String? = null
     private var param2: String? = null
-//    private val closetData: ArrayList<Closet> = DataGenerator.generateClosetData()
-//    private val laundryData: ArrayList<Closet> = DataGenerator.getLaundry(closetData)
-    private val closetData: ArrayList<Closet> = ArrayList()
     private val laundryData: ArrayList<Closet> = ArrayList()
     private var isSelectAllMode = false
 
@@ -67,6 +64,7 @@ class LaundryFragment : Fragment() {
         selectAllButton.setOnClickListener(View.OnClickListener {
             //laundryAdapter.toggleSelectMode()
             //laundryAdapter.notifyDataSetChanged()
+            /*
             isSelectAllMode = !isSelectAllMode
 
             // Iterate through the clothing items and set their selectMode based on isSelectMode.
@@ -77,11 +75,13 @@ class LaundryFragment : Fragment() {
                 }
             }
             laundryAdapter.notifyDataSetChanged()
+             */
+            laundryAdapter.toggleSelectAllMode()
 
         })
 
         selectButton.setOnClickListener(View.OnClickListener {
-
+            /*
             val isSelectMode = !laundryAdapter.selectMode
 
             // Iterate through the clothing items and set their selectMode based on isSelectMode.
@@ -95,6 +95,9 @@ class LaundryFragment : Fragment() {
             // Notify the adapter to refresh the RecyclerView.
             laundryAdapter.selectMode = isSelectMode
             laundryAdapter.notifyDataSetChanged()
+
+             */
+            laundryAdapter.toggleSelectMode()
         })
 
         return view
