@@ -15,6 +15,7 @@ import com.closeted.closet.Clothing
 import com.closeted.database.FirebaseReferences
 import com.closeted.outfits.Outfit
 import com.closeted.outfits.ViewOutfitAdapter
+import com.google.firebase.Timestamp
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
@@ -29,6 +30,7 @@ class CalendarOutfitSetDate : AppCompatActivity() {
     private lateinit var outfitId: String
     private val firebase: FirebaseReferences = FirebaseReferences()
     private lateinit var outfit: Outfit
+    private lateinit var timestamp: Timestamp
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_calendar_outfit_set_date)
@@ -63,9 +65,20 @@ class CalendarOutfitSetDate : AppCompatActivity() {
 
         confirmBtn.setOnClickListener {
             val resultIntent = Intent()
-            // Set the selected outfit as a result or any other relevant data
-            setResult(Activity.RESULT_OK, resultIntent)
-            finish()
+
+            val newCalendarItem = Calendar(
+                outfit,
+                timestamp
+            )
+
+            // TODO: insert operation to calendar collection in firebase
+            lifecycleScope.launch {
+                val asyncJob = async { firebase.insertCalendarEntry(newCalendarItem) }
+                asyncJob.await()
+
+                setResult(Activity.RESULT_OK, resultIntent)
+                finish()
+            }
         }
     }
 
@@ -83,6 +96,10 @@ class CalendarOutfitSetDate : AppCompatActivity() {
                 val dateFormat = SimpleDateFormat("MMMM dd, yyyy", Locale.getDefault())
                 val formattedDate = dateFormat.format(c.time)
                 dateTv.text = formattedDate
+
+                val timestampMillis = c.timeInMillis
+
+                timestamp = Timestamp(timestampMillis / 1000, 0)
             },
             year,
             month,

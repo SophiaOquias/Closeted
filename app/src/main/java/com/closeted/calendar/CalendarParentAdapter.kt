@@ -36,7 +36,7 @@ class CalendarParentAdapter(private val data: ArrayList<Calendar>): RecyclerView
             LinearLayoutManager.HORIZONTAL,
             false
         )
-        holder.dateTv.text = data[position].date
+        holder.dateTv.text = data[position].date.toString()
 
         val outfits = data[position].outfit
         layoutManager.initialPrefetchItemCount = outfits.clothingItems.size

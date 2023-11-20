@@ -11,13 +11,13 @@ import com.closeted.closet.Clothing
 import com.closeted.R
 import com.squareup.picasso.Picasso
 
-class OutfitPickerChildAdapter(private val data: List<Clothing>, private val activity: Activity) : RecyclerView.Adapter<OutfitPickerChildAdapter.ViewHolder>() {
+class OutfitPickerChildAdapter(private val data: List<Clothing>, private val activity: Activity, private val outfitId: String) : RecyclerView.Adapter<OutfitPickerChildAdapter.ViewHolder>() {
 
     companion object {
         private const val CALENDAR_DATE_REQUEST_CODE = 1
     }
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        val view =LayoutInflater.from(parent.context).inflate(R.layout.outfit_item,parent,false)
+        val view = LayoutInflater.from(parent.context).inflate(R.layout.outfit_item,parent,false)
         return ViewHolder(view)
     }
 
@@ -25,7 +25,10 @@ class OutfitPickerChildAdapter(private val data: List<Clothing>, private val act
         holder.bind(data[position])
 
         holder.itemView.setOnClickListener {
+
             val intent = Intent(holder.itemView.context, CalendarOutfitSetDate::class.java)
+
+            intent.putExtra("outfit_id", outfitId)
             ActivityCompat.startActivityForResult(
                 activity,
                 intent,

@@ -2,6 +2,7 @@ package com.closeted.database
 
 import android.net.Uri
 import android.util.Log
+import com.closeted.calendar.Calendar
 import com.closeted.closet.Closet
 import com.closeted.closet.ClosetAdapter
 import com.closeted.closet.Clothing
@@ -41,6 +42,11 @@ class FirebaseReferences {
 
         const val OUTFITS_COLLECTION = "outfits"
         const val OUTFIT_CLOTHING_LIST = "clothing_list"
+
+        const val CALENDAR_COLLECTION = "calendar"
+        const val CALENDAR_OUTFIT = "outfit"
+        const val CALENDAR_DATE = "timestamp"
+
     }
 
     fun getAllClothes(closet: ArrayList<Closet>, adapter: ClosetAdapter) {
@@ -427,6 +433,34 @@ class FirebaseReferences {
             } catch (e: Exception) {
                 // Handle exceptions (e.g., FirestoreException)
                 Log.e(TAG, "Error updating outfit document: $e")
+                throw e
+            }
+        }
+    }
+
+    suspend fun insertCalendarEntry(calendar: Calendar): Calendar {
+        return withContext(Dispatchers.IO) {
+            val db = Firebase.firestore
+
+            try {
+                // Create a new calendar entry document and get its reference
+                val calendarRef = db.collection(CALENDAR_COLLECTION).document()
+
+                // Set the calendar entry document with the provided data
+                calendarRef.set(
+                    hashMapOf(
+                        CALENDAR_OUTFIT to calendar.outfit.id,
+                        CALENDAR_DATE to calendar.date
+                    )
+                ).await()
+
+                Log.d(TAG, "Calendar entry inserted successfully with ID: ${calendarRef.id}")
+
+                // Return a new Calendar object with the document ID
+                Calendar(calendarRef.id, calendar.outfit, calendar.date)
+            } catch (e: Exception) {
+                // Handle exceptions (e.g., FirestoreException)
+                Log.e(TAG, "Error inserting calendar entry: $e")
                 throw e
             }
         }

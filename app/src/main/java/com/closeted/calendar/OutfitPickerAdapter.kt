@@ -13,7 +13,7 @@ import com.closeted.R
 import com.closeted.outfits.Outfit
 import com.closeted.outfits.OutfitChildAdapter
 
-class OutfitPickerAdapter(private val data: ArrayList<Outfit>, private val activity: Activity) : RecyclerView.Adapter<OutfitPickerAdapter.ViewHolder>() {
+class OutfitPickerAdapter(private var data: ArrayList<Outfit>, private val activity: Activity) : RecyclerView.Adapter<OutfitPickerAdapter.ViewHolder>() {
     private val viewPool = RecyclerView.RecycledViewPool()
 
     companion object {
@@ -34,19 +34,26 @@ class OutfitPickerAdapter(private val data: ArrayList<Outfit>, private val activ
         )
         layoutManager.initialPrefetchItemCount = collection.clothingItems.size
 
-        val childItemAdapter = OutfitPickerChildAdapter(collection.clothingItems, activity)
+        val childItemAdapter = OutfitPickerChildAdapter(collection.clothingItems, activity, collection.id)
         holder.childRecyclerView.layoutManager = layoutManager
         holder.childRecyclerView.adapter = childItemAdapter
         holder.childRecyclerView.setRecycledViewPool(viewPool)
 
         holder.itemView.setOnClickListener {
             val intent = Intent(holder.itemView.context, CalendarOutfitSetDate::class.java)
+            intent.putExtra("outfit_id", collection.id)
             startActivityForResult(activity, intent, CALENDAR_DATE_REQUEST_CODE, null)
         }
     }
 
     override fun getItemCount(): Int {
         return this.data.size
+    }
+
+    fun setData(newData: ArrayList<Outfit>) {
+        data.clear()
+        data = newData
+        notifyDataSetChanged()
     }
 
     inner class ViewHolder(itemView : View) : RecyclerView.ViewHolder(itemView){
