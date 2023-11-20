@@ -12,9 +12,8 @@ import com.closeted.closet.ClothingAdapter
 import com.closeted.closet.EditMode
 
 
-class AddClothingAdapter (private val data: ArrayList<Closet>): RecyclerView.Adapter<ClosetViewHolder>() {
+class AddClothingAdapter (private val data: ArrayList<Closet>, private val selectedList: ArrayList<String>): RecyclerView.Adapter<ClosetViewHolder>() {
     private val viewPool = RecyclerView.RecycledViewPool()
-    private var selectedList:ArrayList<String> = ArrayList()
     private var childItemAdapter: ClothingAdapter? = null
 
     init {

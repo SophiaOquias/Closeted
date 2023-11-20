@@ -299,14 +299,12 @@ class FirebaseReferences {
         }
     }
 
-    suspend fun insertOutfit(clothingList: ArrayList<Clothing>): String {
+    suspend fun insertOutfit(clothingIds: ArrayList<String>): String {
         return withContext(Dispatchers.IO) {
             val db = Firebase.firestore
 
             try {
                 val outfitRef = db.collection(OUTFITS_COLLECTION).document()
-
-                val clothingIds = clothingList.map { it.id }
 
                 outfitRef.set(
                     hashMapOf(
@@ -324,6 +322,7 @@ class FirebaseReferences {
             }
         }
     }
+
 
     suspend fun getAllOutfits(): ArrayList<Outfit> {
         return withContext(Dispatchers.IO) {
