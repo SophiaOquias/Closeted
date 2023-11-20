@@ -16,7 +16,7 @@ public class ClosetAdapter (private val data: ArrayList<Closet>): RecyclerView.A
     init {
         // Initialize the child adapter here (if needed)
         // For example, you can set it as non-editable initially
-        this.childItemAdapter = ClothingAdapter(ArrayList(), false, this.editMode)
+        this.childItemAdapter = ClothingAdapter(ArrayList(), this.editMode)
     }
 
     override fun onCreateViewHolder(@NonNull parent: ViewGroup, viewType: Int): ClosetViewHolder {
@@ -63,7 +63,7 @@ public class ClosetAdapter (private val data: ArrayList<Closet>): RecyclerView.A
         //layoutManager.initialPrefetchItemCount = parentItem.clothing.size
         layoutManager.initialPrefetchItemCount = clothesNotInLaundry.size
         val clothesNotInLaundryList = ArrayList(clothesNotInLaundry)
-        this.childItemAdapter = ClothingAdapter(clothesNotInLaundryList, false, this.editMode)
+        this.childItemAdapter = ClothingAdapter(clothesNotInLaundryList, this.editMode)
 
         holder.childRecyclerView.layoutManager = layoutManager
         holder.childRecyclerView.adapter = childItemAdapter

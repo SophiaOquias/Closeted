@@ -10,7 +10,7 @@ import android.widget.ImageView
 import androidx.recyclerview.widget.RecyclerView
 import com.closeted.R
 
-class ClothingAdapter(private val data: ArrayList<Clothing>, private val laundryView: Boolean, private var editMode: EditMode): RecyclerView.Adapter<ClothingViewHolder>() {
+class ClothingAdapter(private val data: ArrayList<Clothing>, private var editMode: EditMode): RecyclerView.Adapter<ClothingViewHolder>() {
     private var checkBool = false
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ClothingViewHolder {

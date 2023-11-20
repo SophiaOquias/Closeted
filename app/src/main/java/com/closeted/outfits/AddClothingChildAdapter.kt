@@ -9,6 +9,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.closeted.R
 import com.closeted.closet.Clothing
 import com.closeted.closet.ClothingViewHolder
+import com.closeted.closet.EditMode
 import com.closeted.closet.OpenClothingItem
 
 class AddClothingChildAdapter(private val data: ArrayList<Clothing>, private val laundryView: Boolean): RecyclerView.Adapter<ClothingViewHolder>() {
@@ -26,7 +27,7 @@ class AddClothingChildAdapter(private val data: ArrayList<Clothing>, private val
             return
         }
 
-        holder.bindData(data[position], laundryView)
+        holder.bindData(data[position], EditMode.SELECT)
 
         val xBtn = holder.itemView.findViewById<ImageButton>(R.id.trashButton)
         if(xBtn.isEnabled){
