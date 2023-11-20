@@ -13,7 +13,6 @@ import com.closeted.closet.EditMode
 import com.closeted.closet.OpenClothingItem
 
 class AddClothingChildAdapter(private val data: ArrayList<Clothing>, private val laundryView: Boolean): RecyclerView.Adapter<ClothingViewHolder>() {
-    private var checkBool = false
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ClothingViewHolder {
         val inflater = LayoutInflater.from(parent.context)
