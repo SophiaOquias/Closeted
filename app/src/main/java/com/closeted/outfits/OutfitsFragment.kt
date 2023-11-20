@@ -68,61 +68,13 @@ class OutfitsFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         val btn = view.findViewById<ImageButton>(R.id.addOutfit)
-        val closetAdapter = ClosetAdapter(closetData)
-        val outfitAdapter = OutfitParentAdapter(outfitData)
-        val addOutfitButton = view.findViewById<Button>(R.id.selectClothingforOutfit)
-        val confirmButton = view.findViewById<Button>(R.id.addClothesConfirmBtn)
 
         btn.setOnClickListener {
             val intent = Intent(view.context, AddClothingActivity::class.java)
+            intent.putExtra("outfit_id", "")
             this.startActivity(intent)
-
-          /*  val isSelectMode = !closetAdapter.selectMode
-            for (i in closetData.indices) {
-                for (j in closetData[i].clothing.indices) {
-                    closetData[i].clothing[j].selectMode = isSelectMode
-                }
-            }
-
-            addOutfitButton?.let {
-                it.visibility =
-                    if (closetData.any { it.clothing.any { clothing -> clothing.selectAllMode || clothing.selectMode } }) View.VISIBLE else View.GONE
-            }
-
-            closetAdapter.selectMode = isSelectMode
-            closetAdapter.notifyDataSetChanged()*/
         }
     }
-
-
-    /*override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-
-        val btn = view.findViewById<ImageButton>(R.id.addOutfit)
-        val closetAdapter = ClosetAdapter(closetData)
-        val addOutfitButton = view.findViewById<Button>(R.id.selectClothingforOutfit)
-
-        btn.setOnClickListener {
-            val intent = Intent(view.context, AddClothingActivity::class.java)
-            this.startActivity(intent)
-
-            val isSelectMode = !closetAdapter.selectMode
-            // Iterate through the clothing items and set their selectMode based on isSelectMode.
-            for (i in closetData.indices) {
-                for (j in closetData[i].clothing.indices) {
-                    closetData[i].clothing[j].selectMode = isSelectMode
-                }
-            }
-
-            addOutfitButton?.let {
-                it.visibility = if (closetData.any { it.clothing.any { clothing -> clothing.selectAllMode || clothing.selectMode } }) View.VISIBLE else View.GONE
-            }
-
-            // Notify the adapter to refresh the RecyclerView.
-            closetAdapter.selectMode = isSelectMode
-            closetAdapter.notifyDataSetChanged()
-        }
-    }*/
 
     override fun onStart() {
         super.onStart()

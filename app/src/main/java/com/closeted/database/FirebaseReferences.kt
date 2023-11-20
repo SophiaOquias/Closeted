@@ -402,6 +402,35 @@ class FirebaseReferences {
         }
     }
 
+    suspend fun updateAddOutfit(outfitId: String, updatedClothingIds: ArrayList<String>) {
+        return withContext(Dispatchers.IO) {
+            val db = Firebase.firestore
+
+            try {
+                // Retrieve the existing list of clothing IDs
+                val existingClothingIds = db.collection(OUTFITS_COLLECTION)
+                    .document(outfitId)
+                    .get()
+                    .await()
+                    .get(OUTFIT_CLOTHING_LIST) as? ArrayList<String> ?: ArrayList()
+
+                // Append the new clothing IDs to the existing list
+                existingClothingIds.addAll(updatedClothingIds)
+
+                // Update the outfit document with the new clothing list
+                db.collection(OUTFITS_COLLECTION).document(outfitId)
+                    .update(OUTFIT_CLOTHING_LIST, existingClothingIds).await()
+
+                Log.d(TAG, "Outfit with ID $outfitId updated successfully")
+            } catch (e: Exception) {
+                // Handle exceptions (e.g., FirestoreException)
+                Log.e(TAG, "Error updating outfit document: $e")
+                throw e
+            }
+        }
+    }
+
+
     suspend fun deleteOutfitById(outfitId: String) {
         return withContext(Dispatchers.IO) {
             val db = Firebase.firestore
@@ -417,14 +446,11 @@ class FirebaseReferences {
         }
     }
 
-    suspend fun updateOutfit(outfitId: String, updatedClothingList: ArrayList<Clothing>) {
+    suspend fun updateOutfit(outfitId: String, updatedClothingIds: ArrayList<String>) {
         return withContext(Dispatchers.IO) {
             val db = Firebase.firestore
 
             try {
-                // Extract the IDs from the updatedClothingList
-                val updatedClothingIds = updatedClothingList.map { it.id }
-
                 // Update the outfit document with the new clothing list
                 db.collection(OUTFITS_COLLECTION).document(outfitId)
                     .update(OUTFIT_CLOTHING_LIST, updatedClothingIds).await()

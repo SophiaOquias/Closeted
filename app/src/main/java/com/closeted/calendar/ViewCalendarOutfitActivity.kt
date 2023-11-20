@@ -1,6 +1,7 @@
 package com.closeted.calendar
 
 import android.app.DatePickerDialog
+import android.content.Intent
 import android.graphics.Color
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -14,6 +15,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.closeted.R
 import com.closeted.closet.Clothing
 import com.closeted.database.FirebaseReferences
+import com.closeted.outfits.AddClothingActivity
 import com.closeted.outfits.Outfit
 import com.closeted.outfits.ViewOutfitAdapter
 import com.google.android.material.floatingactionbutton.FloatingActionButton
@@ -34,6 +36,9 @@ class ViewCalendarOutfitActivity : AppCompatActivity() {
     private lateinit var outfit: Outfit
     private lateinit var currentDate: Timestamp
     private lateinit var newDate: Timestamp
+    private var initialCount = 0
+    private lateinit var calendarId: String
+    private lateinit var outfitId: String
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_calendar_view_outfit)
@@ -45,10 +50,8 @@ class ViewCalendarOutfitActivity : AppCompatActivity() {
         val deleteButton = findViewById<ImageButton>(R.id.viewDeleteBtn)
 
         clothingList = ArrayList()
-        val calendarId = intent.getStringExtra("calendar_id")!!
-        val outfitId = intent.getStringExtra("outfit_id")!!
-
-        var initialCount = 0
+        calendarId = intent.getStringExtra("calendar_id")!!
+        outfitId = intent.getStringExtra("outfit_id")!!
 
         lifecycleScope.launch {
             val calendarJob = async { currentCalendar = firebase.getCalendarById(calendarId)!! }
@@ -57,12 +60,6 @@ class ViewCalendarOutfitActivity : AppCompatActivity() {
             currentDate = currentCalendar.date
             newDate = currentDate
             dateTv.text = formatTimestampToString(currentDate)
-
-            val outfitJob = async {outfit = firebase.getOutfitById(currentCalendar.outfit.id)!!}
-            outfitJob.await()
-
-            adapter.setData(outfit.clothingItems)
-            initialCount = outfit.clothingItems.size
         }
 
         this.recyclerView = findViewById(R.id.recyclerView)
@@ -73,6 +70,12 @@ class ViewCalendarOutfitActivity : AppCompatActivity() {
             LinearLayoutManager.HORIZONTAL,
             false
         )
+
+        addButton.setOnClickListener {
+            val addIntent = Intent(this, AddClothingActivity::class.java)
+            addIntent.putExtra("outfit_id", outfitId)
+            this.startActivity(addIntent)
+        }
 
         editButton.setOnClickListener {
             // Toggle the edit mode flag
@@ -106,7 +109,7 @@ class ViewCalendarOutfitActivity : AppCompatActivity() {
 
             if(initialCount != clothingList.size) {
                 lifecycleScope.launch {
-                    firebase.updateOutfit(outfitId, clothingList)
+                    firebase.updateOutfit(outfitId, ArrayList(clothingList.map { it.id }))
                 }
             }
 
@@ -164,5 +167,16 @@ class ViewCalendarOutfitActivity : AppCompatActivity() {
             day
         )
         datePickerDialog.show()
+    }
+
+    override fun onResume() {
+        super.onResume()
+
+        lifecycleScope.launch {
+            val asyncJob = async {outfit = firebase.getOutfitById(outfitId)!!}
+            asyncJob.await()
+            adapter.setData(outfit.clothingItems)
+            initialCount = outfit.clothingItems.size
+        }
     }
 }

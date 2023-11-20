@@ -33,13 +33,23 @@ class AddClothingActivity : AppCompatActivity() {
         closetRecyclerViewItem.layoutManager = layoutManager
 
         val confirmBtn = findViewById<Button>(R.id.addClothesConfirmBtn)
+        val outfitId = intent.getStringExtra("outfit_id")!!
 
         confirmBtn.setOnClickListener {
             if(selectedList.isNotEmpty()) {
                 lifecycleScope.launch {
-                    val asyncJob = async { firebase.insertOutfit(selectedList) }
-                    asyncJob.await()
-                    finish()
+                    // check if add operation
+                    if(outfitId.isEmpty()) {
+                        val asyncJob = async { firebase.insertOutfit(selectedList) }
+                        asyncJob.await()
+                        finish()
+                    }
+                    // else is edit
+                    else {
+                        val asyncJob = async { firebase.updateAddOutfit(outfitId, selectedList) }
+                        asyncJob.await()
+                        finish()
+                    }
                 }
             }
         }

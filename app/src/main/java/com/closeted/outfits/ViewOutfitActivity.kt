@@ -1,5 +1,6 @@
 package com.closeted.outfits
 
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
@@ -24,22 +25,13 @@ class ViewOutfitActivity : AppCompatActivity() {
     private lateinit var outfitId: String
     private val firebase: FirebaseReferences = FirebaseReferences()
     private lateinit var outfit: Outfit
+    private var initialCount = 0
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_view_outfit)
 
         clothingList = ArrayList()
         outfitId = intent.getStringExtra("outfit_id")!!
-
-        var initialCount = 0
-
-        lifecycleScope.launch {
-            val asyncJob = async {outfit = firebase.getOutfitById(outfitId)!!}
-            asyncJob.await()
-            adapter.setData(outfit.clothingItems)
-            initialCount = outfit.clothingItems.size
-        }
-
 
         this.recyclerView = findViewById(R.id.recyclerView)
         this.adapter = ViewOutfitAdapter(clothingList, outfitId)
@@ -54,6 +46,12 @@ class ViewOutfitActivity : AppCompatActivity() {
         val confirmButton = findViewById<Button>(R.id.viewConfirmBtn)
         val addButton = findViewById<FloatingActionButton>(R.id.viewAddBtn)
         val deleteButton = findViewById<ImageButton>(R.id.viewDeleteBtn)
+
+        addButton.setOnClickListener {
+            val addIntent = Intent(this, AddClothingActivity::class.java)
+            addIntent.putExtra("outfit_id", outfitId)
+            this.startActivity(addIntent)
+        }
 
         editButton.setOnClickListener {
             // Toggle the edit mode flag
@@ -81,7 +79,7 @@ class ViewOutfitActivity : AppCompatActivity() {
 
             if(initialCount != clothingList.size) {
                 lifecycleScope.launch {
-                    firebase.updateOutfit(outfitId, clothingList)
+                    firebase.updateOutfit(outfitId, ArrayList(clothingList.map { it.id }))
                 }
             }
 
@@ -99,6 +97,17 @@ class ViewOutfitActivity : AppCompatActivity() {
                 asyncJob.await()
                 finish()
             }
+        }
+    }
+
+    override fun onResume() {
+        super.onResume()
+
+        lifecycleScope.launch {
+            val asyncJob = async {outfit = firebase.getOutfitById(outfitId)!!}
+            asyncJob.await()
+            adapter.setData(outfit.clothingItems)
+            initialCount = outfit.clothingItems.size
         }
     }
 
