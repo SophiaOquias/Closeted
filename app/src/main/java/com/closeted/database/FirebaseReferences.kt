@@ -582,4 +582,23 @@ class FirebaseReferences {
             }
         }
     }
+
+    suspend fun updateCalendarDate(calendarId: String, newDate: Timestamp) {
+        return withContext(Dispatchers.IO) {
+            val db = Firebase.firestore
+
+            try {
+                val calendarRef = db.collection(CALENDAR_COLLECTION).document(calendarId)
+
+                // Update the date field in the calendar document
+                calendarRef.update(CALENDAR_DATE, newDate).await()
+
+                Log.d(TAG, "Calendar date updated successfully")
+            } catch (e: Exception) {
+                // Handle exceptions (e.g., FirestoreException)
+                Log.e(TAG, "Error updating calendar date: $e")
+                throw e
+            }
+        }
+    }
 }

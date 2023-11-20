@@ -33,6 +33,7 @@ class ViewCalendarOutfitActivity : AppCompatActivity() {
     private val firebase: FirebaseReferences = FirebaseReferences()
     private lateinit var outfit: Outfit
     private lateinit var currentDate: Timestamp
+    private lateinit var newDate: Timestamp
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_calendar_view_outfit)
@@ -54,6 +55,7 @@ class ViewCalendarOutfitActivity : AppCompatActivity() {
             calendarJob.await()
 
             currentDate = currentCalendar.date
+            newDate = currentDate
             dateTv.text = formatTimestampToString(currentDate)
 
             val outfitJob = async {outfit = firebase.getOutfitById(currentCalendar.outfit.id)!!}
@@ -115,6 +117,12 @@ class ViewCalendarOutfitActivity : AppCompatActivity() {
                     firebase.deleteCalendarEntryById(calendarId)
                 }
             }
+
+            if(currentDate != newDate) {
+                lifecycleScope.launch {
+                    firebase.updateCalendarDate(calendarId, newDate)
+                }
+            }
         }
 
         deleteButton.setOnClickListener {
@@ -149,7 +157,7 @@ class ViewCalendarOutfitActivity : AppCompatActivity() {
 
                 val timestampMillis = c.timeInMillis
 
-                currentDate = Timestamp(timestampMillis / 1000, 0)
+                newDate = Timestamp(timestampMillis / 1000, 0)
             },
             year,
             month,
