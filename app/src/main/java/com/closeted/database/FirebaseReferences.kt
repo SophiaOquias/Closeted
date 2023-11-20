@@ -228,9 +228,30 @@ class FirebaseReferences {
         val docRef = db.collection(CLOTHES_COLLECTION).document(c.id)
 
         try {
+            // Identify outfits that include the clothing to be deleted
+            val outfitsQuerySnapshot = db.collection(OUTFITS_COLLECTION)
+                .whereArrayContains(OUTFIT_CLOTHING_LIST, c.id)
+                .get()
+                .await()
+
+            // Update each outfit to remove the clothing ID
+            for (outfitDoc in outfitsQuerySnapshot.documents) {
+                val outfitId = outfitDoc.id
+                val existingClothingIds = outfitDoc.get(OUTFIT_CLOTHING_LIST) as? ArrayList<String> ?: ArrayList()
+
+                // Remove the clothing ID from the list
+                existingClothingIds.remove(c.id)
+
+                // Update the outfit document with the modified clothing list
+                db.collection(OUTFITS_COLLECTION).document(outfitId)
+                    .update(OUTFIT_CLOTHING_LIST, existingClothingIds).await()
+
+                Log.d(TAG, "Removed clothing ${c.id} from outfit $outfitId")
+            }
+
+            // Delete the clothing document
             docRef.delete().await()
             Log.d(TAG, "Document deleted successfully")
-            deleteImageFromStorage(c.imageUrl)
         } catch (e: Exception) {
             Log.d(TAG, "Error deleting document: $e")
             throw e
@@ -432,19 +453,35 @@ class FirebaseReferences {
 
 
     suspend fun deleteOutfitById(outfitId: String) {
-        return withContext(Dispatchers.IO) {
-            val db = Firebase.firestore
+        val db = Firebase.firestore
 
-            try {
-                // Delete the outfit document
-                db.collection(OUTFITS_COLLECTION).document(outfitId).delete().await()
-                Log.d(TAG, "Outfit with ID $outfitId deleted successfully")
-            } catch (e: Exception) {
-                Log.e(TAG, "Error deleting outfit document: $e")
-                throw e
+        try {
+            // Identify calendar entries that use the outfit to be deleted
+            val calendarQuerySnapshot = db.collection(CALENDAR_COLLECTION)
+                .whereEqualTo(CALENDAR_OUTFIT, outfitId)
+                .get()
+                .await()
+
+            // Delete each calendar entry
+            for (calendarDoc in calendarQuerySnapshot.documents) {
+                val calendarEntryId = calendarDoc.id
+
+                // Delete the calendar entry document
+                db.collection(CALENDAR_COLLECTION).document(calendarEntryId).delete().await()
+
+                Log.d(TAG, "Calendar entry with ID $calendarEntryId deleted successfully")
             }
+
+            // Delete the outfit document
+            db.collection(OUTFITS_COLLECTION).document(outfitId).delete().await()
+
+            Log.d(TAG, "Outfit with ID $outfitId deleted successfully")
+        } catch (e: Exception) {
+            Log.e(TAG, "Error deleting outfit document: $e")
+            throw e
         }
     }
+
 
     suspend fun updateOutfit(outfitId: String, updatedClothingIds: ArrayList<String>) {
         return withContext(Dispatchers.IO) {
