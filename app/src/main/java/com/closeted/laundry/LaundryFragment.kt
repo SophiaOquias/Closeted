@@ -1,11 +1,13 @@
 package com.closeted.laundry
 
+import android.annotation.SuppressLint
 import android.os.Bundle
+import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
-import androidx.fragment.app.Fragment
+import android.widget.ImageButton
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.closeted.R
@@ -25,9 +27,6 @@ class LaundryFragment : Fragment() {
     // TODO: Rename and change types of parameters
     private var param1: String? = null
     private var param2: String? = null
-//    private val closetData: ArrayList<Closet> = DataGenerator.generateClosetData()
-//    private val laundryData: ArrayList<Closet> = DataGenerator.getLaundry(closetData)
-    private val closetData: ArrayList<Closet> = ArrayList()
     private val laundryData: ArrayList<Closet> = ArrayList()
     private var isSelectAllMode = false
 
@@ -62,36 +61,12 @@ class LaundryFragment : Fragment() {
 
 
         selectAllButton.setOnClickListener(View.OnClickListener {
-            //laundryAdapter.toggleSelectMode()
-            //laundryAdapter.notifyDataSetChanged()
-           /* isSelectAllMode = !isSelectAllMode
-
-            // Iterate through the clothing items and set their selectMode based on isSelectMode.
-            for (i in laundryData.indices) {
-                for (j in laundryData[i].clothing.indices) {
-                    laundryData[i].clothing[j].selectAllMode = isSelectAllMode
-                    addToClosetButton.visibility = if (laundryData[i].clothing[j].selectAllMode || laundryData[i].clothing[j].selectMode) View.VISIBLE else View.GONE
-                }
-            }
-            laundryAdapter.notifyDataSetChanged()*/
+            laundryAdapter.toggleSelectAllMode()
 
         })
 
         selectButton.setOnClickListener(View.OnClickListener {
-
-           /* val isSelectMode = !laundryAdapter.selectMode
-
-            // Iterate through the clothing items and set their selectMode based on isSelectMode.
-            for (i in laundryData.indices) {
-                for (j in laundryData[i].clothing.indices) {
-                    laundryData[i].clothing[j].selectMode = isSelectMode
-                    addToClosetButton.visibility = if (laundryData[i].clothing[j].selectAllMode || laundryData[i].clothing[j].selectMode) View.VISIBLE else View.GONE
-                }
-            }
-
-            // Notify the adapter to refresh the RecyclerView.
-            laundryAdapter.selectMode = isSelectMode*/
-            laundryAdapter.notifyDataSetChanged()
+            laundryAdapter.toggleSelectMode()
         })
 
         return view

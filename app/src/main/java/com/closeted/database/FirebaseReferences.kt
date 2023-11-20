@@ -2,12 +2,14 @@ package com.closeted.database
 
 import android.net.Uri
 import android.util.Log
+import com.closeted.calendar.Calendar
 import com.closeted.closet.Closet
 import com.closeted.closet.ClosetAdapter
 import com.closeted.closet.Clothing
 import com.closeted.outfits.AddClothingAdapter
 import com.closeted.outfits.Outfit
 import com.google.firebase.Firebase
+import com.google.firebase.Timestamp
 import com.google.firebase.firestore.firestore
 import com.google.firebase.storage.storage
 import java.util.UUID
@@ -41,6 +43,11 @@ class FirebaseReferences {
 
         const val OUTFITS_COLLECTION = "outfits"
         const val OUTFIT_CLOTHING_LIST = "clothing_list"
+
+        const val CALENDAR_COLLECTION = "calendar"
+        const val CALENDAR_OUTFIT = "outfit"
+        const val CALENDAR_DATE = "timestamp"
+
     }
 
     fun getAllClothes(closet: ArrayList<Closet>, adapter: ClosetAdapter) {
@@ -292,6 +299,32 @@ class FirebaseReferences {
         }
     }
 
+    suspend fun insertOutfit(clothingList: ArrayList<Clothing>): String {
+        return withContext(Dispatchers.IO) {
+            val db = Firebase.firestore
+
+            try {
+                val outfitRef = db.collection(OUTFITS_COLLECTION).document()
+
+                val clothingIds = clothingList.map { it.id }
+
+                outfitRef.set(
+                    hashMapOf(
+                        OUTFIT_CLOTHING_LIST to clothingIds
+                    )
+                ).await()
+
+                Log.d(TAG, "Outfit inserted successfully with ID: ${outfitRef.id}")
+
+                outfitRef.id
+            } catch (e: Exception) {
+                // Handle exceptions (e.g., FirestoreException)
+                Log.e(TAG, "Error inserting outfit: $e")
+                throw e
+            }
+        }
+    }
+
     suspend fun getAllOutfits(): ArrayList<Outfit> {
         return withContext(Dispatchers.IO) {
             val db = Firebase.firestore
@@ -401,6 +434,169 @@ class FirebaseReferences {
             } catch (e: Exception) {
                 // Handle exceptions (e.g., FirestoreException)
                 Log.e(TAG, "Error updating outfit document: $e")
+                throw e
+            }
+        }
+    }
+
+    suspend fun insertCalendarEntry(calendar: Calendar): Calendar {
+        return withContext(Dispatchers.IO) {
+            val db = Firebase.firestore
+
+            try {
+                // Create a new calendar entry document and get its reference
+                val calendarRef = db.collection(CALENDAR_COLLECTION).document()
+
+                // Set the calendar entry document with the provided data
+                calendarRef.set(
+                    hashMapOf(
+                        CALENDAR_OUTFIT to calendar.outfit.id,
+                        CALENDAR_DATE to calendar.date
+                    )
+                ).await()
+
+                Log.d(TAG, "Calendar entry inserted successfully with ID: ${calendarRef.id}")
+
+                // Return a new Calendar object with the document ID
+                Calendar(calendarRef.id, calendar.outfit, calendar.date)
+            } catch (e: Exception) {
+                // Handle exceptions (e.g., FirestoreException)
+                Log.e(TAG, "Error inserting calendar entry: $e")
+                throw e
+            }
+        }
+    }
+
+    suspend fun getAllCalendarEntries(): ArrayList<Calendar> {
+        return withContext(Dispatchers.IO) {
+            val db = Firebase.firestore
+
+            try {
+                val currentTime = Timestamp.now()
+
+                val calendarQuerySnapshot = db.collection(CALENDAR_COLLECTION)
+                    .whereGreaterThanOrEqualTo(CALENDAR_DATE, currentTime)
+                    .get()
+                    .await()
+
+                Log.d(TAG, "Queried ${calendarQuerySnapshot.size()} future calendar entries")
+
+                // Extract calendar entry data from the documents
+                val calendarList = calendarQuerySnapshot.documents.map { calendarDoc ->
+                    val calendarId = calendarDoc.id
+                    val outfitId = calendarDoc.getString(CALENDAR_OUTFIT) ?: ""
+                    val date = calendarDoc.getTimestamp(CALENDAR_DATE)!!
+                    val outfit = getOutfitById(outfitId)!!
+
+                    Calendar(calendarId, outfit, date)
+                } as ArrayList<Calendar>
+
+                // Sort the list by date
+                calendarList.sortBy { it.date.seconds }
+
+                return@withContext calendarList
+            } catch (e: Exception) {
+                // Handle exceptions (e.g., FirestoreException)
+                Log.e(TAG, "Error getting future calendar entries: $e")
+                throw e
+            }
+        }
+    }
+
+    suspend fun getHistoricOutfits(): ArrayList<Calendar> {
+        return withContext(Dispatchers.IO) {
+            val db = Firebase.firestore
+
+            try {
+                val currentTime = Timestamp.now()
+
+                val calendarQuerySnapshot = db.collection(CALENDAR_COLLECTION)
+                    .whereLessThan(CALENDAR_DATE, currentTime)
+                    .get()
+                    .await()
+
+                Log.d(TAG, "Queried ${calendarQuerySnapshot.size()} past calendar entries")
+
+                // Extract calendar entry data from the documents
+                val calendarList = calendarQuerySnapshot.documents.map { calendarDoc ->
+                    val calendarId = calendarDoc.id
+                    val outfitId = calendarDoc.getString(CALENDAR_OUTFIT) ?: ""
+                    val date = calendarDoc.getTimestamp(CALENDAR_DATE)!!
+                    val outfit = getOutfitById(outfitId)!!
+
+                    Calendar(calendarId, outfit, date)
+                } as ArrayList<Calendar>
+
+                // Sort the list by date
+                calendarList.sortBy { it.date.seconds }
+
+                return@withContext calendarList
+            } catch (e: Exception) {
+                // Handle exceptions (e.g., FirestoreException)
+                Log.e(TAG, "Error getting future calendar entries: $e")
+                throw e
+            }
+        }
+    }
+
+    suspend fun getCalendarById(calendarId: String): Calendar? {
+        return withContext(Dispatchers.IO) {
+            val db = Firebase.firestore
+
+            try {
+                val calendarDoc = db.collection(CALENDAR_COLLECTION)
+                    .document(calendarId)
+                    .get()
+                    .await()
+
+                if (calendarDoc.exists()) {
+                    val outfitId = calendarDoc.getString(CALENDAR_OUTFIT) ?: ""
+                    val date = calendarDoc.getTimestamp(CALENDAR_DATE)!!
+                    val outfit = getOutfitById(outfitId)!!
+
+                    return@withContext Calendar(calendarId, outfit, date)
+                } else {
+                    // Calendar entry with the specified ID does not exist
+                    return@withContext null
+                }
+            } catch (e: Exception) {
+                // Handle exceptions (e.g., FirestoreException)
+                Log.e(TAG, "Error getting calendar entry by ID: $e")
+                throw e
+            }
+        }
+    }
+
+    suspend fun deleteCalendarEntryById(calendarId: String) {
+        return withContext(Dispatchers.IO) {
+            val db = Firebase.firestore
+
+            try {
+                val calendarRef = db.collection(CALENDAR_COLLECTION).document(calendarId)
+                calendarRef.delete().await()
+                Log.d(TAG, "Calendar entry deleted successfully with ID: $calendarId")
+            } catch (e: Exception) {
+                // Handle exceptions (e.g., FirestoreException)
+                Log.e(TAG, "Error deleting calendar entry with ID $calendarId: $e")
+                throw e
+            }
+        }
+    }
+
+    suspend fun updateCalendarDate(calendarId: String, newDate: Timestamp) {
+        return withContext(Dispatchers.IO) {
+            val db = Firebase.firestore
+
+            try {
+                val calendarRef = db.collection(CALENDAR_COLLECTION).document(calendarId)
+
+                // Update the date field in the calendar document
+                calendarRef.update(CALENDAR_DATE, newDate).await()
+
+                Log.d(TAG, "Calendar date updated successfully")
+            } catch (e: Exception) {
+                // Handle exceptions (e.g., FirestoreException)
+                Log.e(TAG, "Error updating calendar date: $e")
                 throw e
             }
         }

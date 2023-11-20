@@ -12,20 +12,15 @@ import com.closeted.closet.ClothingAdapter
 import com.closeted.closet.EditMode
 
 
-public class AddClothingAdapter (private val data: ArrayList<Closet>): RecyclerView.Adapter<ClosetViewHolder>() {
+class AddClothingAdapter (private val data: ArrayList<Closet>): RecyclerView.Adapter<ClosetViewHolder>() {
     private val viewPool = RecyclerView.RecycledViewPool()
-    var isEditMode: Boolean = false
-    var selectMode: Boolean = false
-    var editMode: EditMode = EditMode.NORMAL
     private var selectedList:ArrayList<String> = ArrayList()
-
     private var childItemAdapter: ClothingAdapter? = null
 
     init {
         // Initialize the child adapter here (if needed)
         // For example, you can set it as non-editable initially
-       // childItemAdapter = ClothingAdapter(ArrayList(), false)
-        childItemAdapter = ClothingAdapter(ArrayList(), false, this.editMode)
+        childItemAdapter = ClothingAdapter(ArrayList(), EditMode.NORMAL)
     }
 
     override fun onCreateViewHolder(@NonNull parent: ViewGroup, viewType: Int): ClosetViewHolder {
@@ -78,21 +73,6 @@ public class AddClothingAdapter (private val data: ArrayList<Closet>): RecyclerV
         holder.childRecyclerView.setRecycledViewPool(viewPool)
 
     }
-
-
-    /*fun toggleEditMode() {
-        isEditMode = !isEditMode
-        if(isEditMode){
-            for(i in data.indices){
-                for(j in data[i].clothing.indices){
-                    if(data[i].clothing[j].laundry == false){
-                        data[i].clothing[j].isEditMode = !data[i].clothing[j].isEditMode
-                    }
-                }
-            }
-        }
-        notifyDataSetChanged()
-    }*/
 
     override fun getItemCount(): Int {
         return data.size

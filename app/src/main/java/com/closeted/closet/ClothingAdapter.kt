@@ -10,7 +10,7 @@ import android.widget.ImageView
 import androidx.recyclerview.widget.RecyclerView
 import com.closeted.R
 
-class ClothingAdapter(private val data: ArrayList<Clothing>, private val laundryView: Boolean, private var editMode: EditMode): RecyclerView.Adapter<ClothingViewHolder>() {
+class ClothingAdapter(private val data: ArrayList<Clothing>, private var editMode: EditMode): RecyclerView.Adapter<ClothingViewHolder>() {
     private var checkBool = false
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ClothingViewHolder {
@@ -44,8 +44,11 @@ class ClothingAdapter(private val data: ArrayList<Clothing>, private val laundry
                 val clickedClothing = data[position]
                 val intent = Intent(context, OpenClothingItem::class.java)
 
-                intent.putExtra("image_url", clickedClothing.id)
+                intent.putExtra("id", clickedClothing.id)
+                intent.putExtra("image_url", clickedClothing.imageUrl)
                 intent.putExtra("clothing_type", clickedClothing.type)
+                intent.putExtra("notes", clickedClothing.notes)
+                intent.putExtra("laundry", clickedClothing.laundry)
 
                 context.startActivity(intent)
             }
