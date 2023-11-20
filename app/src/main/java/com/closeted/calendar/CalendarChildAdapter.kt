@@ -11,7 +11,7 @@ import com.closeted.closet.Clothing
 import com.closeted.outfits.ViewOutfitActivity
 import com.squareup.picasso.Picasso
 
-class CalendarChildAdapter(private val data: List<Clothing>) : RecyclerView.Adapter<CalendarChildAdapter.ViewHolder>() {
+class CalendarChildAdapter(private val data: List<Clothing>, private val calendarId: String, private val outfitId: String) : RecyclerView.Adapter<CalendarChildAdapter.ViewHolder>() {
     inner class ViewHolder(itemView : View) : RecyclerView.ViewHolder(itemView){
         private val imageView: ImageView = itemView.findViewById(R.id.calendarClothingIv)
         fun bind(childItem: Clothing) {
@@ -36,6 +36,8 @@ class CalendarChildAdapter(private val data: List<Clothing>) : RecyclerView.Adap
 
         holder.itemView.setOnClickListener {
             val intent = Intent(holder.itemView.context, ViewCalendarOutfitActivity::class.java)
+            intent.putExtra("calendar_id", calendarId)
+            intent.putExtra("outfit_id", outfitId)
             holder.itemView.context.startActivity(intent)
         }
     }

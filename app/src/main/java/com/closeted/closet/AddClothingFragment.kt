@@ -14,6 +14,7 @@ import android.widget.Spinner
 import androidx.core.content.ContextCompat
 import android.Manifest
 import android.app.Activity.RESULT_OK
+import android.content.ContentValues.TAG
 import android.net.Uri
 import android.os.Environment
 import android.util.Log
@@ -30,6 +31,8 @@ import java.io.IOException
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
+import androidx.lifecycle.lifecycleScope
+import kotlinx.coroutines.launch
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -215,28 +218,38 @@ class AddClothingFragment : Fragment() {
             this.type = spinner.selectedItem.toString()
             this.notes = view.findViewById<EditText>(R.id.etNotes).text.toString()
 
-            firebase.uploadImageToFirebaseStorage(
-                currentPhotoUri,
-                requireContext(),
-                Clothing(
-                    currentPhotoUri.toString(),
-                    type,
-                    notes,
-                    false
-                )
-            )
+            // implement saveClothing here
 
-            val result = Bundle().apply {
-                putString("imageUri", currentPhotoUri.toString())
-                putString("type", type)
-                putString("notes", notes)
-                putBoolean("laundry", false)
+            lifecycleScope.launch {
+                try {
+                    // Call uploadImageToFirebaseStorage to get the image URL
+
+                    // Call saveClothing with the obtained information
+                    val documentId = firebase.saveClothing(
+                        Clothing(currentPhotoUri.toString(),
+                            type,
+                            notes,
+                            false
+                            ),
+                        currentPhotoUri
+                    )
+
+                    Log.d(TAG, "Document ID: $documentId")
+
+                } catch (e: Exception) {
+                    // Handle any exceptions
+                    Log.e(TAG, "Error processing clothing", e)
+                    Toast.makeText(
+                        requireContext(),
+                        "Error processing clothing",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
+
+                transaction.replace(R.id.frame, ClosetFragment())
+                transaction.addToBackStack(null)
+                transaction.commit()
             }
-            parentFragmentManager.setFragmentResult("addClothingResult", result)
-
-            transaction.replace(R.id.frame, ClosetFragment()) // Replace with your destination fragment
-            transaction.addToBackStack(null)
-            transaction.commit()
         })
 
         //Adding clothing types to the spinner (drop-down list)

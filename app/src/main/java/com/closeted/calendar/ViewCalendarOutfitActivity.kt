@@ -8,11 +8,18 @@ import android.widget.Button
 import android.widget.ImageButton
 import android.widget.TextView
 import androidx.core.view.isVisible
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.closeted.R
+import com.closeted.closet.Clothing
+import com.closeted.database.FirebaseReferences
+import com.closeted.outfits.Outfit
 import com.closeted.outfits.ViewOutfitAdapter
 import com.google.android.material.floatingactionbutton.FloatingActionButton
+import com.google.firebase.Timestamp
+import kotlinx.coroutines.async
+import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
@@ -21,30 +28,51 @@ class ViewCalendarOutfitActivity : AppCompatActivity() {
 
     private lateinit var recyclerView: RecyclerView
     private lateinit var adapter: ViewOutfitAdapter
+    private lateinit var clothingList: ArrayList<Clothing>
+    private lateinit var currentCalendar: com.closeted.calendar.Calendar
+    private val firebase: FirebaseReferences = FirebaseReferences()
+    private lateinit var outfit: Outfit
+    private lateinit var currentDate: Timestamp
+    private lateinit var newDate: Timestamp
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_calendar_view_outfit)
 
-        val imgList: ArrayList<Int> = ArrayList()
+        val editButton = findViewById<ImageButton>(R.id.viewEditBtn)
+        val confirmButton = findViewById<Button>(R.id.viewConfirmBtn)
+        val addButton = findViewById<FloatingActionButton>(R.id.viewAddBtn)
+        val dateTv = findViewById<TextView>(R.id.dateTv)
+        val deleteButton = findViewById<ImageButton>(R.id.viewDeleteBtn)
 
-        // fill sample data
-        repeat(10) {
-            imgList.add(R.drawable.temp_pic)
+        clothingList = ArrayList()
+        val calendarId = intent.getStringExtra("calendar_id")!!
+        val outfitId = intent.getStringExtra("outfit_id")!!
+
+        var initialCount = 0
+
+        lifecycleScope.launch {
+            val calendarJob = async { currentCalendar = firebase.getCalendarById(calendarId)!! }
+            calendarJob.await()
+
+            currentDate = currentCalendar.date
+            newDate = currentDate
+            dateTv.text = formatTimestampToString(currentDate)
+
+            val outfitJob = async {outfit = firebase.getOutfitById(currentCalendar.outfit.id)!!}
+            outfitJob.await()
+
+            adapter.setData(outfit.clothingItems)
+            initialCount = outfit.clothingItems.size
         }
 
         this.recyclerView = findViewById(R.id.recyclerView)
-        this.adapter = ViewOutfitAdapter(imgList)
+        this.adapter = ViewOutfitAdapter(clothingList, outfitId)
         this.recyclerView.adapter = adapter
         this.recyclerView.layoutManager = LinearLayoutManager(
             this,
             LinearLayoutManager.HORIZONTAL,
             false
         )
-
-        val editButton = findViewById<ImageButton>(R.id.viewEditBtn)
-        val confirmButton = findViewById<Button>(R.id.viewConfirmBtn)
-        val addButton = findViewById<FloatingActionButton>(R.id.viewAddBtn)
-        val dateTv = findViewById<TextView>(R.id.dateTv)
 
         editButton.setOnClickListener {
             // Toggle the edit mode flag
@@ -75,7 +103,41 @@ class ViewCalendarOutfitActivity : AppCompatActivity() {
             editButton.isVisible = true
             dateTv.setTextColor(Color.BLACK)
             dateTv.setOnClickListener(null)
+
+            if(initialCount != clothingList.size) {
+                lifecycleScope.launch {
+                    firebase.updateOutfit(outfitId, clothingList)
+                }
+            }
+
+            // if user deletes all clothes, outfit is deleted and calendar entry is deleted
+            if(clothingList.size == 0) {
+                lifecycleScope.launch {
+                    firebase.deleteOutfitById(outfitId)
+                    firebase.deleteCalendarEntryById(calendarId)
+                }
+            }
+
+            if(currentDate != newDate) {
+                lifecycleScope.launch {
+                    firebase.updateCalendarDate(calendarId, newDate)
+                }
+            }
         }
+
+        deleteButton.setOnClickListener {
+            lifecycleScope.launch {
+                val asyncJob = async { firebase.deleteCalendarEntryById(calendarId) }
+                asyncJob.await()
+                finish()
+            }
+        }
+    }
+
+    private fun formatTimestampToString(timestamp: Timestamp): String {
+        val dateFormat = SimpleDateFormat("MMMM dd, yyyy", Locale.getDefault())
+        val date = timestamp.toDate()
+        return dateFormat.format(date)
     }
 
     private fun setDate(dateTv: TextView) {
@@ -92,6 +154,10 @@ class ViewCalendarOutfitActivity : AppCompatActivity() {
                 val dateFormat = SimpleDateFormat("MMMM dd, yyyy", Locale.getDefault())
                 val formattedDate = dateFormat.format(c.time)
                 dateTv.text = formattedDate
+
+                val timestampMillis = c.timeInMillis
+
+                newDate = Timestamp(timestampMillis / 1000, 0)
             },
             year,
             month,

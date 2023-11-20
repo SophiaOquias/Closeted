@@ -85,31 +85,13 @@ class ClosetFragment : Fragment() {
                 if (closetAdapter.editMode == EditMode.SELECT || closetAdapter.editMode == EditMode.SELECT_ALL) View.VISIBLE else View.GONE
         })
 
-        firebase.getAllClothes(closetData, closetAdapter)
-
-        parentFragmentManager.setFragmentResultListener("addClothingResult", this) { _, result ->
-            val newItem = Clothing(
-                result.getString("imageUri")!!,
-                result.getString("type")!!,
-                result.getString("notes"),
-                result.getBoolean("laundry")
-            )
-
-            var isAppended = false
-            for(closet in closetData) {
-                if(closet.section == newItem.type) {
-                    isAppended = true
-                    closet.clothing.add(newItem)
-                }
-            }
-
-            if(!isAppended) {
-                closetData.add(Closet(arrayListOf(newItem), newItem.type))
-            }
-            closetAdapter.notifyDataSetChanged()
-        }
-
         return view
+    }
+
+    override fun onResume() {
+        super.onResume()
+
+        firebase.getAllClothes(closetData, closetAdapter)
     }
 
     companion object {

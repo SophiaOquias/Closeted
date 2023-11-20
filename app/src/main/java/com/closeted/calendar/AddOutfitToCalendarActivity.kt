@@ -4,16 +4,21 @@ import android.app.Activity
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.closeted.DataGenerator
 import com.closeted.R
+import com.closeted.database.FirebaseReferences
 import com.closeted.outfits.Outfit
+import kotlinx.coroutines.async
+import kotlinx.coroutines.launch
 
 class AddOutfitToCalendarActivity : AppCompatActivity() {
-//    private val outfitData: ArrayList<Outfit> = DataGenerator.generateOutfitData()
-    private val outfitData: ArrayList<Outfit> = ArrayList()
+    private var outfitData: ArrayList<Outfit> = ArrayList()
     private lateinit var outfitRecyclerViewItem: RecyclerView
+    private val firebase: FirebaseReferences = FirebaseReferences()
+    private lateinit var outfitAdapter: OutfitPickerAdapter
 
     companion object {
         private const val CALENDAR_DATE_REQUEST_CODE = 1
@@ -24,9 +29,15 @@ class AddOutfitToCalendarActivity : AppCompatActivity() {
 
         outfitRecyclerViewItem = findViewById(R.id.selectOutfitRecycler)
         val layoutManager = LinearLayoutManager(this)
-        val outfitAdapter = OutfitPickerAdapter(outfitData, this)
+        outfitAdapter = OutfitPickerAdapter(outfitData, this)
         outfitRecyclerViewItem.adapter = outfitAdapter
         outfitRecyclerViewItem.layoutManager = layoutManager
+
+        lifecycleScope.launch {
+            val asyncJob = async { outfitData = firebase.getAllOutfits() }
+            asyncJob.await()
+            outfitAdapter.setData(outfitData)
+        }
     }
 
     @Deprecated("Deprecated in Java")
