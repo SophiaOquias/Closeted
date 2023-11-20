@@ -292,6 +292,32 @@ class FirebaseReferences {
         }
     }
 
+    suspend fun insertOutfit(clothingList: ArrayList<Clothing>): String {
+        return withContext(Dispatchers.IO) {
+            val db = Firebase.firestore
+
+            try {
+                val outfitRef = db.collection(OUTFITS_COLLECTION).document()
+
+                val clothingIds = clothingList.map { it.id }
+
+                outfitRef.set(
+                    hashMapOf(
+                        OUTFIT_CLOTHING_LIST to clothingIds
+                    )
+                ).await()
+
+                Log.d(TAG, "Outfit inserted successfully with ID: ${outfitRef.id}")
+
+                outfitRef.id
+            } catch (e: Exception) {
+                // Handle exceptions (e.g., FirestoreException)
+                Log.e(TAG, "Error inserting outfit: $e")
+                throw e
+            }
+        }
+    }
+
     suspend fun getAllOutfits(): ArrayList<Outfit> {
         return withContext(Dispatchers.IO) {
             val db = Firebase.firestore
