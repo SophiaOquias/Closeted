@@ -17,6 +17,7 @@ public class AddClothingAdapter (private val data: ArrayList<Closet>): RecyclerV
     var isEditMode: Boolean = false
     var selectMode: Boolean = false
     var editMode: EditMode = EditMode.NORMAL
+    private var selectedList:ArrayList<String> = ArrayList()
 
     private var childItemAdapter: ClothingAdapter? = null
 
@@ -70,7 +71,7 @@ public class AddClothingAdapter (private val data: ArrayList<Closet>): RecyclerV
         //layoutManager.initialPrefetchItemCount = parentItem.clothing.size
         layoutManager.initialPrefetchItemCount = clothesNotInLaundry.size
         val clothesNotInLaundryList = ArrayList(clothesNotInLaundry)
-        val childItemAdapter = AddClothingChildAdapter(clothesNotInLaundryList, false)
+        val childItemAdapter = AddClothingChildAdapter(clothesNotInLaundryList, false, selectedList)
 
         holder.childRecyclerView.layoutManager = layoutManager
         holder.childRecyclerView.adapter = childItemAdapter
