@@ -10,8 +10,11 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.closeted.R
 import com.closeted.outfits.ViewOutfitActivity
+import com.google.firebase.Timestamp
+import java.text.SimpleDateFormat
+import java.util.Locale
 
-class CalendarParentAdapter(private val data: ArrayList<Calendar>): RecyclerView.Adapter<CalendarParentAdapter.ViewHolder>() {
+class CalendarParentAdapter(private var data: ArrayList<Calendar>): RecyclerView.Adapter<CalendarParentAdapter.ViewHolder>() {
     private val viewPool = RecyclerView.RecycledViewPool()
     inner class ViewHolder(itemView : View) : RecyclerView.ViewHolder(itemView){
         val dateTv: TextView = itemView.findViewById(R.id.calendarDateTv)
@@ -36,7 +39,7 @@ class CalendarParentAdapter(private val data: ArrayList<Calendar>): RecyclerView
             LinearLayoutManager.HORIZONTAL,
             false
         )
-        holder.dateTv.text = data[position].date.toString()
+        holder.dateTv.text = formatTimestampToString(data[position].date)
 
         val outfits = data[position].outfit
         layoutManager.initialPrefetchItemCount = outfits.clothingItems.size
@@ -50,5 +53,17 @@ class CalendarParentAdapter(private val data: ArrayList<Calendar>): RecyclerView
             val intent = Intent(holder.itemView.context, ViewCalendarOutfitActivity::class.java)
             holder.itemView.context.startActivity(intent)
         }
+    }
+
+    fun setData(newData: ArrayList<Calendar>) {
+        data.clear()
+        data = newData
+        notifyDataSetChanged()
+    }
+
+    fun formatTimestampToString(timestamp: Timestamp): String {
+        val dateFormat = SimpleDateFormat("MMMM dd, yyyy", Locale.getDefault())
+        val date = timestamp.toDate()
+        return dateFormat.format(date)
     }
 }

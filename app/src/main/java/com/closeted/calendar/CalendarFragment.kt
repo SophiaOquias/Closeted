@@ -7,11 +7,15 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageButton
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.closeted.DataGenerator
 import com.closeted.R
+import com.closeted.database.FirebaseReferences
 import com.closeted.outfits.AddClothingActivity
+import kotlinx.coroutines.async
+import kotlinx.coroutines.launch
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -27,8 +31,9 @@ class CalendarFragment : Fragment() {
     // TODO: Rename and change types of parameters
     private var param1: String? = null
     private var param2: String? = null
-//    private val calendarData: ArrayList<Calendar> = DataGenerator.generateCalendarData()
-    private val calendarData: ArrayList<Calendar> = ArrayList()
+    private var calendarData: ArrayList<Calendar> = ArrayList()
+    private val firebase: FirebaseReferences = FirebaseReferences()
+    private lateinit var closetAdapter: CalendarParentAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -47,9 +52,15 @@ class CalendarFragment : Fragment() {
         val view = inflater.inflate(R.layout.fragment_calendar, container, false)
         val closetRecyclerViewItem = view.findViewById<RecyclerView>(R.id.calendarParentRecycler)
         val layoutManager = LinearLayoutManager(requireContext())
-        val closetAdapter = CalendarParentAdapter(calendarData)
+        closetAdapter = CalendarParentAdapter(calendarData)
         closetRecyclerViewItem.adapter = closetAdapter
         closetRecyclerViewItem.layoutManager = layoutManager
+
+        lifecycleScope.launch {
+            val asyncJob = async { calendarData = firebase.getAllCalendarEntries() }
+            asyncJob.await()
+            closetAdapter.setData(calendarData)
+        }
 
         return view
     }

@@ -465,4 +465,37 @@ class FirebaseReferences {
             }
         }
     }
+
+    suspend fun getAllCalendarEntries(): ArrayList<Calendar> {
+        return withContext(Dispatchers.IO) {
+            val db = Firebase.firestore
+
+            try {
+                val calendarQuerySnapshot = db.collection(CALENDAR_COLLECTION)
+                    .get()
+                    .await()
+
+                Log.d(TAG, "Queried ${calendarQuerySnapshot.size()} calendar entries")
+
+                // Extract calendar entry data from the documents
+                val calendarList = calendarQuerySnapshot.documents.map { calendarDoc ->
+                    val calendarId = calendarDoc.id
+                    val outfitId = calendarDoc.getString(CALENDAR_OUTFIT) ?: ""
+                    val date = calendarDoc.getTimestamp(CALENDAR_DATE)!!
+                    val outfit = getOutfitById(outfitId)!!
+
+                    Calendar(calendarId, outfit, date)
+                } as ArrayList<Calendar>
+
+                // Sort the list by date
+                calendarList.sortBy { it.date.seconds }
+
+                return@withContext calendarList
+            } catch (e: Exception) {
+                // Handle exceptions (e.g., FirestoreException)
+                Log.e(TAG, "Error getting calendar entries: $e")
+                throw e
+            }
+        }
+    }
 }
