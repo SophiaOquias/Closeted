@@ -8,11 +8,12 @@ import com.closeted.R
 import com.closeted.closet.Closet
 import com.closeted.closet.ClosetViewHolder
 import com.closeted.closet.ClothingAdapter
+import com.closeted.closet.EditMode
 
 
 public class LaundryAdapter (private val data: ArrayList<Closet>): RecyclerView.Adapter<ClosetViewHolder>() {
     private val viewPool = RecyclerView.RecycledViewPool()
-    var selectMode: Boolean = false
+    var editMode: EditMode = EditMode.NORMAL
 
     var childItemAdapter: ClothingAdapter? = null
 
@@ -43,7 +44,7 @@ public class LaundryAdapter (private val data: ArrayList<Closet>): RecyclerView.
         layoutManager.initialPrefetchItemCount = parentItem.clothing.size
 
         //val
-        childItemAdapter = ClothingAdapter(parentItem.clothing, true)
+        childItemAdapter = ClothingAdapter(parentItem.clothing, true, this.editMode)
         holder.childRecyclerView.layoutManager = layoutManager
         holder.childRecyclerView.adapter = childItemAdapter
         holder.childRecyclerView.setRecycledViewPool(viewPool)

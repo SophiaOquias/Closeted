@@ -33,8 +33,7 @@ class OutfitsFragment : Fragment() {
     // TODO: Rename and change types of parameters
     private var param1: String? = null
     private var param2: String? = null
-    private lateinit var outfitListRV: RecyclerView
-//    private val outfitData: ArrayList<Outfit> = DataGenerator.generateOutfitData()
+
     private var outfitData: ArrayList<Outfit> = ArrayList()
     private val firebase: FirebaseReferences = FirebaseReferences()
     private lateinit var outfitRecyclerViewItem: RecyclerView
@@ -78,7 +77,7 @@ class OutfitsFragment : Fragment() {
             val intent = Intent(view.context, AddClothingActivity::class.java)
             this.startActivity(intent)
 
-            val isSelectMode = !closetAdapter.selectMode
+          /*  val isSelectMode = !closetAdapter.selectMode
             for (i in closetData.indices) {
                 for (j in closetData[i].clothing.indices) {
                     closetData[i].clothing[j].selectMode = isSelectMode
@@ -91,7 +90,7 @@ class OutfitsFragment : Fragment() {
             }
 
             closetAdapter.selectMode = isSelectMode
-            closetAdapter.notifyDataSetChanged()
+            closetAdapter.notifyDataSetChanged()*/
         }
     }
 

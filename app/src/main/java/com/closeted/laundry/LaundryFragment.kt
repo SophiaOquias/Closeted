@@ -1,16 +1,13 @@
 package com.closeted.laundry
 
-import android.annotation.SuppressLint
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
-import android.widget.ImageButton
+import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.closeted.DataGenerator
 import com.closeted.R
 import com.closeted.closet.Closet
 
@@ -67,7 +64,7 @@ class LaundryFragment : Fragment() {
         selectAllButton.setOnClickListener(View.OnClickListener {
             //laundryAdapter.toggleSelectMode()
             //laundryAdapter.notifyDataSetChanged()
-            isSelectAllMode = !isSelectAllMode
+           /* isSelectAllMode = !isSelectAllMode
 
             // Iterate through the clothing items and set their selectMode based on isSelectMode.
             for (i in laundryData.indices) {
@@ -76,13 +73,13 @@ class LaundryFragment : Fragment() {
                     addToClosetButton.visibility = if (laundryData[i].clothing[j].selectAllMode || laundryData[i].clothing[j].selectMode) View.VISIBLE else View.GONE
                 }
             }
-            laundryAdapter.notifyDataSetChanged()
+            laundryAdapter.notifyDataSetChanged()*/
 
         })
 
         selectButton.setOnClickListener(View.OnClickListener {
 
-            val isSelectMode = !laundryAdapter.selectMode
+           /* val isSelectMode = !laundryAdapter.selectMode
 
             // Iterate through the clothing items and set their selectMode based on isSelectMode.
             for (i in laundryData.indices) {
@@ -93,7 +90,7 @@ class LaundryFragment : Fragment() {
             }
 
             // Notify the adapter to refresh the RecyclerView.
-            laundryAdapter.selectMode = isSelectMode
+            laundryAdapter.selectMode = isSelectMode*/
             laundryAdapter.notifyDataSetChanged()
         })
 

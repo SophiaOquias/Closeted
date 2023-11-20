@@ -9,19 +9,22 @@ import com.closeted.R
 import com.closeted.closet.Closet
 import com.closeted.closet.ClosetViewHolder
 import com.closeted.closet.ClothingAdapter
+import com.closeted.closet.EditMode
 
 
 public class AddClothingAdapter (private val data: ArrayList<Closet>): RecyclerView.Adapter<ClosetViewHolder>() {
     private val viewPool = RecyclerView.RecycledViewPool()
     var isEditMode: Boolean = false
     var selectMode: Boolean = false
+    var editMode: EditMode = EditMode.NORMAL
 
     private var childItemAdapter: ClothingAdapter? = null
 
     init {
         // Initialize the child adapter here (if needed)
         // For example, you can set it as non-editable initially
-        childItemAdapter = ClothingAdapter(ArrayList(), false)
+       // childItemAdapter = ClothingAdapter(ArrayList(), false)
+        childItemAdapter = ClothingAdapter(ArrayList(), false, this.editMode)
     }
 
     override fun onCreateViewHolder(@NonNull parent: ViewGroup, viewType: Int): ClosetViewHolder {
@@ -76,7 +79,7 @@ public class AddClothingAdapter (private val data: ArrayList<Closet>): RecyclerV
     }
 
 
-    fun toggleEditMode() {
+    /*fun toggleEditMode() {
         isEditMode = !isEditMode
         if(isEditMode){
             for(i in data.indices){
@@ -88,7 +91,7 @@ public class AddClothingAdapter (private val data: ArrayList<Closet>): RecyclerV
             }
         }
         notifyDataSetChanged()
-    }
+    }*/
 
     override fun getItemCount(): Int {
         return data.size
