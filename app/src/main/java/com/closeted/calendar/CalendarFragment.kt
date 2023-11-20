@@ -56,12 +56,6 @@ class CalendarFragment : Fragment() {
         closetRecyclerViewItem.adapter = closetAdapter
         closetRecyclerViewItem.layoutManager = layoutManager
 
-        lifecycleScope.launch {
-            val asyncJob = async { calendarData = firebase.getAllCalendarEntries() }
-            asyncJob.await()
-            closetAdapter.setData(calendarData)
-        }
-
         return view
     }
 
@@ -73,6 +67,16 @@ class CalendarFragment : Fragment() {
         btn.setOnClickListener {
             val intent = Intent(view.context, AddOutfitToCalendarActivity::class.java)
             this.startActivity(intent)
+        }
+    }
+
+    override fun onResume() {
+        super.onResume()
+
+        lifecycleScope.launch {
+            val asyncJob = async { calendarData = firebase.getAllCalendarEntries() }
+            asyncJob.await()
+            closetAdapter.setData(calendarData)
         }
     }
 

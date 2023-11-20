@@ -75,7 +75,6 @@ class CalendarOutfitSetDate : AppCompatActivity() {
             lifecycleScope.launch {
                 val asyncJob = async { firebase.insertCalendarEntry(newCalendarItem) }
                 asyncJob.await()
-
                 setResult(Activity.RESULT_OK, resultIntent)
                 finish()
             }
