@@ -11,7 +11,6 @@ class Calendar {
         private set
 
     var date: Timestamp
-        private set
 
     constructor(outfit: Outfit, date: Timestamp) {
         this.outfit = outfit

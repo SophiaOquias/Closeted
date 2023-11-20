@@ -498,4 +498,32 @@ class FirebaseReferences {
             }
         }
     }
+
+    suspend fun getCalendarById(calendarId: String): Calendar? {
+        return withContext(Dispatchers.IO) {
+            val db = Firebase.firestore
+
+            try {
+                val calendarDoc = db.collection(CALENDAR_COLLECTION)
+                    .document(calendarId)
+                    .get()
+                    .await()
+
+                if (calendarDoc.exists()) {
+                    val outfitId = calendarDoc.getString(CALENDAR_OUTFIT) ?: ""
+                    val date = calendarDoc.getTimestamp(CALENDAR_DATE)!!
+                    val outfit = getOutfitById(outfitId)!!
+
+                    return@withContext Calendar(calendarId, outfit, date)
+                } else {
+                    // Calendar entry with the specified ID does not exist
+                    return@withContext null
+                }
+            } catch (e: Exception) {
+                // Handle exceptions (e.g., FirestoreException)
+                Log.e(TAG, "Error getting calendar entry by ID: $e")
+                throw e
+            }
+        }
+    }
 }

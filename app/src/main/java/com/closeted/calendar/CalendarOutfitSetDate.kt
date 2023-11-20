@@ -71,7 +71,6 @@ class CalendarOutfitSetDate : AppCompatActivity() {
                 timestamp
             )
 
-            // TODO: insert operation to calendar collection in firebase
             lifecycleScope.launch {
                 val asyncJob = async { firebase.insertCalendarEntry(newCalendarItem) }
                 asyncJob.await()
