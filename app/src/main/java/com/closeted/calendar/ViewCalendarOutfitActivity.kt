@@ -47,6 +47,8 @@ class ViewCalendarOutfitActivity : AppCompatActivity() {
         val calendarId = intent.getStringExtra("calendar_id")!!
         val outfitId = intent.getStringExtra("outfit_id")!!
 
+        var initialCount = 0
+
         lifecycleScope.launch {
             val calendarJob = async { currentCalendar = firebase.getCalendarById(calendarId)!! }
             calendarJob.await()
@@ -58,6 +60,7 @@ class ViewCalendarOutfitActivity : AppCompatActivity() {
             outfitJob.await()
 
             adapter.setData(outfit.clothingItems)
+            initialCount = outfit.clothingItems.size
         }
 
         this.recyclerView = findViewById(R.id.recyclerView)
@@ -99,7 +102,19 @@ class ViewCalendarOutfitActivity : AppCompatActivity() {
             dateTv.setTextColor(Color.BLACK)
             dateTv.setOnClickListener(null)
 
-            // TODO: update calendar
+            if(initialCount != clothingList.size) {
+                lifecycleScope.launch {
+                    firebase.updateOutfit(outfitId, clothingList)
+                }
+            }
+
+            // if user deletes all clothes, outfit is deleted and calendar entry is deleted
+            if(clothingList.size == 0) {
+                lifecycleScope.launch {
+                    firebase.deleteOutfitById(outfitId)
+                    firebase.deleteCalendarEntryById(calendarId)
+                }
+            }
         }
 
         deleteButton.setOnClickListener {
