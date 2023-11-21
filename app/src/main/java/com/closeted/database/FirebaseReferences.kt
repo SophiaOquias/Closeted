@@ -324,6 +324,36 @@ class FirebaseReferences {
         }
     }
 
+    suspend fun setLaundry(clothingList: ArrayList<Clothing>, bool: Boolean) {
+        val db = Firebase.firestore
+
+        // Use a batch to update multiple documents atomically
+        val batch = db.batch()
+
+        try {
+            for (clothing in clothingList) {
+                val docRef = db.collection(CLOTHES_COLLECTION).document(clothing.id)
+
+                val updates = hashMapOf(
+                    CLOTHING_LAUNDRY to bool.toString()
+                )
+
+                // Update the document in the batch
+                batch.update(docRef, updates as Map<String, Any>)
+                Log.d(TAG, "Document ${clothing.id} added to batch for laundry update")
+            }
+
+            // Commit the batch to update all documents atomically
+            batch.commit().await()
+            Log.d(TAG, "Batch update successful")
+        } catch (e: Exception) {
+            // Handle exceptions (e.g., FirestoreException)
+            Log.e(TAG, "Error updating documents in batch: $e")
+            throw e
+        }
+    }
+
+
     suspend fun insertOutfit(clothingIds: ArrayList<String>): String {
         return withContext(Dispatchers.IO) {
             val db = Firebase.firestore
