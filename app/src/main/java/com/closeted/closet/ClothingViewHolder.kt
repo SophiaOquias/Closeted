@@ -27,7 +27,7 @@ class ClothingViewHolder(itemView:View): ViewHolder(itemView) {
         selectButton.visibility = if (editMode == EditMode.SELECT || editMode == EditMode.SELECT_ALL) View.VISIBLE else View.GONE
         selectButton.isClickable = (editMode == EditMode.SELECT || editMode == EditMode.SELECT_ALL)
         selectButton.isChecked = editMode == EditMode.SELECT_ALL
-        
+
     }
 }
 
