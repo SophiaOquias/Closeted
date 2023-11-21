@@ -20,11 +20,11 @@
             android:paddingBottom="10dp">
 
             <Button
-                android:id="@+id/selectAllButton"
+                android:id="@+id/clearAllButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:background="#00FFFFFF"
-                android:text="Select All"
+                android:text="Clear All"
                 android:textColor="@color/white"
                 android:textSize="16sp"
                 android:padding="0dp"
@@ -40,7 +40,7 @@
                 android:textSize="24sp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toStartOf="@+id/selectButton"
-                app:layout_constraintStart_toEndOf="@+id/selectAllButton"
+                app:layout_constraintStart_toEndOf="@+id/clearAllButton"
                 app:layout_constraintTop_toTopOf="parent" />
 
 

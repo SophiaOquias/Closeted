@@ -8,18 +8,19 @@ import androidx.recyclerview.widget.RecyclerView
 import com.closeted.R
 import com.closeted.closet.Closet
 import com.closeted.closet.ClosetViewHolder
+import com.closeted.closet.Clothing
 import com.closeted.closet.ClothingAdapter
 import com.closeted.closet.EditMode
 
 
-class AddClothingAdapter (private val data: ArrayList<Closet>, private val selectedList: ArrayList<String>): RecyclerView.Adapter<ClosetViewHolder>() {
+class AddClothingAdapter (private val data: ArrayList<Closet>, private val selectedList: ArrayList<String>): RecyclerView.Adapter<ClosetViewHolder>(),ClothingAdapter.ClothingSelectionListener {
     private val viewPool = RecyclerView.RecycledViewPool()
     private var childItemAdapter: ClothingAdapter? = null
 
     init {
         // Initialize the child adapter here (if needed)
         // For example, you can set it as non-editable initially
-        childItemAdapter = ClothingAdapter(ArrayList(), EditMode.NORMAL)
+        childItemAdapter = ClothingAdapter(ArrayList(), EditMode.NORMAL, this)
     }
 
     override fun onCreateViewHolder(@NonNull parent: ViewGroup, viewType: Int): ClosetViewHolder {
@@ -75,6 +76,10 @@ class AddClothingAdapter (private val data: ArrayList<Closet>, private val selec
 
     override fun getItemCount(): Int {
         return data.size
+    }
+
+    override fun onItemSelectionChanged(item: Clothing, isSelected: Boolean) {
+        TODO("Not yet implemented")
     }
 }
 

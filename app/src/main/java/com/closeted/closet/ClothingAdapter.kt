@@ -9,9 +9,15 @@ import android.widget.ImageButton
 import android.widget.ImageView
 import androidx.recyclerview.widget.RecyclerView
 import com.closeted.R
+import com.closeted.laundry.LaundryAdapter
 
-class ClothingAdapter(private val data: ArrayList<Clothing>, private var editMode: EditMode): RecyclerView.Adapter<ClothingViewHolder>() {
+class ClothingAdapter(private val data: ArrayList<Clothing>, private var editMode: EditMode, private val selectionListener: ClothingSelectionListener): RecyclerView.Adapter<ClothingViewHolder>() {
     private var checkBool = false
+
+    interface ClothingSelectionListener {
+        fun onItemSelectionChanged(item: Clothing, isSelected: Boolean)
+    }
+
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ClothingViewHolder {
         val inflater = LayoutInflater.from(parent.context)
@@ -34,8 +40,12 @@ class ClothingAdapter(private val data: ArrayList<Clothing>, private var editMod
         }
 
         val checkButton = holder.itemView.findViewById<CheckBox>(R.id.selectOption)
-        checkButton.visibility = if (this.editMode == EditMode.SELECT) View.VISIBLE else View.GONE
-        checkButton.isClickable = this.editMode == EditMode.SELECT
+        checkButton.visibility = if (this.editMode == EditMode.SELECT || this.editMode == EditMode.SELECT_ALL) View.VISIBLE else View.GONE
+        checkButton.isClickable = (this.editMode == EditMode.SELECT || this.editMode == EditMode.SELECT_ALL)
+
+        checkButton.setOnCheckedChangeListener { _, isChecked ->
+            selectionListener.onItemSelectionChanged(data[position], isChecked)
+        }
 
         val clothing = holder.itemView.findViewById<ImageView>(R.id.imageView)
         clothing.setOnClickListener {
@@ -64,7 +74,6 @@ class ClothingAdapter(private val data: ArrayList<Clothing>, private var editMod
         Log.d("ClothingAdapter", this.editMode.toString())
         notifyDataSetChanged()
     }
-
 
     override fun getItemCount(): Int {
         return data.size

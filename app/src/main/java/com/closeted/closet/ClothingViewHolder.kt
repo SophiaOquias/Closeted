@@ -14,7 +14,6 @@ class ClothingViewHolder(itemView:View): ViewHolder(itemView) {
     private val selectButton: CheckBox = itemView.findViewById(R.id.selectOption)
 
     fun bindData(clothing: Clothing,  editMode: EditMode) {
-//        img.setImageResource(clothing.imageId)
         Picasso.get().load(clothing.imageUrl).into(img)
         img.scaleType = ImageView.ScaleType.CENTER_CROP
 
@@ -23,8 +22,8 @@ class ClothingViewHolder(itemView:View): ViewHolder(itemView) {
         deleteButton.isEnabled = editMode == EditMode.DELETE
 
         selectButton.visibility = if (editMode == EditMode.SELECT || editMode == EditMode.SELECT_ALL) View.VISIBLE else View.GONE
-        selectButton.isClickable =  (editMode == EditMode.SELECT || editMode == EditMode.SELECT_ALL)
-        selectButton.isChecked =  editMode == EditMode.SELECT_ALL
+        selectButton.isClickable = (editMode == EditMode.SELECT || editMode == EditMode.SELECT_ALL)
+        selectButton.isChecked = editMode == EditMode.SELECT_ALL
 
     }
 }

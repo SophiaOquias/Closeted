@@ -8,6 +8,7 @@ import com.closeted.closet.ClosetAdapter
 import com.closeted.closet.Clothing
 import com.closeted.outfits.AddClothingAdapter
 import com.closeted.outfits.Outfit
+import com.closeted.laundry.LaundryAdapter
 import com.google.firebase.Firebase
 import com.google.firebase.Timestamp
 import com.google.firebase.firestore.firestore
@@ -121,7 +122,52 @@ class FirebaseReferences {
                 for(type in clothingTypes) {
                     val temp: ArrayList<Clothing> = ArrayList()
                     for(clothing in clothes) {
-                        if(clothing.type == type && !clothing.laundry) {
+                        if(clothing.type.equals(type)) {
+                            temp.add(clothing)
+                        }
+                    }
+                    if(temp.isNotEmpty()) {
+                        closet.add(Closet(temp, type))
+                    }
+                }
+                if(closet.isNotEmpty()) {
+                    adapter.notifyDataSetChanged()
+                }
+
+            }
+            .addOnFailureListener { exception ->
+                Log.d("TEST", "Error getting documents: $exception")
+            }
+
+    }
+
+    fun getAllLaundry(closet: ArrayList<Closet>, adapter: LaundryAdapter) {
+        val db = Firebase.firestore
+        val clothes: ArrayList<Clothing> = ArrayList()
+        closet.clear()
+
+        db.collection(CLOTHES_COLLECTION)
+            .get()
+            .addOnSuccessListener { result ->
+                for(document in result) {
+                    Log.d("TEST", "${document.id} => ${document.data}")
+                    val temp = Clothing(
+                        document.id,
+                        document.getString(CLOTHING_IMAGE)!!,
+                        document.getString(CLOTHING_TYPE)!!,
+                        document.getString(CLOTHING_NOTE),
+                        document.getString(CLOTHING_LAUNDRY).toBoolean()
+                    )
+                    if(temp.laundry) {
+                        clothes.add(temp)
+                    }
+                }
+
+                // separates clothes into clothing types
+                for(type in clothingTypes) {
+                    val temp: ArrayList<Clothing> = ArrayList()
+                    for(clothing in clothes) {
+                        if(clothing.type.equals(type)) {
                             temp.add(clothing)
                         }
                     }
@@ -278,6 +324,7 @@ class FirebaseReferences {
         }
     }
 
+    /*
     suspend fun setLaundry(id: String, bool: Boolean) {
         val db = Firebase.firestore
 
@@ -288,7 +335,6 @@ class FirebaseReferences {
             val updates = hashMapOf(
                 CLOTHING_LAUNDRY to bool.toString()
             )
-
             docRef.update(updates as Map<String, Any>).await()
 
             Log.d(TAG, "Document ${id} updated successfully")
@@ -298,6 +344,38 @@ class FirebaseReferences {
             throw e
         }
     }
+     */
+
+
+    suspend fun setLaundry(clothingList: ArrayList<Clothing>, bool: Boolean) {
+        val db = Firebase.firestore
+
+        // Use a batch to update multiple documents atomically
+        val batch = db.batch()
+
+        try {
+            for (clothing in clothingList) {
+                val docRef = db.collection(CLOTHES_COLLECTION).document(clothing.id)
+
+                val updates = hashMapOf(
+                    CLOTHING_LAUNDRY to bool.toString()
+                )
+
+                // Update the document in the batch
+                batch.update(docRef, updates as Map<String, Any>)
+                Log.d(TAG, "Document ${clothing.id} added to batch for laundry update")
+            }
+
+            // Commit the batch to update all documents atomically
+            batch.commit().await()
+            Log.d(TAG, "Batch update successful")
+        } catch (e: Exception) {
+            // Handle exceptions (e.g., FirestoreException)
+            Log.e(TAG, "Error updating documents in batch: $e")
+            throw e
+        }
+    }
+
 
     suspend fun insertOutfit(clothingIds: ArrayList<String>): String {
         return withContext(Dispatchers.IO) {

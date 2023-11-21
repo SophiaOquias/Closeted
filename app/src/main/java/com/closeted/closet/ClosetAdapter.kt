@@ -8,15 +8,16 @@ import androidx.recyclerview.widget.RecyclerView
 import com.closeted.R
 
 
-public class ClosetAdapter (private val data: ArrayList<Closet>): RecyclerView.Adapter<ClosetViewHolder>() {
+class ClosetAdapter (private val data: ArrayList<Closet>): RecyclerView.Adapter<ClosetViewHolder>(), ClothingAdapter.ClothingSelectionListener {
     private val viewPool = RecyclerView.RecycledViewPool()
     var editMode: EditMode = EditMode.NORMAL
     private var childItemAdapter: ClothingAdapter
+    private var selectedClothing: ArrayList<Clothing> = ArrayList()
 
     init {
         // Initialize the child adapter here (if needed)
         // For example, you can set it as non-editable initially
-        this.childItemAdapter = ClothingAdapter(ArrayList(), this.editMode)
+        this.childItemAdapter = ClothingAdapter(ArrayList(), this.editMode, this)
     }
 
     override fun onCreateViewHolder(@NonNull parent: ViewGroup, viewType: Int): ClosetViewHolder {
@@ -62,7 +63,7 @@ public class ClosetAdapter (private val data: ArrayList<Closet>): RecyclerView.A
         //layoutManager.initialPrefetchItemCount = parentItem.clothing.size
         layoutManager.initialPrefetchItemCount = clothesNotInLaundry.size
         val clothesNotInLaundryList = ArrayList(clothesNotInLaundry)
-        this.childItemAdapter = ClothingAdapter(clothesNotInLaundryList, this.editMode)
+        this.childItemAdapter = ClothingAdapter(clothesNotInLaundryList, this.editMode, this)
 
         holder.childRecyclerView.layoutManager = layoutManager
         holder.childRecyclerView.adapter = childItemAdapter
@@ -93,6 +94,23 @@ public class ClosetAdapter (private val data: ArrayList<Closet>): RecyclerView.A
 
         this.childItemAdapter.setEditMode(this.editMode)
         notifyDataSetChanged()
+    }
+
+    override fun onItemSelectionChanged(item: Clothing, isSelected: Boolean) {
+        if (isSelected) {
+            selectedClothing.add(item)
+        } else {
+            selectedClothing.remove(item)
+        }
+    }
+
+
+    fun getSelectedClothing(): ArrayList<Clothing> {
+        return selectedClothing
+    }
+
+    fun clearSelection() {
+        selectedClothing.clear()
     }
 
     override fun getItemCount(): Int {
