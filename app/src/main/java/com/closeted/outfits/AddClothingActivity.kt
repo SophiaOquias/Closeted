@@ -28,7 +28,7 @@ class AddClothingActivity : AppCompatActivity() {
         closetRecyclerViewItem = findViewById(R.id.addClothesRecycler)
 
         val layoutManager = LinearLayoutManager(this)
-        closetAdapter = AddClothingAdapter(closetData, selectedList)
+        closetAdapter = AddClothingAdapter(closetData, selectedList, lifecycleScope)
         closetRecyclerViewItem.adapter = closetAdapter
         closetRecyclerViewItem.layoutManager = layoutManager
 

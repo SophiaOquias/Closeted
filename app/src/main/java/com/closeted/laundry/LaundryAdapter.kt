@@ -1,4 +1,5 @@
 package com.closeted.laundry
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.annotation.NonNull
@@ -7,15 +8,18 @@ import androidx.recyclerview.widget.RecyclerView
 import com.closeted.R
 import com.closeted.closet.Closet
 import com.closeted.closet.ClosetViewHolder
+import com.closeted.closet.Clothing
 import com.closeted.closet.ClothingAdapter
 import com.closeted.closet.EditMode
+import kotlinx.coroutines.CoroutineScope
 
 
-class LaundryAdapter (private val data: ArrayList<Closet>): RecyclerView.Adapter<ClosetViewHolder>() {
+class LaundryAdapter (private val data: ArrayList<Closet>, private val coroutineScope: CoroutineScope): RecyclerView.Adapter<ClosetViewHolder>(), ClothingAdapter.ClothingSelectionListener {
     private val viewPool = RecyclerView.RecycledViewPool()
     var editMode: EditMode = EditMode.NORMAL
 
     var childItemAdapter: ClothingAdapter? = null
+    private var selectedClothing: ArrayList<Clothing> = ArrayList()
 
 
     override fun onCreateViewHolder(@NonNull parent: ViewGroup, viewType: Int): ClosetViewHolder {
@@ -44,7 +48,7 @@ class LaundryAdapter (private val data: ArrayList<Closet>): RecyclerView.Adapter
         layoutManager.initialPrefetchItemCount = parentItem.clothing.size
 
         //val
-        childItemAdapter = ClothingAdapter(parentItem.clothing, this.editMode)
+        childItemAdapter = ClothingAdapter(parentItem.clothing, this.editMode, this, coroutineScope)
         holder.childRecyclerView.layoutManager = layoutManager
         holder.childRecyclerView.adapter = childItemAdapter
         holder.childRecyclerView.setRecycledViewPool(viewPool)
@@ -74,6 +78,24 @@ class LaundryAdapter (private val data: ArrayList<Closet>): RecyclerView.Adapter
 
         // Set the edit mode for the child adapter if needed
         childItemAdapter?.setEditMode(this.editMode)
+    }
+
+    override fun onItemSelectionChanged(item: Clothing, isSelected: Boolean) {
+        if (isSelected) {
+            selectedClothing.add(item)
+        } else {
+            selectedClothing.remove(item)
+        }
+    }
+
+
+    fun getSelectedClothing(): ArrayList<Clothing> {
+        Log.d("selectedClothing", selectedClothing.size.toString())
+        return selectedClothing
+    }
+
+    fun clearSelection() {
+        selectedClothing.clear()
     }
 
     override fun getItemCount(): Int {
