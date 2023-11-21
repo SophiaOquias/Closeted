@@ -1,6 +1,7 @@
 package com.closeted.closet
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -12,6 +13,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.closeted.R
 import com.closeted.database.FirebaseReferences
+import kotlinx.coroutines.launch
 
 
 // TODO: Rename parameter arguments, choose names that match
@@ -85,6 +87,19 @@ class ClosetFragment : Fragment() {
                 if (closetAdapter.editMode == EditMode.SELECT || closetAdapter.editMode == EditMode.SELECT_ALL) View.VISIBLE else View.GONE
         })
 
+        addToLaundryButton.setOnClickListener {
+
+            val selectedClothing = closetAdapter.getSelectedClothing()
+
+            Log.d("CLOSET", "selected clothing: $selectedClothing")
+
+            lifecycleScope.launch {
+                firebase.setLaundry(selectedClothing, true)
+                removeClothingFromClosets(closetData, selectedClothing)
+                closetAdapter.notifyDataSetChanged()
+            }
+        }
+
         return view
     }
 
@@ -92,6 +107,21 @@ class ClosetFragment : Fragment() {
         super.onResume()
 
         firebase.getAllClothes(closetData, closetAdapter)
+    }
+
+    private fun removeClothingFromClosets(closets: ArrayList<Closet>, clothingToRemove: ArrayList<Clothing>) {
+        for (closet in closets) {
+            val updatedClothingList = ArrayList<Clothing>()
+
+            for (clothing in closet.clothing) {
+                if (!clothingToRemove.contains(clothing)) {
+                    updatedClothingList.add(clothing)
+                }
+            }
+
+            // Update the closet with the filtered list
+            closet.clothing = updatedClothingList
+        }
     }
 
     companion object {

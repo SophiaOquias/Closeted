@@ -13,9 +13,13 @@ import com.closeted.database.FirebaseReferences
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
-class ClothingAdapter(private val data: ArrayList<Clothing>, private var editMode: EditMode, private val coroutineScope: CoroutineScope): RecyclerView.Adapter<ClothingViewHolder>() {
+class ClothingAdapter(private val data: ArrayList<Clothing>, private var editMode: EditMode,private val selectionListener: ClothingSelectionListener,  private val coroutineScope: CoroutineScope): RecyclerView.Adapter<ClothingViewHolder>() {
     private var checkBool = false
     private var firebase: FirebaseReferences = FirebaseReferences()
+
+    interface ClothingSelectionListener {
+        fun onItemSelectionChanged(item: Clothing, isSelected: Boolean)
+    }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ClothingViewHolder {
         val inflater = LayoutInflater.from(parent.context)
@@ -42,6 +46,10 @@ class ClothingAdapter(private val data: ArrayList<Clothing>, private var editMod
         val checkButton = holder.itemView.findViewById<CheckBox>(R.id.selectOption)
         checkButton.visibility = if (this.editMode == EditMode.SELECT) View.VISIBLE else View.GONE
         checkButton.isClickable = this.editMode == EditMode.SELECT
+
+        checkButton.setOnCheckedChangeListener { _, isChecked ->
+            selectionListener.onItemSelectionChanged(data[position], isChecked)
+        }
 
         val clothing = holder.itemView.findViewById<ImageView>(R.id.imageView)
         clothing.setOnClickListener {
