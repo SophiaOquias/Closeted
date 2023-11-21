@@ -9,9 +9,10 @@ import com.closeted.closet.Closet
 import com.closeted.closet.ClosetViewHolder
 import com.closeted.closet.ClothingAdapter
 import com.closeted.closet.EditMode
+import kotlinx.coroutines.CoroutineScope
 
 
-class LaundryAdapter (private val data: ArrayList<Closet>): RecyclerView.Adapter<ClosetViewHolder>() {
+class LaundryAdapter (private val data: ArrayList<Closet>, private val coroutineScope: CoroutineScope): RecyclerView.Adapter<ClosetViewHolder>() {
     private val viewPool = RecyclerView.RecycledViewPool()
     var editMode: EditMode = EditMode.NORMAL
 
@@ -44,7 +45,7 @@ class LaundryAdapter (private val data: ArrayList<Closet>): RecyclerView.Adapter
         layoutManager.initialPrefetchItemCount = parentItem.clothing.size
 
         //val
-        childItemAdapter = ClothingAdapter(parentItem.clothing, this.editMode)
+        childItemAdapter = ClothingAdapter(parentItem.clothing, this.editMode, coroutineScope)
         holder.childRecyclerView.layoutManager = layoutManager
         holder.childRecyclerView.adapter = childItemAdapter
         holder.childRecyclerView.setRecycledViewPool(viewPool)

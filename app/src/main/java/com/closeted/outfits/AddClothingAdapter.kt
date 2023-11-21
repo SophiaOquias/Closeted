@@ -10,16 +10,17 @@ import com.closeted.closet.Closet
 import com.closeted.closet.ClosetViewHolder
 import com.closeted.closet.ClothingAdapter
 import com.closeted.closet.EditMode
+import kotlinx.coroutines.CoroutineScope
 
 
-class AddClothingAdapter (private val data: ArrayList<Closet>, private val selectedList: ArrayList<String>): RecyclerView.Adapter<ClosetViewHolder>() {
+class AddClothingAdapter (private val data: ArrayList<Closet>, private val selectedList: ArrayList<String>, private val coroutineScope: CoroutineScope): RecyclerView.Adapter<ClosetViewHolder>() {
     private val viewPool = RecyclerView.RecycledViewPool()
     private var childItemAdapter: ClothingAdapter? = null
 
     init {
         // Initialize the child adapter here (if needed)
         // For example, you can set it as non-editable initially
-        childItemAdapter = ClothingAdapter(ArrayList(), EditMode.NORMAL)
+        childItemAdapter = ClothingAdapter(ArrayList(), EditMode.NORMAL, coroutineScope)
     }
 
     override fun onCreateViewHolder(@NonNull parent: ViewGroup, viewType: Int): ClosetViewHolder {

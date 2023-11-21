@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.ImageButton
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.closeted.R
@@ -52,7 +53,7 @@ class ClosetFragment : Fragment() {
 
         val layoutManager = LinearLayoutManager(requireContext())
 
-        closetAdapter = ClosetAdapter(closetData)
+        closetAdapter = ClosetAdapter(closetData, lifecycleScope)
 
         closetRecyclerViewItem.adapter = closetAdapter
         closetRecyclerViewItem.layoutManager = layoutManager

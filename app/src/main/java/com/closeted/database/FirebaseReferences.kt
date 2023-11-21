@@ -80,7 +80,7 @@ class FirebaseReferences {
                 for(type in clothingTypes) {
                     val temp: ArrayList<Clothing> = ArrayList()
                     for(clothing in clothes) {
-                        if(clothing.type == type && !clothing.laundry) {
+                        if(clothing.type == type) {
                             temp.add(clothing)
                         }
                     }
@@ -116,16 +116,14 @@ class FirebaseReferences {
                         document.getString(CLOTHING_NOTE),
                         document.getString(CLOTHING_LAUNDRY).toBoolean()
                     )
-                    if(!temp.laundry) {
-                        clothes.add(temp)
-                    }
+                    clothes.add(temp)
                 }
 
                 // separates clothes into clothing types
                 for(type in clothingTypes) {
                     val temp: ArrayList<Clothing> = ArrayList()
                     for(clothing in clothes) {
-                        if(clothing.type == type && !clothing.laundry) {
+                        if(clothing.type == type) {
                             temp.add(clothing)
                         }
                     }
