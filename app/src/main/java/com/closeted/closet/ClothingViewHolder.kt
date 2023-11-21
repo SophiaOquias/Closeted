@@ -27,12 +27,7 @@ class ClothingViewHolder(itemView:View): ViewHolder(itemView) {
         selectButton.visibility = if (editMode == EditMode.SELECT || editMode == EditMode.SELECT_ALL) View.VISIBLE else View.GONE
         selectButton.isClickable = (editMode == EditMode.SELECT || editMode == EditMode.SELECT_ALL)
         selectButton.isChecked = editMode == EditMode.SELECT_ALL
-
-        if(clothing.laundry) {
-            val colorFilter = PorterDuffColorFilter(Color.DKGRAY, PorterDuff.Mode.MULTIPLY)
-            img.colorFilter = colorFilter
-        }
-
+        
     }
 }
 
