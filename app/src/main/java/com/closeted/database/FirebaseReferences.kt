@@ -171,7 +171,7 @@ class FirebaseReferences {
         }
     }
 
-    private suspend fun uploadImageToFirebaseStorage(imageUri: Uri): String {
+    suspend fun uploadImageToFirebaseStorage(imageUri: Uri): String {
         return withContext(Dispatchers.IO) {
             val storage = Firebase.storage
             val storageRef = storage.reference
@@ -194,7 +194,6 @@ class FirebaseReferences {
             }
         }
     }
-
 
     suspend fun saveClothing(c: Clothing, uri: Uri): String {
         return withContext(Dispatchers.IO) {

@@ -299,11 +299,11 @@ class AddClothingFragment : Fragment() {
 
         if(resultCode == RESULT_OK) {
             val selected: Uri = data!!.data!!
-            this.image = requireView().findViewById(R.id.editButton)
+            this.image = requireView().findViewById(R.id.clothingImage)
             this.image.setImageURI(selected)
         }
         else if (requestCode == takePictureLauncher.hashCode() && currentPhotoUri != null) {
-            this.image = requireView().findViewById(R.id.editButton)
+            this.image = requireView().findViewById(R.id.clothingImage)
             this.image.setImageURI(currentPhotoUri)
         }
     }
