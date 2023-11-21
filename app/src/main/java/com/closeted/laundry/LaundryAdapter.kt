@@ -18,7 +18,7 @@ class LaundryAdapter (private val data: ArrayList<Closet>, private val coroutine
     private val viewPool = RecyclerView.RecycledViewPool()
     var editMode: EditMode = EditMode.NORMAL
 
-    var childItemAdapter: ClothingAdapter? = null
+    var childItemAdapter: ClothingAdapter
     private var selectedClothing: ArrayList<Clothing> = ArrayList()
     init {
         // Initialize the child adapter here (if needed)
