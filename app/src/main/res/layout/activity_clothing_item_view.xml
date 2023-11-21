@@ -100,72 +100,16 @@
                 android:src="@drawable/baseline_photo_camera_24" />
         </LinearLayout>
 
-        <LinearLayout
-            android:id="@+id/typeLayout"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="24dp"
-            android:orientation="vertical"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/clothingImage">
-
-            <Spinner
-                android:id="@+id/spinner_clothing_type"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:background="@color/white"
-                android:visibility="gone"
-                />
-
-            <LinearLayout
-                android:id="@+id/outfitInfo"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:visibility="visible"
-                app:layout_constraintTop_toBottomOf="@+id/spinner_clothing_type">
-
-                <TextView
-                    android:id="@+id/appearsIn"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="24dp"
-                    android:text="Appears in "
-                    android:textSize="16sp"
-                    />
-
-                <TextView
-                    android:id="@+id/outfitCount"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="24dp"
-                    android:text="#"
-                    android:textSize="16sp"
-                    app:layout_constraintStart_toEndOf="@id/appearsIn" />
-
-                <TextView
-                    android:id="@+id/outfitsPhrase"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="24dp"
-                    android:text=" outfits"
-                    android:textSize="16sp"
-                    app:layout_constraintStart_toEndOf="@id/outfitCount" />
-            </LinearLayout>
-        </LinearLayout>
-
         <TextView
             android:id="@+id/Notes"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
-            android:layout_marginTop="24dp"
             android:text="Notes"
             android:textSize="24sp"
             android:textStyle="bold"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/typeLayout" />
+            tools:layout_editor_absoluteY="464dp" />
 
         <EditText
             android:id="@+id/clothingNotes"
