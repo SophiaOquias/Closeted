@@ -1,6 +1,9 @@
 package com.closeted.calendar
 
 import android.content.Intent
+import android.graphics.Color
+import android.graphics.PorterDuff
+import android.graphics.PorterDuffColorFilter
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -15,8 +18,11 @@ class CalendarChildAdapter(private val data: List<Clothing>, private val calenda
     inner class ViewHolder(itemView : View) : RecyclerView.ViewHolder(itemView){
         private val imageView: ImageView = itemView.findViewById(R.id.calendarClothingIv)
         fun bind(childItem: Clothing) {
-//            imageView.setImageResource(childItem.imageId)
             Picasso.get().load(childItem.imageUrl).into(imageView)
+            if(childItem.laundry) {
+                val colorFilter = PorterDuffColorFilter(Color.DKGRAY, PorterDuff.Mode.MULTIPLY)
+                imageView.colorFilter = colorFilter
+            }
         }
     }
 

@@ -1,5 +1,8 @@
 package com.closeted.outfits
 import android.content.Intent
+import android.graphics.Color
+import android.graphics.PorterDuff
+import android.graphics.PorterDuffColorFilter
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -33,6 +36,11 @@ class OutfitChildAdapter(private val data: List<Clothing>, private val outfitId:
         private val imageView: ImageView = itemView.findViewById(R.id.outfit_img)
         fun bind(childItem: Clothing) {
             Picasso.get().load(childItem.imageUrl).into(imageView)
+
+            if(childItem.laundry) {
+                val colorFilter = PorterDuffColorFilter(Color.DKGRAY, PorterDuff.Mode.MULTIPLY)
+                imageView.colorFilter = colorFilter
+            }
         }
     }
 }

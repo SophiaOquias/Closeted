@@ -23,10 +23,6 @@ class AddClothingChildAdapter(private val data: ArrayList<Clothing>, private val
     }
 
     override fun onBindViewHolder(holder: ClothingViewHolder, position: Int) {
-        if (data[position].laundry && !laundryView) {
-            // Do not bind laundry items for closet view
-            return
-        }
 
         holder.bindData(data[position], EditMode.SELECT)
 
@@ -44,7 +40,6 @@ class AddClothingChildAdapter(private val data: ArrayList<Clothing>, private val
         checkButton.isClickable = this.editMode == EditMode.SELECT
         val clothing = holder.itemView.findViewById<ImageView>(R.id.imageView)
         clothing.setOnClickListener {
-            // TODO: select clothes to add in outfit and place in a list
             if (editMode == EditMode.SELECT) {
                 checkBool = !checkBool
                 checkButton.isChecked = checkBool
