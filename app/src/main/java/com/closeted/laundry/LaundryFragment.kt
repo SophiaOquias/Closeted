@@ -8,6 +8,8 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import androidx.lifecycle.lifecycleScope
+import android.widget.ImageButton
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.closeted.R
@@ -54,7 +56,7 @@ class LaundryFragment : Fragment() {
 
         val layoutManager = LinearLayoutManager(requireContext())
 
-        laundryAdapter = LaundryAdapter(laundryData)
+        val laundryAdapter = LaundryAdapter(laundryData, lifecycleScope)
 
         laundryRecyclerViewItem.adapter = laundryAdapter
         laundryRecyclerViewItem.layoutManager = layoutManager

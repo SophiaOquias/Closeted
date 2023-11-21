@@ -49,6 +49,10 @@ class FirebaseReferences {
         const val CALENDAR_OUTFIT = "outfit"
         const val CALENDAR_DATE = "timestamp"
 
+        const val HISTORY_COLLECTION = "history"
+        const val HISTORY_IMAGE_URLS = "history_image_urls"
+        const val HISTORY_DATE = "history_date"
+
     }
 
     fun getAllClothes(closet: ArrayList<Closet>, adapter: ClosetAdapter) {
@@ -77,7 +81,7 @@ class FirebaseReferences {
                 for(type in clothingTypes) {
                     val temp: ArrayList<Clothing> = ArrayList()
                     for(clothing in clothes) {
-                        if(clothing.type == type && !clothing.laundry) {
+                        if(clothing.type == type) {
                             temp.add(clothing)
                         }
                     }
@@ -113,16 +117,14 @@ class FirebaseReferences {
                         document.getString(CLOTHING_NOTE),
                         document.getString(CLOTHING_LAUNDRY).toBoolean()
                     )
-                    if(!temp.laundry) {
-                        clothes.add(temp)
-                    }
+                    clothes.add(temp)
                 }
 
                 // separates clothes into clothing types
                 for(type in clothingTypes) {
                     val temp: ArrayList<Clothing> = ArrayList()
                     for(clothing in clothes) {
-                        if(clothing.type.equals(type)) {
+                        if(clothing.type == type) {
                             temp.add(clothing)
                         }
                     }
@@ -215,7 +217,7 @@ class FirebaseReferences {
         }
     }
 
-    private suspend fun uploadImageToFirebaseStorage(imageUri: Uri): String {
+    suspend fun uploadImageToFirebaseStorage(imageUri: Uri): String {
         return withContext(Dispatchers.IO) {
             val storage = Firebase.storage
             val storageRef = storage.reference
@@ -238,7 +240,6 @@ class FirebaseReferences {
             }
         }
     }
-
 
     suspend fun saveClothing(c: Clothing, uri: Uri): String {
         return withContext(Dispatchers.IO) {
@@ -274,9 +275,30 @@ class FirebaseReferences {
         val docRef = db.collection(CLOTHES_COLLECTION).document(c.id)
 
         try {
+            // Identify outfits that include the clothing to be deleted
+            val outfitsQuerySnapshot = db.collection(OUTFITS_COLLECTION)
+                .whereArrayContains(OUTFIT_CLOTHING_LIST, c.id)
+                .get()
+                .await()
+
+            // Update each outfit to remove the clothing ID
+            for (outfitDoc in outfitsQuerySnapshot.documents) {
+                val outfitId = outfitDoc.id
+                val existingClothingIds = outfitDoc.get(OUTFIT_CLOTHING_LIST) as? ArrayList<String> ?: ArrayList()
+
+                // Remove the clothing ID from the list
+                existingClothingIds.remove(c.id)
+
+                // Update the outfit document with the modified clothing list
+                db.collection(OUTFITS_COLLECTION).document(outfitId)
+                    .update(OUTFIT_CLOTHING_LIST, existingClothingIds).await()
+
+                Log.d(TAG, "Removed clothing ${c.id} from outfit $outfitId")
+            }
+
+            // Delete the clothing document
             docRef.delete().await()
             Log.d(TAG, "Document deleted successfully")
-            deleteImageFromStorage(c.imageUrl)
         } catch (e: Exception) {
             Log.d(TAG, "Error deleting document: $e")
             throw e
@@ -324,7 +346,6 @@ class FirebaseReferences {
         }
     }
 
-    /*
     suspend fun setLaundry(id: String, bool: Boolean) {
         val db = Firebase.firestore
 
@@ -344,8 +365,6 @@ class FirebaseReferences {
             throw e
         }
     }
-     */
-
 
     suspend fun setLaundry(clothingList: ArrayList<Clothing>, bool: Boolean) {
         val db = Firebase.firestore
@@ -510,17 +529,32 @@ class FirebaseReferences {
 
 
     suspend fun deleteOutfitById(outfitId: String) {
-        return withContext(Dispatchers.IO) {
-            val db = Firebase.firestore
+        val db = Firebase.firestore
 
-            try {
-                // Delete the outfit document
-                db.collection(OUTFITS_COLLECTION).document(outfitId).delete().await()
-                Log.d(TAG, "Outfit with ID $outfitId deleted successfully")
-            } catch (e: Exception) {
-                Log.e(TAG, "Error deleting outfit document: $e")
-                throw e
+        try {
+            // Identify calendar entries that use the outfit to be deleted
+            val calendarQuerySnapshot = db.collection(CALENDAR_COLLECTION)
+                .whereEqualTo(CALENDAR_OUTFIT, outfitId)
+                .get()
+                .await()
+
+            // Delete each calendar entry
+            for (calendarDoc in calendarQuerySnapshot.documents) {
+                val calendarEntryId = calendarDoc.id
+
+                // Delete the calendar entry document
+                db.collection(CALENDAR_COLLECTION).document(calendarEntryId).delete().await()
+
+                Log.d(TAG, "Calendar entry with ID $calendarEntryId deleted successfully")
             }
+
+            // Delete the outfit document
+            db.collection(OUTFITS_COLLECTION).document(outfitId).delete().await()
+
+            Log.d(TAG, "Outfit with ID $outfitId deleted successfully")
+        } catch (e: Exception) {
+            Log.e(TAG, "Error deleting outfit document: $e")
+            throw e
         }
     }
 
@@ -606,13 +640,14 @@ class FirebaseReferences {
         }
     }
 
-    suspend fun getHistoricOutfits(): ArrayList<Calendar> {
+    suspend fun getHistoricOutfits(): ArrayList<History> {
         return withContext(Dispatchers.IO) {
             val db = Firebase.firestore
 
             try {
                 val currentTime = Timestamp.now()
 
+                // Get past calendar entries
                 val calendarQuerySnapshot = db.collection(CALENDAR_COLLECTION)
                     .whereLessThan(CALENDAR_DATE, currentTime)
                     .get()
@@ -621,22 +656,74 @@ class FirebaseReferences {
                 Log.d(TAG, "Queried ${calendarQuerySnapshot.size()} past calendar entries")
 
                 // Extract calendar entry data from the documents
-                val calendarList = calendarQuerySnapshot.documents.map { calendarDoc ->
+                val historyList = ArrayList<History>()
+
+                for (calendarDoc in calendarQuerySnapshot.documents) {
                     val calendarId = calendarDoc.id
                     val outfitId = calendarDoc.getString(CALENDAR_OUTFIT) ?: ""
                     val date = calendarDoc.getTimestamp(CALENDAR_DATE)!!
                     val outfit = getOutfitById(outfitId)!!
 
-                    Calendar(calendarId, outfit, date)
-                } as ArrayList<Calendar>
+                    // Check if the date is in the past
+                    if (date.seconds < currentTime.seconds) {
+                        // Move to history collection
+                        val history = History(
+                            imageUrls = outfit.clothingItems.map { it.imageUrl } as ArrayList<String>,
+                            date = date
+                        )
+
+                        // Add to history collection
+                        val historyRef = db.collection(HISTORY_COLLECTION).document()
+                        historyRef.set(
+                            hashMapOf(
+                                HISTORY_IMAGE_URLS to history.imageUrls,
+                                HISTORY_DATE to history.date
+                            )
+                        ).await()
+
+                        // Delete from calendar collection
+                        db.collection(CALENDAR_COLLECTION).document(calendarId).delete().await()
+
+                        Log.d(TAG, "Moved calendar entry with ID $calendarId to history")
+                    }
+                }
+
+                // Append existing items from the history collection
+                val historyQuerySnapshot = db.collection(HISTORY_COLLECTION)
+                    .get()
+                    .await()
+
+                for (historyDoc in historyQuerySnapshot.documents) {
+                    val historyId = historyDoc.id
+                    val imageUrls = historyDoc.get(HISTORY_IMAGE_URLS) as ArrayList<String>
+                    val date = historyDoc.getTimestamp(HISTORY_DATE)!!
+
+                    historyList.add(History(historyId, imageUrls, date))
+                }
 
                 // Sort the list by date
-                calendarList.sortBy { it.date.seconds }
+                historyList.sortBy { it.date.seconds }
 
-                return@withContext calendarList
+                return@withContext historyList
             } catch (e: Exception) {
                 // Handle exceptions (e.g., FirestoreException)
-                Log.e(TAG, "Error getting future calendar entries: $e")
+                Log.e(TAG, "Error moving calendar entries to history: $e")
+                throw e
+            }
+        }
+    }
+
+    suspend fun deleteHistoryById(historyId: String) {
+        return withContext(Dispatchers.IO) {
+            val db = Firebase.firestore
+
+            try {
+                // Delete the history document
+                db.collection(HISTORY_COLLECTION).document(historyId).delete().await()
+
+                Log.d(TAG, "History entry with ID $historyId deleted successfully")
+            } catch (e: Exception) {
+                Log.e(TAG, "Error deleting history entry: $e")
                 throw e
             }
         }

@@ -36,6 +36,7 @@ class OutfitParentAdapter(private val data: ArrayList<Outfit>) : RecyclerView.Ad
 
         holder.itemView.setOnClickListener {
             val intent = Intent(holder.itemView.context, ViewOutfitActivity::class.java)
+            intent.putExtra("outfit_id", collection.id)
             holder.itemView.context.startActivity(intent)
         }
     }

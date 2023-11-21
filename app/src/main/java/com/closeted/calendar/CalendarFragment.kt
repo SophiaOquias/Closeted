@@ -6,6 +6,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import android.widget.ImageButton
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -32,8 +33,6 @@ class CalendarFragment : Fragment() {
     private var calendarData: ArrayList<Calendar> = ArrayList()
     private val firebase: FirebaseReferences = FirebaseReferences()
     private lateinit var closetAdapter: CalendarParentAdapter
-    private lateinit var historyAdapter: CalendarParentAdapter
-    private var historyData: ArrayList<Calendar> = ArrayList()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -56,13 +55,6 @@ class CalendarFragment : Fragment() {
         calendarRecyclerView.adapter = closetAdapter
         calendarRecyclerView.layoutManager = layoutManager
 
-        // history
-        val historyRecyclerView = view.findViewById<RecyclerView>(R.id.historyRecycler)
-        historyAdapter = CalendarParentAdapter(historyData)
-        historyRecyclerView.adapter = historyAdapter
-        val historyLayoutManager = LinearLayoutManager(requireContext())
-        historyRecyclerView.layoutManager = historyLayoutManager
-
         return view
     }
 
@@ -70,9 +62,15 @@ class CalendarFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         val btn = view.findViewById<ImageButton>(R.id.addOutfitCalendar)
+        val historyBtn = view.findViewById<Button>(R.id.historyBtn)
 
         btn.setOnClickListener {
             val intent = Intent(view.context, AddOutfitToCalendarActivity::class.java)
+            this.startActivity(intent)
+        }
+
+        historyBtn.setOnClickListener {
+            val intent = Intent(view.context, ViewHistoryActivity::class.java)
             this.startActivity(intent)
         }
     }
@@ -83,11 +81,9 @@ class CalendarFragment : Fragment() {
         lifecycleScope.launch {
             val asyncJob = async {
                 calendarData = firebase.getAllCalendarEntries()
-                historyData = firebase.getHistoricOutfits()
             }
             asyncJob.await()
             closetAdapter.setData(calendarData)
-            historyAdapter.setData(historyData)
         }
     }
 

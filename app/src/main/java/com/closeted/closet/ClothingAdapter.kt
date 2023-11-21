@@ -9,15 +9,18 @@ import android.widget.ImageButton
 import android.widget.ImageView
 import androidx.recyclerview.widget.RecyclerView
 import com.closeted.R
+import com.closeted.database.FirebaseReferences
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
 import com.closeted.laundry.LaundryAdapter
 
-class ClothingAdapter(private val data: ArrayList<Clothing>, private var editMode: EditMode, private val selectionListener: ClothingSelectionListener): RecyclerView.Adapter<ClothingViewHolder>() {
+class ClothingAdapter(private val data: ArrayList<Clothing>, private var editMode: EditMode,private val selectionListener: ClothingSelectionListener,  private val coroutineScope: CoroutineScope): RecyclerView.Adapter<ClothingViewHolder>() {
     private var checkBool = false
+    private var firebase: FirebaseReferences = FirebaseReferences()
 
     interface ClothingSelectionListener {
         fun onItemSelectionChanged(item: Clothing, isSelected: Boolean)
     }
-
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ClothingViewHolder {
         val inflater = LayoutInflater.from(parent.context)
@@ -32,10 +35,12 @@ class ClothingAdapter(private val data: ArrayList<Clothing>, private var editMod
         val xBtn = holder.itemView.findViewById<ImageButton>(R.id.trashButton)
         if(xBtn.isEnabled){
             xBtn.setOnClickListener {
-                val itemPosition = holder.adapterPosition
-                data.removeAt(itemPosition)
-                notifyItemRemoved(itemPosition)
-                notifyDataSetChanged()
+                coroutineScope.launch {
+                    val itemPosition = holder.adapterPosition
+                    firebase.deleteClothing(data[itemPosition])
+                    data.removeAt(itemPosition)
+                    notifyItemRemoved(itemPosition)
+                }
             }
         }
 
@@ -49,7 +54,7 @@ class ClothingAdapter(private val data: ArrayList<Clothing>, private var editMod
 
         val clothing = holder.itemView.findViewById<ImageView>(R.id.imageView)
         clothing.setOnClickListener {
-            if(editMode==EditMode.NORMAL){
+            if(editMode == EditMode.NORMAL){
                 val context = holder.itemView.context
                 val clickedClothing = data[position]
                 val intent = Intent(context, OpenClothingItem::class.java)

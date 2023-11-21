@@ -1,7 +1,13 @@
 package com.closeted.closet
 
+import android.Manifest
+import android.content.Intent
+import android.content.pm.PackageManager
+import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.os.Environment
+import android.provider.MediaStore
 import android.util.Log
 import android.view.View
 import android.widget.ArrayAdapter
@@ -11,14 +17,26 @@ import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.Spinner
 import android.widget.TextView
+import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.content.ContextCompat
+import androidx.core.content.FileProvider
 import androidx.lifecycle.lifecycleScope
 import com.closeted.R
 import com.closeted.database.FirebaseReferences
 import com.squareup.picasso.Picasso
+import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
+import java.io.File
+import java.io.IOException
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
 class OpenClothingItem : AppCompatActivity() {
+
+    private val CAMERA_PERMISSION_CODE = 1
 
     private var clothingTypes =arrayOf(
         "Blouse",
@@ -35,6 +53,103 @@ class OpenClothingItem : AppCompatActivity() {
 
     private var isEditMode = false
     private val firebase: FirebaseReferences = FirebaseReferences()
+    private lateinit var clothingImageView: ImageView
+    private var currentPhotoUri: Uri? = null
+
+
+    // this basically just asks user for permission to use camera
+    private val requestPermissionLauncher =
+        registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted: Boolean ->
+            if (isGranted) {
+                // Permission granted, proceed with the camera action
+                openCamera()
+            } else {
+                Toast.makeText(
+                    this,
+                    "Please allow this app to access the camera",
+                    Toast.LENGTH_LONG
+                ).show()
+            }
+        }
+
+    // gets result from taking a picture and sets the thumbnail to the captured image and gets URI of image
+    private val takePictureLauncher =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            if (result.resultCode == RESULT_OK) {
+                if (currentPhotoUri != null) {
+                    this.clothingImageView = findViewById(R.id.clothingImage)
+                    this.clothingImageView.setImageURI(currentPhotoUri)
+                } else {
+                    Toast.makeText(
+                        this,
+                        "Failed to retrieve the photo",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
+            }
+        }
+
+    // gets the result from picking an image from photo gallery and updates image thumbnail and gets URI of image
+    private val galleryLauncher =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            if (result.resultCode == RESULT_OK) {
+                val data: Intent? = result.data
+                if (data != null) {
+                    val selected: Uri? = data.data
+                    selected?.let {
+                        this.clothingImageView = findViewById(R.id.clothingImage)
+                        this.clothingImageView.setImageURI(it)
+                        this.currentPhotoUri = it
+                    }
+                }
+            }
+        }
+
+    private fun checkCameraPermission() {
+        if (ContextCompat.checkSelfPermission(
+                this,
+                Manifest.permission.CAMERA
+            ) == PackageManager.PERMISSION_GRANTED
+        ) {
+            openCamera()
+        } else {
+            requestPermissionLauncher.launch(Manifest.permission.CAMERA)
+        }
+    }
+
+    private fun openCamera() {
+        val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
+        val photoFile: File? = createImageFile()
+        if (photoFile != null) {
+            currentPhotoUri = FileProvider.getUriForFile(
+                this,
+                "com.closeted.closet.fileprovider",
+                photoFile
+            )
+            Log.d("ASDF", "Saved to Uri $currentPhotoUri")
+            intent.putExtra(MediaStore.EXTRA_OUTPUT, currentPhotoUri)
+            takePictureLauncher.launch(intent)
+        }
+        else {
+            Toast.makeText(
+                this,
+                "Failed to create an image file",
+                Toast.LENGTH_SHORT
+            ).show()
+        }
+    }
+
+    // saves image captured from camera to local
+    @Throws(IOException::class)
+    private fun createImageFile(): File? {
+        val timeStamp: String = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(Date())
+        val storageDir: File? = getExternalFilesDir(Environment.DIRECTORY_PICTURES)
+        return File.createTempFile(
+            "JPEG_${timeStamp}_",
+            ".jpg",
+            storageDir
+        )
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -55,7 +170,7 @@ class OpenClothingItem : AppCompatActivity() {
         Log.d("TEST", "loading image from ${viewedClothing.imageUrl}")
 
         // Load the image into an ImageView
-        val clothingImageView: ImageView = findViewById(R.id.clothingImage)
+        clothingImageView = findViewById(R.id.clothingImage)
         Picasso.get().load(viewedClothing.imageUrl).into(clothingImageView)
 
         val clothingTypeView: TextView = findViewById(R.id.itemType)
@@ -78,18 +193,31 @@ class OpenClothingItem : AppCompatActivity() {
                 outfitInfo.visibility = View.VISIBLE
                 clothingTypeOptions.visibility = View.GONE
 
-                // TODO: Save changes to your data model
-                val edits = Clothing(
-                    viewedClothing.id,
-                    viewedClothing.imageUrl, // TODO: change this to new url
-                    clothingTypeOptions.selectedItem.toString(),
-                    editNotes.text.toString(),
-                    viewedClothing.laundry
-                )
+                var imageUrl = viewedClothing.imageUrl
 
-                lifecycleScope.launch {
-                    firebase.updateClothing(edits)
+                // using global scope so that if user clicks the back button, image upload persists
+                GlobalScope.launch {
+                    if(currentPhotoUri != null) {
+                        val asyncJob = async {
+                            imageUrl = firebase.uploadImageToFirebaseStorage(currentPhotoUri!!)
+                        }
+
+                        asyncJob.await()
+                    }
+
+                    val edits = Clothing(
+                        viewedClothing.id,
+                        imageUrl,
+                        clothingTypeOptions.selectedItem.toString(),
+                        editNotes.text.toString(),
+                        viewedClothing.laundry
+                    )
+
+                    if(viewedClothing != edits) {
+                        firebase.updateClothing(edits)
+                    }
                 }
+
 
             } else {
                 // Edit mode logic
@@ -126,6 +254,51 @@ class OpenClothingItem : AppCompatActivity() {
                 deletionJob.await()
                 finish()
             }
+        }
+
+        val cameraBtn = findViewById<ImageButton>(R.id.cameraButton)
+
+        cameraBtn.setOnClickListener {
+            checkCameraPermission()
+        }
+
+        val galleryBtn = findViewById<ImageButton>(R.id.galleryButton)
+
+        galleryBtn.setOnClickListener {
+            val intent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
+            galleryLauncher.launch(intent)
+        }
+    }
+
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        if(requestCode == CAMERA_PERMISSION_CODE) {
+            if(grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                openCamera()
+            }
+            else {
+                Toast.makeText(
+                    this,
+                    "You denied permission for camera, you can still allow it in settings",
+                    Toast.LENGTH_LONG
+                ).show()
+            }
+        }
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+
+        if(resultCode == RESULT_OK && data != null) {
+            val selected: Uri = data.data!!
+            this.clothingImageView.setImageURI(selected)
+        }
+        else if (requestCode == takePictureLauncher.hashCode() && currentPhotoUri != null) {
+            this.clothingImageView.setImageURI(currentPhotoUri)
         }
     }
 }

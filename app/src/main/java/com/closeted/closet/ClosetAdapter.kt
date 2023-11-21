@@ -1,4 +1,5 @@
 package com.closeted.closet
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -6,9 +7,10 @@ import androidx.annotation.NonNull
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.closeted.R
+import kotlinx.coroutines.CoroutineScope
 
 
-class ClosetAdapter (private val data: ArrayList<Closet>): RecyclerView.Adapter<ClosetViewHolder>(), ClothingAdapter.ClothingSelectionListener {
+public class ClosetAdapter (private val data: ArrayList<Closet>, private val coroutineScope: CoroutineScope): RecyclerView.Adapter<ClosetViewHolder>(), ClothingAdapter.ClothingSelectionListener {
     private val viewPool = RecyclerView.RecycledViewPool()
     var editMode: EditMode = EditMode.NORMAL
     private var childItemAdapter: ClothingAdapter
@@ -17,7 +19,7 @@ class ClosetAdapter (private val data: ArrayList<Closet>): RecyclerView.Adapter<
     init {
         // Initialize the child adapter here (if needed)
         // For example, you can set it as non-editable initially
-        this.childItemAdapter = ClothingAdapter(ArrayList(), this.editMode, this)
+        this.childItemAdapter = ClothingAdapter(ArrayList(), this.editMode, this, coroutineScope)
     }
 
     override fun onCreateViewHolder(@NonNull parent: ViewGroup, viewType: Int): ClosetViewHolder {
@@ -33,15 +35,10 @@ class ClosetAdapter (private val data: ArrayList<Closet>): RecyclerView.Adapter<
     }
 
     override fun onBindViewHolder(@NonNull holder: ClosetViewHolder, position: Int) {
-        //parent item refers to section of clothes (tops, skirts, dresses, trousers, etc.)
-        val parentItem = data[position]
-        holder.parentItemTitle.text = parentItem.section
+        holder.parentItemTitle.text = data[position].section
 
-        // Check if all clothes under the parent item are in the laundry
-        val clothesNotInLaundry = parentItem.clothing.filter { !it.laundry }
-
-        // If all clothes are in the laundry, skip binding data for this parent item
-        if (clothesNotInLaundry.isEmpty()) {
+        // If there are no longer clothes in the section, skip binding data for this parent item
+        if (data[position].clothing.isEmpty()) {
             holder.itemView.visibility = View.GONE
             holder.itemView.layoutParams = RecyclerView.LayoutParams(0, 0)
             return
@@ -60,10 +57,8 @@ class ClosetAdapter (private val data: ArrayList<Closet>): RecyclerView.Adapter<
             false
         )
 
-        //layoutManager.initialPrefetchItemCount = parentItem.clothing.size
-        layoutManager.initialPrefetchItemCount = clothesNotInLaundry.size
-        val clothesNotInLaundryList = ArrayList(clothesNotInLaundry)
-        this.childItemAdapter = ClothingAdapter(clothesNotInLaundryList, this.editMode, this)
+        layoutManager.initialPrefetchItemCount = data[position].clothing.size
+        this.childItemAdapter = ClothingAdapter(data[position].clothing, this.editMode, this, coroutineScope)
 
         holder.childRecyclerView.layoutManager = layoutManager
         holder.childRecyclerView.adapter = childItemAdapter
@@ -106,12 +101,14 @@ class ClosetAdapter (private val data: ArrayList<Closet>): RecyclerView.Adapter<
 
 
     fun getSelectedClothing(): ArrayList<Clothing> {
+        Log.d("selectedClothing", selectedClothing.size.toString())
         return selectedClothing
     }
 
     fun clearSelection() {
         selectedClothing.clear()
     }
+
 
     override fun getItemCount(): Int {
         return data.size

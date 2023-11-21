@@ -11,18 +11,19 @@ import com.closeted.closet.ClosetViewHolder
 import com.closeted.closet.Clothing
 import com.closeted.closet.ClothingAdapter
 import com.closeted.closet.EditMode
+import kotlinx.coroutines.CoroutineScope
 
 
-class LaundryAdapter (private val data: ArrayList<Closet>, ): RecyclerView.Adapter<ClosetViewHolder>(), ClothingAdapter.ClothingSelectionListener {
+class LaundryAdapter (private val data: ArrayList<Closet>, private val coroutineScope: CoroutineScope): RecyclerView.Adapter<ClosetViewHolder>(), ClothingAdapter.ClothingSelectionListener {
     private val viewPool = RecyclerView.RecycledViewPool()
     var editMode: EditMode = EditMode.NORMAL
-    var childItemAdapter: ClothingAdapter
-    private var selectedClothing: ArrayList<Clothing> = ArrayList()
 
+    var childItemAdapter: ClothingAdapter? = null
+    private var selectedClothing: ArrayList<Clothing> = ArrayList()
     init {
         // Initialize the child adapter here (if needed)
         // For example, you can set it as non-editable initially
-        this.childItemAdapter = ClothingAdapter(ArrayList(), editMode, this)
+        this.childItemAdapter = ClothingAdapter(ArrayList(), editMode, this, coroutineScope)
     }
 
     fun setCheckboxVisibility(editMode: EditMode) {
@@ -54,7 +55,7 @@ class LaundryAdapter (private val data: ArrayList<Closet>, ): RecyclerView.Adapt
         layoutManager.initialPrefetchItemCount = parentItem.clothing.size
 
         //val
-        childItemAdapter = ClothingAdapter(parentItem.clothing, editMode, this)
+        childItemAdapter = ClothingAdapter(parentItem.clothing, this.editMode, this, coroutineScope)
         holder.childRecyclerView.layoutManager = layoutManager
         holder.childRecyclerView.adapter = childItemAdapter
         holder.childRecyclerView.setRecycledViewPool(viewPool)
