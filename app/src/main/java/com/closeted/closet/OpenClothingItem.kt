@@ -183,14 +183,12 @@ class OpenClothingItem : AppCompatActivity() {
         val editButton = findViewById<ImageButton>(R.id.editButton)
         editButton.setOnClickListener {
             val changeImage: LinearLayout = findViewById(R.id.changeImage)
-            val outfitInfo: LinearLayout = findViewById(R.id.outfitInfo)
             val clothingTypeOptions: Spinner = findViewById(R.id.spinner_clothing_type)
 
             if (isEditMode) {
                 // Save changes logic
                 changeImage.visibility = View.GONE
                 editNotes.isEnabled = false
-                outfitInfo.visibility = View.VISIBLE
                 clothingTypeOptions.visibility = View.GONE
 
                 var imageUrl = viewedClothing.imageUrl
@@ -224,7 +222,6 @@ class OpenClothingItem : AppCompatActivity() {
                 // TODO: add functionality to change image
                 changeImage.visibility = View.VISIBLE
                 editNotes.isEnabled = true
-                outfitInfo.visibility = View.GONE
                 clothingTypeOptions.visibility = View.VISIBLE
 
                 // Create an ArrayAdapter using the string array and a default spinner layout
