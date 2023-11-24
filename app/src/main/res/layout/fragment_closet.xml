@@ -44,8 +44,8 @@
                 android:textColor="@color/white"
                 android:textSize="24sp"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toStartOf="@+id/linearLayout3"
-                app:layout_constraintStart_toEndOf="@+id/laundryButton"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
             <LinearLayout
@@ -63,7 +63,9 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:background="#00FFFFFF"
-                    android:src="@drawable/baseline_edit_note_50" />
+                    android:src="@drawable/baseline_delete_50"
+                    android:layout_marginRight="10dp"
+                    />
 
                 <ImageButton
                     android:id="@+id/selectButton"

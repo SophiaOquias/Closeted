@@ -213,6 +213,10 @@ class OpenClothingItem : AppCompatActivity() {
 
                     if(viewedClothing != edits) {
                         firebase.updateClothing(edits)
+                        runOnUiThread {
+                            clothingTypeView.text = clothingTypeOptions.selectedItem.toString()
+                            viewedClothing.type = clothingTypeOptions.selectedItem.toString()
+                        }
                     }
                 }
 

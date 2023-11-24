@@ -123,11 +123,10 @@ class LaundryFragment : Fragment() {
 
                 // Hide the button after it's clicked
                 addToClosetButton.visibility = View.GONE
+                laundryAdapter.clearSelection()
+                laundryAdapter.toggleSelectMode()
             }
-
-
         }
-
         firebase.getAllLaundry(laundryData, laundryAdapter)
 
         return view
@@ -143,7 +142,6 @@ class LaundryFragment : Fragment() {
                 if (!clothingToRemove.contains(clothing)) {
                     updatedClothingList.add(clothing)
                 }
-
             }
             // Update the closet with the filtered list
             closet.clothing = updatedClothingList
@@ -162,7 +160,6 @@ class LaundryFragment : Fragment() {
         }
 
     }
-
 
     companion object {
         /**

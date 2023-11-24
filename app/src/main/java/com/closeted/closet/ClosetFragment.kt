@@ -78,7 +78,6 @@ class ClosetFragment : Fragment() {
             closetAdapter.toggleEditMode()
         })
 
-
         val laundryButton = view.findViewById<ImageButton>(R.id.laundryButton)
         val addToLaundryButton = view.findViewById<Button>(R.id.addToLaundry)
         laundryButton.setOnClickListener(View.OnClickListener {
@@ -97,6 +96,11 @@ class ClosetFragment : Fragment() {
                 firebase.setLaundry(selectedClothing, true)
                 removeClothingFromClosets(closetData, selectedClothing)
                 closetAdapter.notifyDataSetChanged()
+
+                // Hide the addToLaundryButton and checkboxes
+                addToLaundryButton.visibility = View.GONE
+                closetAdapter.clearSelection()
+                closetAdapter.toggleSelectMode()
             }
         }
 

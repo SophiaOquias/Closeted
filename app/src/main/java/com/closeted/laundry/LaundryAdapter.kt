@@ -67,6 +67,7 @@ class LaundryAdapter (private val data: ArrayList<Closet>, private val coroutine
         }
         else{
             this.editMode = EditMode.NORMAL
+            clearSelection()
         }
 
         this.childItemAdapter.setEditMode(this.editMode)
